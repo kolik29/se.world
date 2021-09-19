@@ -4,12 +4,16 @@ function url(dispatch) {
 
 function post(dispatch) {
     return new Promise((resolve, reject) => {
-        $.post(url(dispatch), {})
-        .done(data => {
-            resolve(JSON.parse(data));
+        $.post(url(dispatch), {
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
         })
-        .fail(data => {
-            reject(data);
-        })
-    })
+            .done(data => {
+                resolve(JSON.parse(data));
+            })
+            .fail(data => {
+                reject(data);
+            });
+    });
 }
