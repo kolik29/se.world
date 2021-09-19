@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
+    <title>Signature Element</title>
+</head>
+<body>
+    <header>
+        <div class="menu">
+            <a href="index.html"><img class="logotype" src="logotype.svg" alt=""></a>
+            <div class="rotating-icon">
+                <div id="cart">
+                    <img src="cart.svg" alt="">
+                    <div id="counter">0</div>
+                </div>
+                <div id="about">info</div>
+            </div>
+        </div>
+        <div class="bag">
+            <div class="about-wrapper">
+                <div class="h1">About 關於</div>
+                <p class="studio-info">
+                We strive to concentrate on the smallest details and take cues from various aspects of the world around us, all forms of art ever created and the phenomena of time.
+                </p>
+                <p class="contacts">
+                    hi@se.world <br>
+                    +7 916 709 69 68
+                </p>
+                <p class="policy">Find about our <a target="_blanc" href="policy.html">Terms & Policy.</a></p>
+            </div>
+            <div id="order-item-clone">
+                <div class="minus">–</div>
+                <div class="bag-product">
+                    <span class="product-type">T-shirt</span>
+                    <span class="product-name">Element IV 元素 4</span>
+                    <span class="product-size">M</span>
+                    <span class="product-quantity">1</span>
+                    <span class="product-price"></span>
+                </div>
+                <div class="plus">+</div>
+            </div>
+            <div id="empty-bag">Nothing in the bag yet</div>
+            <div class="bag-items">
+                <div id="order-list">
+                </div>
+                <div class="input-wrapper">
+                    <a href="checkout.html" id="checkout" class="action-line">
+                        <div>Total</div>
+                        <div id="total"></div>
+                        <button id="buy" class="checkout-button">BUY</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+    <script src="policy.js"></script>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
+    <title>Product</title>
+</head>
+<body class="product-page">
+<div id="slide-number"></div>
+<div class="sticky-scroll">
+    <div class="fixed-wrapp">
+        <header>
+            <div class="menu">
+                <a href="index.html"><img class="logotype" src="logotype.svg" alt=""></a>
+                <div class="rotating-icon">
+                    <div id="cart">
+                        <img data-src="cart.svg" alt="">
+                        <div id="counter">0</div>
+                    </div>
+                    <div id="about">info</div>
+                </div>
+            </div>
+            <div class="bag">
+                <div class="about-wrapper">
+                    <div class="h1">About 關於</div>
+                    <p class="studio-info">
+                    We strive to concentrate on the smallest details and take cues from various aspects of the world around us, all forms of art ever created and the phenomena of time.
+                    </p>
+                    <p class="contacts">
+                        hi@se.world <br>
+                        +7 916 709 69 68
+                    </p>
+                    <p class="policy">Find about our <a target="_blanc" href="policy.html">Terms & Policy.</a></p>
+                </div>
+                <div id="order-item-clone">
+                    <div class="minus">–</div>
+                    <div class="bag-product">
+                        <span class="product-type">T-shirt</span>
+                        <span class="product-name">Element IV 元素 4</span>
+                        <span class="product-size">M</span>
+                        <span class="product-quantity">1</span>
+                        <span class="product-price"></span>
+                    </div>
+                    <div class="plus">+</div>
+                </div>
+                <div id="empty-bag">Nothing in the bag yet</div>
+                <div class="bag-items">
+                    <div id="order-list">
+                    </div>
+                    <div class="input-wrapper">
+                        <a href="checkout.html" id="checkout" class="action-line">
+                            <div>Total</div>
+                            <div id="total"></div>
+                            <button id="buy" class="checkout-button">BUY</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div id="indicator">
+            <div class="line"></div>
+        </div>
+        <div id="purchase" class="action-line purchase-desktop">
+            <div class="shipping">Shipping</div>
+            <div id="size-wrapper">
+                <div id="size"><span class="short-size">M</span>edium <span class="chinese">中等的</span></div>
+                <div class="size-arrow">^</div>
+                <ul id="size-list">
+                    <li><span class="short-size">S</span>mall <span class="chinese">小的</span></li>
+                    <li><span class="short-size">M</span>edium <span class="chinese">中等的</span></li>
+                    <li><span class="short-size">L</span>arge <span class="chinese">大的</span></li>
+                    <li><span class="short-size">XL</span>arge <span class="chinese">特大號</span></li>
+                </ul>
+            </div>
+            <button class="checkout-button add">ADD</button>
+            <div class="shipping-info">
+                Express UPS <br>
+                $20 (Free over $200) <br>
+                <br>
+                3 days to <br>
+                Europe | Asia | North America <br>
+                <br>
+                6 days to <br>
+                South America | Middle East | Africa | Australia <br>
+                <br>
+                Order payment: Debit/Credit card <br>
+                [via 3-D Secure protocol] <br>
+                <br>
+                Returns <br>
+                <br>
+                1. Sign in to your account <br>
+                2. Fill out the return application <br>
+                3. Get FREE refund in 10 days <br>
+                <br>
+                We use UPS Express service for deliveries to the Rest of World. <br>
+                <br>
+                Your order will be shipped on a DDU (Delivery Duty Unpaid) service and you may be required to pay duties and taxes on your purchase when it arrives in the destination country. <br>
+                <br>
+                Our courier [UPS Express] will contact you in advance of deliveringthe goods. <br>
+                <br>
+                Unfortunately, <br>
+                we have no control over these charges, and cannot tell you what the cost might be, as customs policies and import duties vary widely from country to country. <br>
+                <br>
+                It might be a good idea to contact your local customs office for current charges before you order, so you are not surprised by charges you were not expecting.
+            </div>
+        </div>
+        <div class="slider">
+            <figure class="slider-item">
+                <img data-src="cap/cap1.jpg" alt="">
+                <figcaption class="description">Alright! How ya’ll doing in the real world? I tell you: I don’t visit it much no more! At the same time I prefer my own little place. On S.E., you know...right here.. is the place to be.</figcaption>
+            </figure>
+            <figure class="slider-item">
+                <img data-src="cap/cap2.jpg" alt="">
+                <figcaption class="description">Is what I want to do even possible? I don't really want to give the img and figcaption elements an id attribute.</figcaption>
+            </figure>
+            <figure class="slider-item">
+                <img data-src="cap/cap3.jpg" alt="">
+                <figcaption class="description">Classic baseball cap 100% Nylon. Laser cut logo + embroidery! 經典棒球帽 100% 尼龍。激光切割標誌+刺繡</figcaption>
+            </figure>
+            <figure class="slider-item">
+                <img data-src="cap/cap4.jpg" alt="">
+                <figcaption class="description">Alright! How ya’ll doing in the real world? I tell you: I don’t visit it much no more! At the same time I prefer my own little place. On S.E., you know...right here.. is the place to be.</figcaption>
+            </figure>
+            <figure class="slider-item">
+                <img data-src="cap/cap5.jpg" alt="">
+                <figcaption class="description">Is what I want to do even possible? I don't really want to give the img and figcaption elements an id attribute.</figcaption>
+            </figure>
+            <figure class="slider-item">
+                <img data-src="cap/cap6.jpg" alt="">
+                <figcaption class="description">Is what I want to do even possible? I don't really want to give the img and figcaption elements an id attribute.</figcaption>
+            </figure>
+            <figure class="slider-item">
+                <img data-src="cap/cap7.jpg" alt="">
+                <figcaption class="description">Is what I want to do even possible? I don't really want to give the img and figcaption elements an id attribute.</figcaption>
+            </figure>
+            <figure class="slider-item">
+                <img data-src="cap/cap8.jpg" alt="">
+                <figcaption class="description">Is what I want to do even possible? I don't really want to give the img and figcaption elements an id attribute.</figcaption>
+            </figure>
+            <button id="prev-img"></button>
+            <button id="next-img"></button>
+        </div>
+        <div class="bubble bubble-mobile">
+            <div class="bubble-flex">
+                <div class="">
+                    <div class="related-name">Element VII 元素 7</div>
+                    <div class="price">350</div>
+                </div>
+                <div class="show-more">Show text <br> ↓</div>
+            </div>
+            <div class="slide-text">
+                Classic baseball cap 100% Nylon. Laser cut logo + embroidery! 經典棒球帽 100% 尼龍。激光切割標誌+刺繡
+            </div>
+            <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                </g>
+            </svg>
+        </div>
+    </div>
+    <aside id="related">
+        <div class="related-item">
+            <img data-src="products/1.jpg" alt="">
+            <div class="bubble">
+                <div class="related-name">Element VII 元素 7</div>
+                <div class="price">350</div>
+            </div>
+        </div>
+        <div class="related-item">
+            <img data-src="products/2.jpg" alt="">
+            <div class="bubble">
+                <div class="related-name">Element VII 元素 7</div>
+                <div class="price">350</div>
+            </div>
+        </div>
+        <div class="related-item item-selected">
+            <img data-src="products/3.jpg" alt="">
+            <div class="bubble">
+                <div class="bubble-flex">
+                    <div class="">
+                        <div class="related-name">Element VII 元素 7</div>
+                        <div class="price">350</div>
+                    </div>
+                    <div class="show-more">Show text <br> ↓</div>
+                </div>
+                <div class="slide-text"></div>
+            </div>
+            <svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                </g>
+            </svg>
+        </div>
+        <div class="related-item">
+            <img data-src="products/4.jpg" alt="">
+            <div class="bubble">
+                <div class="related-name">Element VII 元素 7</div>
+                <div class="price">350</div>
+            </div>
+        </div>
+        <div class="related-item">
+            <img data-src="products/5.jpg" alt="">
+            <div class="bubble">
+                <div class="related-name">Element VII 元素 7</div>
+                <div class="price">350</div>
+            </div>
+        </div>
+        <div class="related-item">
+            <img data-src="products/6.jpg" alt="">
+            <div class="bubble">
+                <div class="related-name">Element VII 元素 7</div>
+                <div class="price">350</div>
+            </div>
+        </div>
+        <div class="related-item">
+            <img data-src="products/7.jpg" alt="">
+            <div class="bubble">
+                <div class="related-name">Element VII 元素 7</div>
+                <div class="price">350</div>
+            </div>
+        </div>
+        <div class="related-item">
+            <img data-src="products/8.jpg" alt="">
+            <div class="bubble">
+                <div class="related-name">Element VII 元素 7</div>
+                <div class="price">350</div>
+            </div>
+        </div>
+    </aside>
+</div>
+</body>
+    <script src="product.js"></script>
+</html>
