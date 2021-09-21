@@ -1,37 +1,35 @@
 $(() => {
-    console.log('test')
-
     var url = new URL(location.href);
     
-    // post('seworld.get_cart', {
-    //     lang: 'en'
-    // }).then(
-    //     result => {
-    //         if (result.products.length > 0) {
-    //             $('#counter').text(result.products.length);
-    //             $('#total').text(result.full_price);
-    //             $('#total').text(result.full_price);
-    //             $('#empty-bag').css({
-    //                 display: 'none'
-    //             });
-    //             $('.bag-items').addClass('flex-open');
-    //             $('#order-list').append($('<div>', {
-    //                 class: 'order-item'
-    //             }).append($('<div>', {
-    //                 class: 'minus',
-    //                 text: '–'
-    //             }).append($('<div>', {
-    //                 class: 'bag-product'
-    //             }))
-    //             .append($('<div>', {
-    //                 class: 'plus',
-    //                 text: '+'
-    //             }))));
-    //         }
-    //     },
-    //     error => {
-    //         console.log(error)
-    // });
+    post('seworld.get_cart', {
+        lang: 'en'
+    }).then(
+        result => {
+            if (result.products.length > 0) {
+                $('#counter').text(result.products.length);
+                $('#total').text(result.full_price);
+                $('#total').text(result.full_price);
+                $('#empty-bag').css({
+                    display: 'none'
+                });
+                $('.bag-items').addClass('flex-open');
+                $('#order-list').append($('<div>', {
+                    class: 'order-item'
+                }).append($('<div>', {
+                    class: 'minus',
+                    text: '–'
+                }).append($('<div>', {
+                    class: 'bag-product'
+                }))
+                .append($('<div>', {
+                    class: 'plus',
+                    text: '+'
+                }))));
+            }
+        },
+        error => {
+            console.log(error)
+    });
         
     if (url.pathname == '/index.html' || url.pathname == '/') {
         post('seworld.products_expected').then(
