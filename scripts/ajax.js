@@ -7,7 +7,9 @@ function post(dispatch, data = {}) {
         $.post(url(dispatch), {
             crossDomain: true,
             dataType: 'jsonp',
-            data: data
+            data: data,
+            store_access_key: 'csse',
+            no_redirect: ''
         })
         .done(data => {
             resolve(JSON.parse(data));
