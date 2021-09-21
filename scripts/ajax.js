@@ -4,15 +4,18 @@ function url(dispatch) {
 
 function post(dispatch) {
     return new Promise((resolve, reject) => {
-        // $.post(url(dispatch), {
-        //     crossDomain: true,
-        // })
-        //     .done(data => {
-        //         resolve(JSON.parse(data));
-        //     })
-        //     .fail(data => {
-        //         reject(data);
-        //     });
+        $.post(url(dispatch), {
+            crossDomain: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        })
+        .done(data => {
+            resolve(JSON.parse(data));
+        })
+        .fail(data => {
+            reject(data);
+        });
 
         if (dispatch == 'seworld.products_expected')
             resolve([
@@ -177,28 +180,28 @@ function post(dispatch) {
                 }
             ]);
 
-            if (dispatch == 'seworld.get_cart')
-                resolve({
-                    full_price: '12345 ₽',
-                    products: [
-                        {
-                            id: 1,
-                            variations: {
-                                XL: 2,
-                            },
-                            name: 'Шапка',
+        if (dispatch == 'seworld.get_cart')
+            resolve({
+                full_price: '12345 ₽',
+                products: [
+                    {
+                        id: 1,
+                        variations: {
+                            XL: 2,
+                        },
+                        name: 'Шапка',
+                        pairs: {
+                            main_pair: 'img1',
                             pairs: {
-                                main_pair: 'img1',
-                                pairs: {
-                                    src: 'img2',
-                                    desc: 'img3',
-                                }
-                            },
-                            desc: 'описание товара',
-                            price: '1000 ₽',
-                            type: 'T-shirt'
-                        }
-                    ]
-                });
+                                src: 'img2',
+                                desc: 'img3',
+                            }
+                        },
+                        desc: 'описание товара',
+                        price: '1000 ₽',
+                        type: 'T-shirt'
+                    }
+                ]
+            });
     });
 }
