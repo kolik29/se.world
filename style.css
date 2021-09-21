@@ -232,10 +232,6 @@ header {
     text-align: center;
 }
 
-#total::before {
-    content: '$';
-}
-
 .about-wrapper {
     padding: 0 1rem 0.66666rem;
     line-height: 1.1;
@@ -681,9 +677,9 @@ a {
     -ms-transform: scale(-1,-1);
 }
 
-.price::before {
+/* .price::before {
     content: '$';
-}
+} */
 
 .item-selected img {
     opacity: 0 !important;

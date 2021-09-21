@@ -2,34 +2,34 @@ document.querySelector(':root').style.setProperty('--vh', window.innerHeight/100
 
 window.addEventListener('resize', () => { 
     document.querySelector(':root').style.setProperty('--vh', window.innerHeight/100 + 'px');
-    })
+})
 
 window.onload = function() {
     
     //Img Preload
     [].forEach.call(document.querySelectorAll('img[data-src]'), function(img) {
         img.setAttribute('src', img.getAttribute('data-src'))
-            img.onload = function() {
-                img.removeAttribute('data-src')
-                related.style.opacity = '1'
-                img.style.opacity = '1'
-            }
-        })
-        //Scroll to selected item
-        const el = document.getElementsByClassName('item-selected')[0]
-        setTimeout(function() {
-            if (el.offsetTop > window.innerHeight/2) {
-                window.scrollTo ({
-                    top: (el.offsetTop - window.innerHeight/2),
-                    left: 0,
-                    behavior: 'smooth'
-                })
-            }
-        }, 1000)
-
-
+        img.onload = function() {
+            img.removeAttribute('data-src')
+            related.style.opacity = '1'
+            img.style.opacity = '1'
+        }
+    })
+    //Scroll to selected item
+    const el = document.getElementsByClassName('item-selected')[0]
+    setTimeout(function() {
+        // if (el.offsetTop > window.innerHeight/2) {
+        //     window.scrollTo ({
+        //         top: (el.offsetTop - window.innerHeight/2),
+        //         left: 0,
+        //         behavior: 'smooth'
+        //     })
+        // }
+    }, 1000)
+    
+    
     var purchase = document.getElementById('purchase')
-
+    
     // ShowBlock
     function showBlock(el) {
         if (el.classList.contains('open')) {
@@ -74,16 +74,16 @@ window.onload = function() {
             el.classList.add('open')
         }
     }
-
+    
     // Triangles
     var triangle = document.querySelector('.triangle')
     var bubbles = document.getElementsByClassName('bubble')
-
+    
     for (i=0; i<bubbles.length; i++) {
         var clone = triangle.cloneNode(true)
         bubbles[i].append(clone);
     }
-
+    
     // Menu
     var rotatingicon = document.querySelector('.rotating-icon')
     var header = document.querySelector('header')
@@ -91,11 +91,19 @@ window.onload = function() {
     var fixedwrapp = document.querySelector('.fixed-wrapp')
     rotatingicon.addEventListener('click', function(){showBlock(bag)})
 
+    // document.addEventListener('click', function(e) {
+    //     console.log(e.target)
+    //     if (e.target)
+    //         if (e.target.classList)
+    //             if (e.target.classList.contains('rotating-icon') || e.target.closest('rotating-icon'))
+    //                 showBlock(bag);
+    // });
+    
     //Change slider text
     var showMore = document.getElementsByClassName('show-more')
     var selectedItem = document.querySelector('.item-selected .bubble')
     var bubbleMobile = document.querySelector('.bubble-mobile')
-
+    
     function showText(el) {
         if (el.classList.contains('visible')) {
             el.classList.remove('visible')
@@ -106,20 +114,29 @@ window.onload = function() {
             el.classList.add('visible')
             showMore[0].innerHTML = 'Hide text <br> ↑'
             showMore[1].innerHTML = 'Hide text <br> ↑'
-        
+            
         }
     }
-
-    bubbleMobile.addEventListener('click', function() {showText(bubbleMobile)})
-    selectedItem.addEventListener('click', function() {showText(selectedItem)})
-
+    
+    // bubbleMobile.addEventListener('click', function() {showText(bubbleMobile)})
+    // selectedItem.addEventListener('click', function() {showText(selectedItem)})
+    
+    document.addEventListener('click', function(e) {
+        if (e.target)
+        if (e.target.classList.contains('bubble') || e.target.closest('.bubble'))
+        showText(selectedItem);
+        
+        if (e.target.classList.contains('bubble-mobile') || e.target.closest('.bubble-mobile'))
+        showText(bubbleMobile);
+    })
+    
     var slideText = document.getElementsByClassName('slide-text')
     var addText = function(slideN) {
         slideText[0].innerHTML = thisImg[slideN].children[1].innerHTML
         slideText[1].innerHTML = thisImg[slideN].children[1].innerHTML
     }
-
-
+    
+    
     // Change slide
     var nextButton = document.getElementById('next-img')
     var prevButton = document.getElementById('prev-img')
@@ -127,12 +144,12 @@ window.onload = function() {
     var line = document.getElementsByClassName('line')
     var indicator = document.getElementById('indicator')
     var arrowNumber = document.getElementById('slide-number')
-
+    
     for (i=0; i<thisImg.length-1; i++) {
         var clone = line[0].cloneNode(true)
         indicator.append(clone)
     }
-
+    
     j = 0
     if (window.location.hash) {
         var slideNumber = window.location.hash.substring(1).match(/\d+/)[0]
@@ -142,57 +159,60 @@ window.onload = function() {
     }
     thisImg[j].classList.add('img-selected')
     line[j].classList.add('line-selected')
-    addText(j)
-
+    // addText(j)
+    
     arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
-
-    nextButton.addEventListener('click', function() {
-        if (j < thisImg.length-1) {
-            thisImg[j].classList.remove('img-selected')
-            line[j].classList.remove('line-selected')
-            thisImg[j+1].classList.add('img-selected')
-            line[j+1].classList.add('line-selected')
-            j++
-            window.location.hash = 'slide-' + (j + 1)
-            addText(j)
-        } else {
-            thisImg[j].classList.remove('img-selected')
-            line[j].classList.remove('line-selected')
-            thisImg[0].classList.add('img-selected')
-            line[0].classList.add('line-selected')
-            j = 0
-            window.location.hash = 'slide-' + (j + 1)
-            addText(j)
+    
+    
+    document.addEventListener('click', function(e) {
+        if (e.target) {
+            if (e.target.id == 'next-img')
+            if (j < thisImg.length-1) {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[j+1].classList.add('img-selected')
+                line[j+1].classList.add('line-selected')
+                j++
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            } else {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[0].classList.add('img-selected')
+                line[0].classList.add('line-selected')
+                j = 0
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            }
+            arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
+            
+            if (e.target.id == 'prev-img')
+            if (j>0) {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[j-1].classList.add('img-selected')
+                line[j-1].classList.add('line-selected')
+                j--
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            } else {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[thisImg.length-1].classList.add('img-selected')
+                line[thisImg.length-1].classList.add('line-selected')
+                j = thisImg.length-1
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            }
+            arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
         }
-        arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
     })
-
-    prevButton.addEventListener('click', function() {
-        if (j>0) {
-            thisImg[j].classList.remove('img-selected')
-            line[j].classList.remove('line-selected')
-            thisImg[j-1].classList.add('img-selected')
-            line[j-1].classList.add('line-selected')
-            j--
-            window.location.hash = 'slide-' + (j + 1)
-            addText(j)
-        } else {
-            thisImg[j].classList.remove('img-selected')
-            line[j].classList.remove('line-selected')
-            thisImg[thisImg.length-1].classList.add('img-selected')
-            line[thisImg.length-1].classList.add('line-selected')
-            j = thisImg.length-1
-            window.location.hash = 'slide-' + (j + 1)
-            addText(j)
-        }
-        arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
-    })
-
+    
     //Mouse out of document
     document.addEventListener('mouseout', function(){
         arrowNumber.style.opacity = '0'
     })
-
+    
     //Slide number position
     function moveNumber(e) {
         var pageX = e.pageX
@@ -201,42 +221,44 @@ window.onload = function() {
         arrowNumber.style.left = pageX + 'px'
         arrowNumber.style.top = pageY - pageYOffset + 'px'
     }
-
+    
     document.addEventListener('mousemove', moveNumber)
-
+    
     var related = document.getElementById('related')
-
+    
     related.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
     related.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
     header.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
     header.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
     purchase.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
     purchase.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
-
+    
     //Size
     var size = document.getElementById('size')
     var sizeWrapper = document.getElementById('size-wrapper')
     var sizeList = document.getElementById('size-list')
-    sizeWrapper.addEventListener('click',function() {
-        showBlock(sizeList)
 
-    })
+    document.addEventListener('click', function(e) {
+        if (e.target)
+            if (e.target.id == 'size-wrapper' || e.target.closest('#size-wrapper'))
+                showBlock(sizeList);
+    });
+
     var sizes = document.querySelectorAll('#size-list li')
     for (i=0; i < sizes.length; i++) {
         sizes[i].addEventListener('click', function (e) {
-            e.stopPropagation()
             size.innerHTML = e.target.innerHTML
             sizeList.classList.remove('open')
             sizeWrapper.classList.remove('button-gray')
         })
     }
-
+    
     //Shipping
     var shippingButton = document.getElementsByClassName('shipping')
     var shippingInfo = document.getElementsByClassName('shipping-info')
     shippingButton[0].addEventListener('click', function() {showBlock(shippingInfo[0])})
-
-
+    
+    
     // Add to cart
     var addButton = document.getElementsByClassName('add')[0]
     var bagItems = document.querySelector('.bag-items')
@@ -247,7 +269,7 @@ window.onload = function() {
     var emptyBag = document.getElementById('empty-bag')
     var counter = document.getElementById('counter')
     var total = document.getElementById('total')
-
+    
     //Update bag
     var updateBag = function() {
         var products = document.getElementsByClassName('product-quantity')
@@ -261,7 +283,7 @@ window.onload = function() {
         counter.innerHTML = quantityAll
         total.innerHTML = priceAll
     }
-
+    
     //Update quantity
     var updateQuantity = function(el, b) {
         var quantity = parseInt(el.querySelector('.product-quantity').innerHTML)
@@ -275,7 +297,7 @@ window.onload = function() {
         }
         updateBag()
     }
-
+    
     function addToCart(e) {
         e.stopPropagation()
         bagItems.classList.add('flex-open')
@@ -287,12 +309,12 @@ window.onload = function() {
         //quantity
         clone.querySelector('.minus').addEventListener('click', function () {updateQuantity(clone, -1)})
         clone.querySelector('.plus').addEventListener('click', function () {updateQuantity(clone, 1)})
-
+        
         //data
         clone.querySelector('.product-name').innerHTML = name.innerHTML
         clone.querySelector('.product-size').innerHTML = size.childNodes[0].innerHTML
         clone.querySelector('.product-price').innerHTML = price.innerHTML
-
+        
         if (orderItem.length > 0) {
             for (i=0; i < orderItem.length; i++) {
                 if (clone.querySelector('.product-size').innerHTML == orderItem[i].querySelector('.product-size').innerHTML) {
@@ -313,7 +335,7 @@ window.onload = function() {
         }, 1000)
         updateBag()
     }
-
+    
     addButton.addEventListener('click', addToCart)
-
+    
 }
