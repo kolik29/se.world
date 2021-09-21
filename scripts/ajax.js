@@ -2,13 +2,14 @@ function url(dispatch) {
     return 'https://madfrenzy.com/?dispatch=' + dispatch;
 }
 
-function post(dispatch) {
+function post(dispatch, data = {}) {
     return new Promise((resolve, reject) => {
         $.post(url(dispatch), {
             crossDomain: true,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
+            data: data
         })
         .done(data => {
             resolve(JSON.parse(data));

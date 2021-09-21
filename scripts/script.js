@@ -1,7 +1,11 @@
 $(() => {
+    console.log('test')
+
     var url = new URL(location.href);
     
-    post('seworld.get_cart').then(
+    post('seworld.get_cart', {
+        lang: 'en'
+    }).then(
         result => {
             if (result.products.length > 0) {
                 $('#counter').text(result.products.length);
