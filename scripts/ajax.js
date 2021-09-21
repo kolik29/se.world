@@ -1,5 +1,5 @@
 function url(dispatch) {
-    return 'https://madfrenzy.com/?dispatch=' + dispatch;
+    return 'https://se.madfrenzy.com/?dispatch=' + dispatch;
 }
 
 function post(dispatch, data = {}) {

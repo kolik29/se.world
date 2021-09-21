@@ -40,7 +40,7 @@ $(() => {
             error => {
                 console.log(error)
             }
-            );
+        );
             
         post('seworld.products_in_stock').then(
             result => {
@@ -66,7 +66,7 @@ $(() => {
             error => {
                 console.log(error)
             }
-            );
+        );
     }
             
     if (url.pathname == '/product.html' || url.search != '') {
