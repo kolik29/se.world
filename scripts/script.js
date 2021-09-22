@@ -1,6 +1,8 @@
 var url = new URL(location.href);
 
 $(() => {
+    console.log('load');
+
     var basket = {};
 
     if (localStorage.getItem('basket') == null)
