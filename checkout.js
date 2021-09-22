@@ -55,12 +55,20 @@ window.onload = function() {
         updateBag()
     }
 
-    for (i=0; i<bagProducts.length; i++) {
-        let prod = bagProducts[i]
-        //quantity
-        prod.querySelector('.minus').addEventListener('click', function () {updateQuantity(prod, -1)})
-        prod.querySelector('.plus').addEventListener('click', function () {updateQuantity(prod, 1)})
-    }
+    // for (i=0; i<bagProducts.length; i++) {
+    //     let prod = bagProducts[i]
+    //     //quantity
+    //     prod.querySelector('.minus').addEventListener('click', function () {updateQuantity(prod, -1)})
+    //     prod.querySelector('.plus').addEventListener('click', function () {updateQuantity(prod, 1)})
+    // }
+
+    document.addEventListener('click', function(e) {
+        if (e.target)
+            if (e.target.classList.contains('minus'))
+                updateQuantity(e.target.closest('.order-item'), -1);
+            else if (e.target.classList.contains('plus'))
+                updateQuantity(e.target.closest('.order-item'), 1);
+    })
 
     updateBag()
 }

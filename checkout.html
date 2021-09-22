@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Signature Element</title>
+
+    <script src="scripts/jquery-3.6.0.min.js"></script>
+    <script src="scripts/ajax.js"></script>
+    <script src="scripts/script.js"></script>
 </head>
 <body>
     <header>
@@ -34,58 +38,25 @@
                 [via 3-D Secure protocol]
             </p>
         </div>
-        <div class="bag-items">
+        <form class="bag-items">
             <div id="order-list">
-                <div class="order-item">
-                    <div class="minus">–</div>
-                    <div class="bag-product">
-                        <span class="product-type">T-shirt</span>
-                        <span class="product-name">Element IV 元素 4</span>
-                        <span class="product-price">150</span>
-                        <span class="product-size">M</span>
-                        <span class="product-quantity">1</span>
-                    </div>
-                    <div class="plus">+</div>
-                </div>
-                <div class="order-item">
-                    <div class="minus">–</div>
-                    <div class="bag-product">
-                        <span class="product-type">T-shirt</span>
-                        <span class="product-name">Element V 元素 5</span>
-                        <span class="product-price">100</span>
-                        <span class="product-size">L</span>
-                        <span class="product-quantity">2</span>
-                    </div>
-                    <div class="plus">+</div>
-                </div>
-                <div class="order-item">
-                    <div class="minus">–</div>
-                    <div class="bag-product">
-                        <span class="product-type">Carpet</span>
-                        <span class="product-name">Element VIII 元素 8</span>
-                        <span class="product-price">180</span>
-                        <span class="product-size">L</span>
-                        <span class="product-quantity">1</span>
-                    </div>
-                    <div class="plus">+</div>
-                </div>
                 <div id="delivery-cost"></div>
             </div>
             <div class="input-wrapper">
-                <input type="text" placeholder="Country">
-                <input type="text" placeholder="State">
-                <input type="text" placeholder="Street">
-                <input type="text" placeholder="Building">
-                <input type="text" placeholder="Apartment/Office">
-                <input type="text" placeholder="Name">
-                <input type="email" placeholder="E-mail (for order details only)">
+                <input type="text" placeholder="Country" name="country">
+                <input type="text" placeholder="State" name="state">
+                <input type="text" placeholder="Street" name="street">
+                <input type="text" placeholder="Building" name="building">
+                <input type="text" placeholder="Apartment/Office" name="apartment">
+                <input type="text" placeholder="Name" name="name">
+                <input type="email" placeholder="E-mail (for order details only)" name="email">
                 <a id="checkout" class="action-line">
                     <div>Total</div>
                     <div id="total"></div>
                     <button id="pay" class="checkout-button">PAY</button>
                 </a>
             </div>
-        </div>
+        </form>
         <div class="about-wrapper">
             <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="policy.html">Terms & Policy.</a></p>
         </div>

@@ -71,7 +71,9 @@ window.onload = function() {
             if (otherOpen[0]) {
                 otherOpen[0].classList.remove('open')
             }
+            
             el.classList.add('open')
+            
         }
     }
     
@@ -89,15 +91,16 @@ window.onload = function() {
     var header = document.querySelector('header')
     var bag = document.querySelector('.bag')
     var fixedwrapp = document.querySelector('.fixed-wrapp')
-    rotatingicon.addEventListener('click', function(){showBlock(bag)})
+    // rotatingicon.addEventListener('click', function(){showBlock(bag)})
 
-    // document.addEventListener('click', function(e) {
-    //     console.log(e.target)
-    //     if (e.target)
-    //         if (e.target.classList)
-    //             if (e.target.classList.contains('rotating-icon') || e.target.closest('rotating-icon'))
-    //                 showBlock(bag);
-    // });
+    document.addEventListener('click', function(e) {
+        if (e.target)
+            if (e.target.classList)
+                if (e.target.classList.contains('rotating-icon') || e.target.closest('rotating-icon')) {
+                    console.log('test')
+                    showBlock(bag);
+                }
+    });
     
     //Change slider text
     var showMore = document.getElementsByClassName('show-more')
@@ -123,11 +126,11 @@ window.onload = function() {
     
     document.addEventListener('click', function(e) {
         if (e.target)
-        if (e.target.classList.contains('bubble') || e.target.closest('.bubble'))
-        showText(selectedItem);
+            if (e.target.classList.contains('bubble') || e.target.closest('.bubble'))
+                showText(selectedItem);
         
         if (e.target.classList.contains('bubble-mobile') || e.target.closest('.bubble-mobile'))
-        showText(bubbleMobile);
+            showText(bubbleMobile);
     })
     
     var slideText = document.getElementsByClassName('slide-text')
@@ -236,12 +239,13 @@ window.onload = function() {
     //Size
     var size = document.getElementById('size')
     var sizeWrapper = document.getElementById('size-wrapper')
-    var sizeList = document.getElementById('size-list')
 
     document.addEventListener('click', function(e) {
         if (e.target)
-            if (e.target.id == 'size-wrapper' || e.target.closest('#size-wrapper'))
+            if (e.target.id == 'size-wrapper' || e.target.closest('#size-wrapper')) {
+                var sizeList = document.getElementById('size-list')
                 showBlock(sizeList);
+            }
     });
 
     var sizes = document.querySelectorAll('#size-list li')
@@ -295,35 +299,35 @@ window.onload = function() {
                 emptyBag.style.display = 'block'
             }
         }
-        updateBag()
+        // updateBag()
     }
     
     function addToCart(e) {
         e.stopPropagation()
         bagItems.classList.add('flex-open')
         emptyBag.style.display = 'none'
-        var clone = orderItemClone.cloneNode(true)
+        // var clone = orderItemClone.cloneNode(true)
         clone.classList.add('order-item')
         clone.removeAttribute('id')
         
         //quantity
-        clone.querySelector('.minus').addEventListener('click', function () {updateQuantity(clone, -1)})
-        clone.querySelector('.plus').addEventListener('click', function () {updateQuantity(clone, 1)})
+        // clone.querySelector('.minus').addEventListener('click', function () {updateQuantity(clone, -1)})
+        // clone.querySelector('.plus').addEventListener('click', function () {updateQuantity(clone, 1)})
         
-        //data
-        clone.querySelector('.product-name').innerHTML = name.innerHTML
-        clone.querySelector('.product-size').innerHTML = size.childNodes[0].innerHTML
-        clone.querySelector('.product-price').innerHTML = price.innerHTML
+        // //data
+        // clone.querySelector('.product-name').innerHTML = name.innerHTML
+        // clone.querySelector('.product-size').innerHTML = size.childNodes[0].innerHTML
+        // clone.querySelector('.product-price').innerHTML = price.innerHTML
         
         if (orderItem.length > 0) {
-            for (i=0; i < orderItem.length; i++) {
-                if (clone.querySelector('.product-size').innerHTML == orderItem[i].querySelector('.product-size').innerHTML) {
-                    updateQuantity(orderItem[i], 1)
-                    break
-                } else if (i == orderItem.length - 1) {
-                    bagItems.querySelector('#order-list').prepend(clone)
-                }
-            }
+            // for (i=0; i < orderItem.length; i++) {
+            //     if (clone.querySelector('.product-size').innerHTML == orderItem[i].querySelector('.product-size').innerHTML) {
+            //         updateQuantity(orderItem[i], 1)
+            //         break
+            //     } else if (i == orderItem.length - 1) {
+            //         bagItems.querySelector('#order-list').prepend(clone)
+            //     }
+            // }
         } else {
             bagItems.querySelector('#order-list').prepend(clone)
         }
@@ -333,7 +337,7 @@ window.onload = function() {
             addButton.innerHTML = 'ADD' 
             addButton.style.pointerEvents = 'all'
         }, 1000)
-        updateBag()
+        // updateBag()
     }
     
     addButton.addEventListener('click', addToCart)

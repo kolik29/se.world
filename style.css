@@ -1213,3 +1213,7 @@ input:-webkit-autofill::first-line {
         margin-top: -0.33333rem;
     }
 }
+
+#order-list .product-price {
+    display: none;
+}
