@@ -1,8 +1,6 @@
 var url = new URL(location.href);
 
 $(() => {
-    console.log('load');
-
     var basket = {};
 
     if (localStorage.getItem('basket') == null)
@@ -16,8 +14,9 @@ $(() => {
         showBasket();
     }
 
+    console.log(url.pathname);
+
     if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '') {
-        console.log('load');
         post('seworld.products_expected').then(
             result => {
                 if (result.length)
