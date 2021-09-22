@@ -16,7 +16,7 @@ $(() => {
 
     console.log(url.pathname);
 
-    if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '') {
+    if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '', url.pathname == '/se.world/') {
         post('seworld.products_expected').then(
             result => {
                 if (result.length)
