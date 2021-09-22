@@ -21,14 +21,14 @@ function setup() {
     for (var i=1; i<=6; i++) {
         images[i] = loadImage('darvin'+i+'.svg');
     }
-    post('seworld.products_expected').then(
-        result => {
-            images[0] = loadImage(result[0].pairs.main_pair);
-        },
-        error => {
-            console.log(error)
-        }
-    );
+    // post('seworld.products_expected').then(
+    //     result => {
+    //         images[0] = loadImage(result[0].pairs.main_pair);
+    //     },
+    //     error => {
+    //         console.log(error)
+    //     }
+    // );
 }
     
     function windowResized() {
