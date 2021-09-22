@@ -17,6 +17,7 @@ $(() => {
     }
 
     if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '') {
+        console.log('load');
         post('seworld.products_expected').then(
             result => {
                 if (result.length)
