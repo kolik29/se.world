@@ -36,7 +36,7 @@ $(() => {
                 for (key in result) {
                     if (Number(result[key].count) > 0)
                         $('.grid-container').append($('<a>', {
-                            href: '/product.html?id=' + result[key].id,
+                            href: '/se.world/product.html?id=' + result[key].id,
                             class: 'grid-item'
                         }).append($('<img>', {
                             src: result[key].pairs.main_pair
