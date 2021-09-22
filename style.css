@@ -400,7 +400,7 @@ a {
     width: 100%;
 }
 
-#archive {
+.archive {
     font-size: 1.4rem;
     cursor: default;
 }
@@ -1013,7 +1013,7 @@ input:-webkit-autofill::first-line {
         right: 0;
         min-width: 60vw;
     }
-    #archive {
+    .archive {
         font-size: 2rem;
     }
     .bag-items {

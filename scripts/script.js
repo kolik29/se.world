@@ -33,22 +33,34 @@ $(() => {
             result => {
                 $('.grid-container .grid-item:not(#new-element)').remove();
 
-                result.forEach((product) => {
-                    $('.grid-container').append($('<a>', {
-                        href: '/product.html?id=' + product.id,
-                        class: 'grid-item'
-                    }).append($('<img>', {
-                        src: product.pairs.main_pair
-                    })).append($('<div>', {
-                        class: 'bubble'
-                    }).append($('<div>', {
-                        class: 'item-name',
-                        text: product.name
-                    })).append($('<div>', {
-                        class: 'price',
-                        text: product.price
-                    }))));
-                });
+                for (key in result) {
+                    if (Number(result[key].count) > 0)
+                        $('.grid-container').append($('<a>', {
+                            href: '/product.html?id=' + result[key].id,
+                            class: 'grid-item'
+                        }).append($('<img>', {
+                            src: result[key].pairs.main_pair
+                        })).append($('<div>', {
+                            class: 'bubble'
+                        }).append($('<div>', {
+                            class: 'item-name',
+                            text: result[key].name
+                        })).append($('<div>', {
+                            class: 'price',
+                            text: result[key].price
+                        }))));
+                }
+
+                post('seworld.products_out_of_stock').then(
+                    result => {
+                        for (key in result) {
+                            $('.grid-container').append($('<div>', {
+                                class: 'grid-item archive',
+                                text: 'Archive 檔案'
+                            }));
+                        }
+                    }
+                )
             },
             error => {
                 console.log(error)
