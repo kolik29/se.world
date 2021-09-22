@@ -14,7 +14,7 @@ $(() => {
         showBasket();
     }
 
-    if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '', url.pathname == '/se.world/') {
+    if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '' || url.pathname == '/se.world/') {
         post('seworld.products_expected').then(
             result => {
                 if (result.length)
@@ -36,7 +36,7 @@ $(() => {
                 for (key in result) {
                     if (Number(result[key].count) > 0)
                         $('.grid-container').append($('<a>', {
-                            href: '/se.world/product.html?id=' + result[key].id,
+                            href: '/product.html?id=' + result[key].id,
                             class: 'grid-item'
                         }).append($('<img>', {
                             src: result[key].pairs.main_pair
@@ -68,7 +68,7 @@ $(() => {
         );
     }
             
-    if (url.pathname == '/product.html' || url.search != '') {
+    if ((url.pathname == '/product.html' || url.pathname == '/se.world/product.html') || url.search != '') {
         var currentProductId = Number(url.search.replace('?id=', ''));
         
         post('seworld.products_in_stock').then(
@@ -77,21 +77,20 @@ $(() => {
                 $('.slider').empty();
 
                 var product_name = '';
-                
-                result.forEach(product => {
-                    if (product.id == Number(currentProductId)) {
-                        product_name = product.name;
+                for (key in result)
+                    if (result[key].id == Number(currentProductId)) {
+                        product_name = result[key].name;
 
                         var img_desk = '';
 
-                        if (typeof product.pairs.pairs == 'array' && product.pairs.pairs.length > 0)
-                            if (product.pairs.pairs[0]['desk'] !== undefined)
-                                product.pairs.pairs[0];
+                        if (typeof result[key].pairs.pairs == 'array' && result[key].pairs.pairs.length > 0)
+                            if (result[key].pairs.pairs[0]['desk'] !== undefined)
+                                result[key].pairs.pairs[0];
 
                         $('#related').append($('<div>', {
                             class: 'related-item item-selected'
                         }).append($('<img>', {
-                            'data-src': product.pairs.main_pair
+                            'data-src': result[key].pairs.main_pair
                         })).append($('<div>', {
                             class: 'bubble'
                         }).append($('<div>', {
@@ -99,10 +98,10 @@ $(() => {
                         }).append($('<div>')
                         .append($('<div>', {
                             class: 'related-name',
-                            text: product.name
+                            text: result[key].name
                         })).append($('<div>', {
                             class: 'price',
-                            text: product.price
+                            text: result[key].price
                         }))).append($('<div>', {
                             class: 'show-more',
                             html: 'Show text <br> ↓'
@@ -110,30 +109,29 @@ $(() => {
                             class: 'slide-text',
                             text: img_desk
                         }))));
-                        
-                        product.pairs.pairs.forEach(img => {
+
+                        for (img_key in result[key].pairs.pairs)
                             $('.slider').append($('<figure>', {
                                 class: 'slider-item'
                             }).append($('<img>', {
-                                'data-src': img.src
+                                'data-src': result[key].pairs.pairs[img_key].detailed.https_image_path
                             })).append($('<figcaption>', {
                                 class: 'description',
-                                text: img.desc
+                                // text: img.desc
                             })));
-                        });
                         
                         $('#size-wrapper').empty();
-                        var sizes = Object.keys(product.variations);
+                        var sizes = Object.keys(result[key].variations);
                         
                         var size = getSizeWord(sizes[0]);
 
                         $('#size-wrapper').append($('<div>', {
                             id: 'size',
                             html: '<span class="short-size">' + sizes[0] + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
-                            'data-product-id': product.id,
-                            'data-variation-id': product.variations[sizes[0]],
-                            'data-price': product.price,
-                            'data-product-name': product.name
+                            'data-product-id': result[key].id,
+                            'data-variation-id': result[key].variations[sizes[0]].product_id,
+                            'data-price': result[key].price,
+                            'data-product-name': result[key].name
                         })).append($('<div>', {
                             class: 'size-arrow',
                             text: '^'
@@ -141,15 +139,15 @@ $(() => {
                             id: 'size-list'
                         }));
                         
-                        for (key in product.variations) {
-                            var size = getSizeWord(key);
-                            
+                        for (variation_key in result[key].variations) {
+                            var size = getSizeWord(variation_key);
+
                             $('#size-list').append($('<li>', {
-                                html: '<span class="short-size">' + key + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
-                                'data-product-id': product.id,
-                                'data-variation-id': product.variations[key],
-                                'data-price': product.price,
-                                'data-product-name': product.name
+                                html: '<span class="short-size">' + variation_key + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
+                                'data-product-id': result[key].id,
+                                'data-variation-id': result[key].variations[variation_key].product_id,
+                                'data-price': result[key].price,
+                                'data-product-name': result[key].name
                             }));
                         }
                         
@@ -164,23 +162,26 @@ $(() => {
                                 $(this).closest('#size-wrapper').find('#size-list').removeClass('open');
                             }, 50);
                         });
+
+                        $('.slider .slider-item').eq(0).addClass('img-selected');
+
+                        slider();
                     } else
                         $('#related').append($('<a>', {
                             class: 'related-item',
-                            href: '/product.html?id=' + product.id
+                            href: '/product.html?id=' + result[key].id
                         }).append($('<img>', {
-                            'data-src': product.pairs.main_pair
+                            'data-src': result[key].pairs.main_pair
                         })).append($('<div>', {
                             class: 'bubble'
                         }).append($('<div>', {
                             class: 'related-name',
-                            text: product.name
+                            text: result[key].name
                         })).append($('<div>', {
                             class: 'price',
-                            text: product.price
+                            text: result[key].price
                         }))));
-                });
-                
+
                 $('img[data-src]').each(function() {
                     $(this).attr('src', $(this).data('src')).css({
                         opacity: 1
@@ -217,10 +218,6 @@ $(() => {
                 console.log(error);
             }
         );
-    }
-
-    if (url.pathname == '/checkout.html') {
-
     }
 
     // post('seworld.products_in_stock')
@@ -267,6 +264,10 @@ $(() => {
         $(this).css({
             'background-color': ''
         });
+    });
+
+    $('body').on('click', '#size-list li', function() {
+        $('#size').html($(this).html());
     });
 });
         
@@ -406,4 +407,107 @@ function addToBasket(basket, product_id, product_name, size, price, remove = fal
     localStorage.setItem('basket', JSON.stringify(basket));
     basketUpdateTotal();
     showBasket();
+}
+
+function slider() {
+    var slideText = document.getElementsByClassName('slide-text')
+    var addText = function(slideN) {
+        slideText[0].innerHTML = thisImg[slideN].children[1].innerHTML
+        slideText[1].innerHTML = thisImg[slideN].children[1].innerHTML
+    }
+
+    var nextButton = document.getElementById('next-img')
+    var prevButton = document.getElementById('prev-img')
+    thisImg = document.getElementsByClassName('slider-item')
+    var line = document.getElementsByClassName('line')
+    var indicator = document.getElementById('indicator')
+    var arrowNumber = document.getElementById('slide-number')
+
+    for (i=0; i<thisImg.length-1; i++) {
+        var clone = line[0].cloneNode(true)
+        indicator.append(clone)
+    }
+
+    j = 0
+    if (window.location.hash) {
+        var slideNumber = window.location.hash.substring(1).match(/\d+/)[0]
+        j = (slideNumber - 1)
+    } else {
+        j = 0
+    }
+
+    thisImg[j].classList.add('img-selected')
+    line[j].classList.add('line-selected')
+    arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
+    
+    document.addEventListener('click', function(e) {
+        if (e.target) {
+            if (e.target.id == 'next-img')
+            if (j < thisImg.length-1) {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[j+1].classList.add('img-selected')
+                line[j+1].classList.add('line-selected')
+                j++
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            } else {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[0].classList.add('img-selected')
+                line[0].classList.add('line-selected')
+                j = 0
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            }
+            arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
+
+            if (e.target.id == 'prev-img')
+            if (j>0) {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[j-1].classList.add('img-selected')
+                line[j-1].classList.add('line-selected')
+                j--
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            } else {
+                thisImg[j].classList.remove('img-selected')
+                line[j].classList.remove('line-selected')
+                thisImg[thisImg.length-1].classList.add('img-selected')
+                line[thisImg.length-1].classList.add('line-selected')
+                j = thisImg.length-1
+                window.location.hash = 'slide-' + (j + 1)
+                addText(j)
+            }
+            arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
+        }
+    })
+    
+    //Slide number position
+    function moveNumber(e) {
+        var pageX = e.pageX
+        var pageY = e.pageY
+        arrowNumber.style.opacity = 1
+        arrowNumber.style.left = pageX + 'px'
+        arrowNumber.style.top = pageY - pageYOffset + 'px'
+    }
+
+    document.addEventListener('mousemove', moveNumber)
+
+    //Mouse out of document
+    document.addEventListener('mouseout', function(){
+        arrowNumber.style.opacity = '0'
+    })
+
+    var purchase = document.getElementById('purchase')
+    var header = document.querySelector('header')
+    var related = document.getElementById('related')
+    
+    related.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
+    related.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
+    header.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
+    header.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
+    purchase.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
+    purchase.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
 }

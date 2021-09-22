@@ -27,9 +27,6 @@ window.onload = function() {
         // }
     }, 1000)
     
-    
-    var purchase = document.getElementById('purchase')
-    
     // ShowBlock
     function showBlock(el) {
         if (el.classList.contains('open')) {
@@ -91,16 +88,16 @@ window.onload = function() {
     var header = document.querySelector('header')
     var bag = document.querySelector('.bag')
     var fixedwrapp = document.querySelector('.fixed-wrapp')
-    // rotatingicon.addEventListener('click', function(){showBlock(bag)})
+    rotatingicon.addEventListener('click', function(){showBlock(bag)})
 
-    document.addEventListener('click', function(e) {
-        if (e.target)
-            if (e.target.classList)
-                if (e.target.classList.contains('rotating-icon') || e.target.closest('rotating-icon')) {
-                    console.log('test')
-                    showBlock(bag);
-                }
-    });
+    // document.addEventListener('click', function(e) {
+    //     if (e.target)
+    //         if (e.target.classList)
+    //             if (e.target.classList.contains('rotating-icon') || e.target.closest('rotating-icon')) {
+    //                 console.log('test')
+    //                 showBlock(bag);
+    //             }
+    // });
     
     //Change slider text
     var showMore = document.getElementsByClassName('show-more')
@@ -132,109 +129,15 @@ window.onload = function() {
         if (e.target.classList.contains('bubble-mobile') || e.target.closest('.bubble-mobile'))
             showText(bubbleMobile);
     })
-    
-    var slideText = document.getElementsByClassName('slide-text')
-    var addText = function(slideN) {
-        slideText[0].innerHTML = thisImg[slideN].children[1].innerHTML
-        slideText[1].innerHTML = thisImg[slideN].children[1].innerHTML
-    }
-    
-    
+
+
     // Change slide
-    var nextButton = document.getElementById('next-img')
-    var prevButton = document.getElementById('prev-img')
-    thisImg = document.getElementsByClassName('slider-item')
-    var line = document.getElementsByClassName('line')
-    var indicator = document.getElementById('indicator')
-    var arrowNumber = document.getElementById('slide-number')
     
-    for (i=0; i<thisImg.length-1; i++) {
-        var clone = line[0].cloneNode(true)
-        indicator.append(clone)
-    }
-    
-    j = 0
-    if (window.location.hash) {
-        var slideNumber = window.location.hash.substring(1).match(/\d+/)[0]
-        j = (slideNumber - 1)
-    } else {
-        j = 0
-    }
-    thisImg[j].classList.add('img-selected')
-    line[j].classList.add('line-selected')
     // addText(j)
     
-    arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
     
     
-    document.addEventListener('click', function(e) {
-        if (e.target) {
-            if (e.target.id == 'next-img')
-            if (j < thisImg.length-1) {
-                thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
-                thisImg[j+1].classList.add('img-selected')
-                line[j+1].classList.add('line-selected')
-                j++
-                window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            } else {
-                thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
-                thisImg[0].classList.add('img-selected')
-                line[0].classList.add('line-selected')
-                j = 0
-                window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            }
-            arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
-            
-            if (e.target.id == 'prev-img')
-            if (j>0) {
-                thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
-                thisImg[j-1].classList.add('img-selected')
-                line[j-1].classList.add('line-selected')
-                j--
-                window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            } else {
-                thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
-                thisImg[thisImg.length-1].classList.add('img-selected')
-                line[thisImg.length-1].classList.add('line-selected')
-                j = thisImg.length-1
-                window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            }
-            arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
-        }
-    })
     
-    //Mouse out of document
-    document.addEventListener('mouseout', function(){
-        arrowNumber.style.opacity = '0'
-    })
-    
-    //Slide number position
-    function moveNumber(e) {
-        var pageX = e.pageX
-        var pageY = e.pageY
-        arrowNumber.style.opacity = 1
-        arrowNumber.style.left = pageX + 'px'
-        arrowNumber.style.top = pageY - pageYOffset + 'px'
-    }
-    
-    document.addEventListener('mousemove', moveNumber)
-    
-    var related = document.getElementById('related')
-    
-    related.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
-    related.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
-    header.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
-    header.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
-    purchase.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
-    purchase.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
     
     //Size
     var size = document.getElementById('size')
