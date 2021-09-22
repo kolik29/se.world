@@ -115,6 +115,7 @@ function setup() {
         // Set the date we're counting down to
         post('seworld.products_expected').then(
             result => {
+                $('#new-item').text(result[0].name);
                 var countDownDate = new Date(Number(result[0].date) * 1000);
                 
                 // Update the count down every 1 second

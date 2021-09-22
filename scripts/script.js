@@ -2,8 +2,6 @@ var url = new URL(location.href);
 
 $(() => {
     var basket = {};
-    
-    // localStorage.removeItem('basket')
 
     if (localStorage.getItem('basket') == null)
         basket = {
@@ -19,10 +17,12 @@ $(() => {
     if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '') {
         post('seworld.products_expected').then(
             result => {
-                if (result.length) {
-                    $('#new-item').text(result[0].name);
+                if (result.length)
                     $('#new-element .item-name').text(result[0].name);
-                }
+                else
+                    $('#new-element .item-name').css({
+                        display: 'none'
+                    })
             },
             error => {
                 console.log(error)
@@ -32,7 +32,7 @@ $(() => {
         post('seworld.products_in_stock').then(
             result => {
                 $('.grid-container .grid-item:not(#new-element)').remove();
-                
+
                 result.forEach((product) => {
                     $('.grid-container').append($('<a>', {
                         href: '/product.html?id=' + product.id,
@@ -208,6 +208,7 @@ $(() => {
     }
 
     if (url.pathname == '/checkout.html') {
+
     }
 
     // post('seworld.products_in_stock')
