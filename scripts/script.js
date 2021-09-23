@@ -68,7 +68,7 @@ $(() => {
         );
     }
             
-    if ((url.pathname == '/product.html' || url.pathname == '/se.world/product.html') || url.search != '') {
+    if (url.pathname == '/product.html' || url.search != '') {
         var currentProductId = Number(url.search.replace('?id=', ''));
         
         post('seworld.products_in_stock').then(
@@ -165,6 +165,8 @@ $(() => {
 
                         $('.slider .slider-item').eq(0).addClass('img-selected');
 
+                        $('.checkout-button.add').data('main-pair', result[key].pairs.main_pair);
+
                         slider();
                     } else
                         $('#related').append($('<a>', {
@@ -200,6 +202,7 @@ $(() => {
                 
                 $('.checkout-button.add').on('click', function() {
                     var product_size_obj = $(this).closest('#purchase').find('#size');
+                    var image = $(this).data('main-pair');
 
                     addToBasket(
                         basket,
@@ -208,7 +211,8 @@ $(() => {
                         {
                             [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
                         },
-                        product_size_obj.data('price')
+                        product_size_obj.data('price'),
+                        image
                     );
                     basketUpdateTotal();
                     showBasket();
@@ -220,13 +224,18 @@ $(() => {
         );
     }
 
-    // post('seworld.products_in_stock')
-    // post('seworld.products_archive')
-    // post('seworld.products_out_of_stock')
-    // post('seworld.policy')
-    // post('seworld.shipping')
-    // post('seworld.add_to_cart')
-    // post('seworld.get_cart')
+    if (url.pathname == '/checkout.html') {
+        basket = JSON.parse(localStorage.getItem('basket'));
+
+        console.log(basket.products)
+
+        basket.products.forEach(item => {
+            $('#products').append($('<img>', {
+                class: 'checkout-item',
+                'data-src': item.main_pair
+            }));
+        });
+    }
 
     $('body').on('click', '#order-list .order-item .plus, #order-list .order-item .minus', function() {
         var order_item = $(this).closest('.order-item');
@@ -239,7 +248,8 @@ $(() => {
                 [order_item.find('.product-size').text()]: order_item.data('variation-id')
             },
             order_item.data('product-price'),
-            $(this).hasClass('minus')
+            $(this).hasClass('minus'),
+            []
         );
         basketUpdateTotal();
         showBasket();
@@ -248,16 +258,46 @@ $(() => {
     $('form.bag-items').submit(function(e) {
         e.preventDefault();
 
+        var formSubmit = true, customer = {};
+
         $(this).find('input').each(function() {
-            if ($(this).val() == '')
+            if ($(this).val() == '') {
                 $(this).css({
                     'background-color': 'red'
                 });
-            else
+
+                if (formSubmit == undefined)
+                    formSubmit = false;
+
+                formSubmit = formSubmit && false;
+            } else {
                 $(this).css({
                     'background-color': ''
                 });
+
+                if (formSubmit == undefined)
+                    formSubmit = true;
+
+                formSubmit = formSubmit && true;
+
+                customer[$(this).attr('name')] = $(this).val();
+            }
         });
+
+        if (formSubmit) {
+            basket = JSON.parse(localStorage.getItem('basket'));
+            data = Object.assign(basket, { customer: customer });
+            console.log(data);
+
+            post('se_world.create_order', data).then(
+                result => {
+                    console.log(result);
+                },
+                error => {
+                    console.log(error);
+                }
+            )
+        }
     });
 
     $('.input-wrapper input').on('keydown', function() {
@@ -269,8 +309,16 @@ $(() => {
     $('body').on('click', '#size-list li', function() {
         $('#size').html($(this).html());
     });
+
+    $('img[data-src]').each(function() {
+        $(this).attr('src', $(this).data('src')).load(function() {
+            $(this).css({
+                opacity: 1
+            });
+        });
+    });
 });
-        
+
 function getSizeWord(size) {
     if (size[size.length - 1] == 'S')
     return ['mall', '小的'];
@@ -372,7 +420,7 @@ function showBasket() {
     }
 }
 
-function addToBasket(basket, product_id, product_name, size, price, remove = false) {
+function addToBasket(basket, product_id, product_name, size, price, image, remove = false) {
     var addProduct = true;
 
     if (basket.products.length > 0) {
@@ -401,7 +449,8 @@ function addToBasket(basket, product_id, product_name, size, price, remove = fal
             basket_count: 1,
             type: 'T-shirt',
             variation: size,
-            price: price
+            price: price,
+            main_pair: image
         });
 
     localStorage.setItem('basket', JSON.stringify(basket));

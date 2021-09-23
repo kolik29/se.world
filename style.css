@@ -1217,3 +1217,7 @@ input:-webkit-autofill::first-line {
 #order-list .product-price {
     display: none;
 }
+
+img[data-src] {
+    transition: .3s;
+}
