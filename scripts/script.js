@@ -3,6 +3,8 @@ var url = new URL(location.href);
 $(() => {
     var basket = {};
 
+    localStorage.removeItem('basket')
+
     if (localStorage.getItem('basket') == null)
         basket = {
             products: [],
@@ -14,7 +16,7 @@ $(() => {
         showBasket();
     }
 
-    if (url.pathname == '/index.html' || url.pathname == '/' || url.pathname == '' || url.pathname == '/se.world/') {
+    if (url.pathname == '/' || url.pathname == '') {
         post('seworld.products_expected').then(
             result => {
                 if (result.length)
@@ -36,7 +38,7 @@ $(() => {
                 for (key in result) {
                     if (Number(result[key].count) > 0)
                         $('.grid-container').append($('<a>', {
-                            href: '/product.html?id=' + result[key].id,
+                            href: '/product?id=' + result[key].id,
                             class: 'grid-item'
                         }).append($('<img>', {
                             src: result[key].pairs.main_pair
@@ -68,7 +70,7 @@ $(() => {
         );
     }
             
-    if (url.pathname == '/product.html' || url.search != '') {
+    if (url.pathname == '/product' || url.search != '') {
         var currentProductId = Number(url.search.replace('?id=', ''));
         
         post('seworld.products_in_stock').then(
@@ -131,7 +133,8 @@ $(() => {
                             'data-product-id': result[key].id,
                             'data-variation-id': result[key].variations[sizes[0]].product_id,
                             'data-price': result[key].price,
-                            'data-product-name': result[key].name
+                            'data-product-name': result[key].name,
+                            'data-max-count': result[key].count
                         })).append($('<div>', {
                             class: 'size-arrow',
                             text: '^'
@@ -171,7 +174,7 @@ $(() => {
                     } else
                         $('#related').append($('<a>', {
                             class: 'related-item',
-                            href: '/product.html?id=' + result[key].id
+                            href: '/product?id=' + result[key].id
                         }).append($('<img>', {
                             'data-src': result[key].pairs.main_pair
                         })).append($('<div>', {
@@ -212,7 +215,8 @@ $(() => {
                             [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
                         },
                         product_size_obj.data('price'),
-                        image
+                        image,
+                        product_size_obj.data('max-count')
                     );
                     basketUpdateTotal();
                     showBasket();
@@ -224,7 +228,7 @@ $(() => {
         );
     }
 
-    if (url.pathname == '/checkout.html') {
+    if (url.pathname == '/checkout') {
         basket = JSON.parse(localStorage.getItem('basket'));
 
         console.log(basket.products)
@@ -248,8 +252,9 @@ $(() => {
                 [order_item.find('.product-size').text()]: order_item.data('variation-id')
             },
             order_item.data('product-price'),
-            $(this).hasClass('minus'),
-            []
+            [],
+            order_item.data('max-count'),
+            $(this).hasClass('minus')
         );
         basketUpdateTotal();
         showBasket();
@@ -309,14 +314,16 @@ $(() => {
     $('body').on('click', '#size-list li', function() {
         $('#size').html($(this).html());
     });
-
-    $('img[data-src]').each(function() {
-        $(this).attr('src', $(this).data('src')).load(function() {
-            $(this).css({
-                opacity: 1
+    
+    if ($('img[data-src]').length > 1)
+        $('img[data-src]').each(function() {
+            $(this).attr('src', $(this).data('src')).load(function() {
+                $(this).css({
+                    opacity: 1
+                });
             });
         });
-    });
+        
 });
 
 function getSizeWord(size) {
@@ -336,7 +343,6 @@ function basketUpdateTotal() {
     if (basket) {
         basket.products.forEach(item => {
             count += item.basket_count;
-            console.log(item.price)
             full_price += (typeof item.price == 'string' ? Number(item.price.replace(/\D+/g, '')) : item.price) * item.basket_count;
         })
 
@@ -420,7 +426,7 @@ function showBasket() {
     }
 }
 
-function addToBasket(basket, product_id, product_name, size, price, image, remove = false) {
+function addToBasket(basket, product_id, product_name, size, price, image, max_count, remove = false) {
     var addProduct = true;
 
     if (basket.products.length > 0) {
@@ -428,14 +434,13 @@ function addToBasket(basket, product_id, product_name, size, price, image, remov
             if (product.id == product_id)
                 if (JSON.stringify(product.variation) == JSON.stringify(size)) {
                     if (remove)
-                        basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
+                        if (basket.products[id].basket_count < max_count)
+                            basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
                     else
                         basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
 
                     addProduct = false;
                 }
-
-            console.log(basket.products[id].basket_count)
 
             if (basket.products[id].basket_count <= 0)
                 basket.products.splice(id, 1)
@@ -450,7 +455,7 @@ function addToBasket(basket, product_id, product_name, size, price, image, remov
             type: 'T-shirt',
             variation: size,
             price: price,
-            main_pair: image
+            main_pair: image,
         });
 
     localStorage.setItem('basket', JSON.stringify(basket));

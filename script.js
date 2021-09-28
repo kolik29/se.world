@@ -18,17 +18,10 @@ var container = document.getElementById('preloader');
 function setup() {
     var canvas = createCanvas(container.offsetWidth, container.offsetHeight);
     canvas.parent('preloader')
-    for (var i=1; i<=6; i++) {
-        images[i] = loadImage('darvin'+i+'.svg');
-    }
-    post('seworld.products_expected').then(
-        result => {
-            images[0] = loadImage(result[0].pairs.main_pair);
-        },
-        error => {
-            console.log(error)
-        }
-    );
+    // for (var i=1; i<=6; i++) {
+    //     images[i] = loadImage('darvin'+i+'.svg');
+    // }
+    images[0] = loadImage('preloader.jpg');
 }
     
     function windowResized() {
@@ -38,30 +31,30 @@ function setup() {
     var i = 1;
     function mouseMoved() {
         if (i<7) {
-            // image(images[0], mouseX-x/2, mouseY-y/2, x, y);
+            image(images[0], mouseX-x/2, mouseY-y/2, x, y);
             i = i + 0.05;
         } else {
             i = 1;
         }
     }
     
-    // function mousePressed() { 
-    //     clear(); 
-    //     i = 1;
-    // }
-    
-    // function touchMoved () {
-    //     if (i<6) {
-    //         image(images[Math.trunc(i)], mouseX-x/2, mouseY-y/2, x, y);
-    //         i = i + 0.05;
-    //     } else {
-    //         i = 1;
-    //     }
-    // }
+    function mousePressed() { 
+        clear(); 
+        i = 1;
+    }
     
     function touchMoved () {
         if (i<6) {
-            // image(images[0], mouseX-x/2, mouseY-y/2, x, y);
+            image(images[Math.trunc(i)], mouseX-x/2, mouseY-y/2, x, y);
+            i = i + 0.05;
+        } else {
+            i = 1;
+        }
+    }
+    
+    function touchMoved () {
+        if (i<6) {
+            image(images[0], mouseX-x/2, mouseY-y/2, x, y);
             i = i + 0.05;
         } else {
             i = 1;
@@ -111,43 +104,15 @@ function setup() {
         })
         
         // // Countdown
+
+        try {
+            countdownDate(prealoderData.name, prealoderData.date);
+        } catch {}
         
         // Set the date we're counting down to
         post('seworld.products_expected').then(
             result => {
-                $('#new-item').text(result[0].name);
-                var countDownDate = new Date(Number(result[0].date) * 1000);
-                
-                // Update the count down every 1 second
-                var x = setInterval(function() {
-                    
-                    // Get today's date and time
-                    var now = new Date().getTime();
-                    
-                    // Find the distance between now and the count down date
-                    var distance = countDownDate - now;
-                    
-                    // Time calculations for days, hours, minutes and seconds
-                    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                    var milliseconds = Math.floor((distance % (1000)));
-                    
-                    var countdown = document.getElementsByClassName('countdown')
-                    // Display the result in the element with id="demo"
-                    countdown[0].innerHTML = 'Drop in ' + days + "d " + hours + "h "
-                    + minutes + "m " + seconds + "s " + milliseconds + 'ms';
-                    countdown[1].innerHTML = 'Drop in ' + days + "d " + hours + "h "
-                    + minutes + "m " + seconds + "s " + milliseconds + 'ms';
-                    
-                    // If the count down is finished, write some text
-                    if (distance < 0) {
-                        clearInterval(x);
-                        countdown[0].innerHTML = "EXPIRED";
-                        countdown[1].innerHTML = "EXPIRED";
-                    }
-                }, 0);
+                countdownDate(result[0].name, result[0].date);
             },
             error => {
                 console.log(error)
@@ -155,3 +120,39 @@ function setup() {
         );
         
     }
+
+function countdownDate(name, date) {
+    $('#new-item').text(name);
+    var countDownDate = new Date(Number(date) * 1000);
+    
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+        
+        // Get today's date and time
+        var now = new Date().getTime();
+        
+        // Find the distance between now and the count down date
+        var distance = countDownDate - now;
+        
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        var milliseconds = Math.floor((distance % (1000)));
+        
+        var countdown = document.getElementsByClassName('countdown')
+        // Display the result in the element with id="demo"
+        countdown[0].innerHTML = 'Drop in ' + days + "d " + hours + "h "
+        + minutes + "m " + seconds + "s " + milliseconds + 'ms';
+        countdown[1].innerHTML = 'Drop in ' + days + "d " + hours + "h "
+        + minutes + "m " + seconds + "s " + milliseconds + 'ms';
+        
+        // If the count down is finished, write some text
+        if (distance < 0) {
+            clearInterval(x);
+            countdown[0].innerHTML = "EXPIRED";
+            countdown[1].innerHTML = "EXPIRED";
+        }
+    }, 0);
+}
