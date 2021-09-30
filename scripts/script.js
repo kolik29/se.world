@@ -3,8 +3,6 @@ var url = new URL(location.href);
 $(() => {
     var basket = {};
 
-    localStorage.removeItem('basket')
-
     if (localStorage.getItem('basket') == null)
         basket = {
             products: [],
@@ -41,7 +39,7 @@ $(() => {
                             href: '/product?id=' + result[key].id,
                             class: 'grid-item'
                         }).append($('<img>', {
-                            src: result[key].pairs.main_pair
+                            'data-src': result[key].pairs.main_pair
                         })).append($('<div>', {
                             class: 'bubble'
                         }).append($('<div>', {
@@ -51,6 +49,8 @@ $(() => {
                             class: 'price',
                             text: result[key].price
                         }))));
+
+                    lazyloadImg();
                 }
 
                 post('seworld.products_out_of_stock').then(
@@ -187,11 +187,7 @@ $(() => {
                             text: result[key].price
                         }))));
 
-                $('img[data-src]').each(function() {
-                    $(this).attr('src', $(this).data('src')).css({
-                        opacity: 1
-                    });
-                });
+                lazyloadImg();
                 
                 $('#related').css({
                     opacity: 1
@@ -315,15 +311,7 @@ $(() => {
         $('#size').html($(this).html());
     });
     
-    if ($('img[data-src]').length > 1)
-        $('img[data-src]').each(function() {
-            $(this).attr('src', $(this).data('src')).load(function() {
-                $(this).css({
-                    opacity: 1
-                });
-            });
-        });
-        
+    lazyloadImg();        
 });
 
 function getSizeWord(size) {
@@ -564,4 +552,15 @@ function slider() {
     header.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
     purchase.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
     purchase.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
+}
+
+function lazyloadImg() {
+    $('img[data-src]').each(function() {
+        $(this).attr('src', $(this).data('src'))
+        $(this).on('load', function() {
+            $(this).css({
+                opacity: 1
+            })
+        })
+    })
 }
