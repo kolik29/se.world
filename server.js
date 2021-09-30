@@ -19,8 +19,8 @@ setInterval(() => {
 }, 600000);
 
 function server() {
-    const hostname = '127.0.0.1';
-    const port = 8080;
+    const hostname = 'se.world';
+    const port = 3000;
 
     const server = http.createServer((require, response) => {
         var filePath = '.' + require.url.split('?')[0];
@@ -36,10 +36,10 @@ function server() {
 
         if (filePath == './policy')
             filePath = './policy.html';
-        
+
         var extname = path.extname(filePath);
         var contentType = 'text/html';
-        
+
         switch (extname) {
             case '.js':
                 contentType = 'text/javascript';
@@ -49,7 +49,7 @@ function server() {
             break;
             case '.png':
                 contentType = 'image/png';
-            break;      
+            break;
             case '.jpg':
                 contentType = 'image/jpg';
             break;
@@ -60,7 +60,7 @@ function server() {
                 contentType = 'text/html';
             break;
         }
-        
+
         fs.readFile(filePath, function(error, content) {
             if (error) {
                 if(error.code == 'ENOENT'){
@@ -72,7 +72,7 @@ function server() {
                 else {
                     response.writeHead(500);
                     response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
-                    response.end(); 
+                    response.end();
                 }
             }
             else {
@@ -80,14 +80,14 @@ function server() {
                 response.end(content, 'utf-8');
             }
         });
-    }).listen(port);
+    }).listen(port, '127.0.0.1');
 
     console.log(`Server running at http://${hostname}:${port}/`);
 }
 
 function post(hostname, dispatch, callback) {
     const data = {};
-    
+
     const options = {
         hostname: hostname,
         path: '/?dispatch=' + dispatch + '&store_access_key=csse&no_redirect',
@@ -96,7 +96,7 @@ function post(hostname, dispatch, callback) {
             'Content-Type': 'application/json'
         }
     }
-    
+
     const req = http.request(options).on('response', function(response) {
         var data = '';
         response.on('data', function (chunk) {
@@ -106,11 +106,11 @@ function post(hostname, dispatch, callback) {
             callback(JSON.parse(data));
         });
         }).end();
-    
+
     req.on('error', error => {
         console.error(error)
     });
-    
+
     req.end();
 }
 
