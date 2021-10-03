@@ -288,11 +288,10 @@ $(() => {
         if (formSubmit) {
             basket = JSON.parse(localStorage.getItem('basket'));
             data = Object.assign(basket, { customer: customer });
-            console.log(data);
 
-            post('se_world.create_order', data).then(
+            post('seworld.create_order', data).then(
                 result => {
-                    console.log(result);
+                    location.href = result.payment_url;
                 },
                 error => {
                     console.log(error);

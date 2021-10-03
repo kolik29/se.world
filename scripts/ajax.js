@@ -3,12 +3,17 @@ function fn_url(dispatch) {
 }
 
 function post(dispatch, data = {}) {
+    console.log(data);
+
     return new Promise((resolve, reject) => {
-        $.post(fn_url(dispatch), {
-            data: data,
-        })
+        $.post(fn_url(dispatch), data)
         .done(data => {
-            resolve(JSON.parse(data));
+            try {
+                resolve(JSON.parse(data));
+            }
+            catch {
+                resolve(data);
+            }
         })
         .fail(data => {
             reject(data);
