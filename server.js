@@ -5,14 +5,15 @@ const path = require('path');
 const { json } = require('stream/consumers');
 const { stringify } = require('querystring');
 const url = require('url');
-
-import prealoderData from 'preloader.js';
+const preloaderModule = require('./preloader');
 
 server();
 
 const products_expected = post('se.madfrenzy.com', 'seworld.products_expected', data => {
     downloadJSON(JSON.stringify(data[0]));
-    // downloadIMG(data[0].pairs.main_pair); если у товара нет изображения, то сервер не запускается
+
+    if (data != undefined)
+        downloadIMG(data[0].pairs.main_pair);
 });
 
 products_expected;
@@ -23,7 +24,7 @@ setInterval(() => {
 }, 600000);
 
 function server() {
-    const hostname = 'se.world';
+    const hostname = '127.0.0.1';
     const port = 3000;
     const accessKey = 'csse';
 
@@ -50,7 +51,7 @@ function server() {
             }
 
             if (filePath == './') {
-                if (prealoderData == undefined)
+                if (preloaderModule.prealoderData == undefined)
                     filePath = './index.html';
                 else
                     filePath = './index_preloader.html';
@@ -167,7 +168,7 @@ function downloadIMG(url) {
 }
 
 function downloadJSON(json) {
-    fs.writeFileSync('preloader.js', 'var prealoderData = ' + json);
+    fs.writeFileSync('preloader.js', 'var prealoderData = ' + json + '; module.exports.prealoderData = prealoderData;');
 }
 
 function parseCookies (request) {
