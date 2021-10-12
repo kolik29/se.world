@@ -1,1 +1,1 @@
-var prealoderData = {"id":"1517","count":"1","name":"test 2","pairs":{"main_pair":"https://se.madfrenzy.com/images/detailed/25/cap1_cjyv-lk.jpg","pairs":[]},"short_description":"","full_description":"","price":"400$","date":"1639688400"}
+var prealoderData = undefined
