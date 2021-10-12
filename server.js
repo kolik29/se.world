@@ -4,38 +4,72 @@ const fs = require('fs');
 const path = require('path');
 const { json } = require('stream/consumers');
 const { stringify } = require('querystring');
+const url = require('url');
+
+import prealoderData from 'preloader.js';
 
 server();
 
 const products_expected = post('se.madfrenzy.com', 'seworld.products_expected', data => {
     downloadJSON(JSON.stringify(data[0]));
-    downloadIMG(data[0].pairs.main_pair);
+    // downloadIMG(data[0].pairs.main_pair); если у товара нет изображения, то сервер не запускается
 });
 
 products_expected;
 
 setInterval(() => {
     products_expected;
+    console.log((new Date()), 'Preloader update');
 }, 600000);
 
 function server() {
     const hostname = 'se.world';
     const port = 3000;
+    const accessKey = 'csse';
 
     const server = http.createServer((require, response) => {
         var filePath = '.' + require.url.split('?')[0];
 
-        if (filePath == './')
-            filePath = './index.html';
+        let queryObject =
+            url.parse(require.url,true).query;
 
-        if (filePath == './product')
-            filePath = './product.html';
+        let additionalHeaders = {};
+        let cookies = parseCookies(require);
 
-        if (filePath == './checkout')
-            filePath = './checkout.html';
+        let haveKey =
+            queryObject.key && queryObject.key === accessKey;
 
-        if (filePath == './policy')
-            filePath = './policy.html';
+        if (haveKey || cookies.key === accessKey) {
+
+            if (!cookies.key) {
+                additionalHeaders = {
+                    'Set-Cookie': 'key=csse',
+                    'Domain': hostname,
+                    'Path': '/'
+                };
+            }
+
+            if (filePath == './') {
+                if (prealoderData == undefined)
+                    filePath = './index.html';
+                else
+                    filePath = './index_preloader.html';
+            }
+
+            if (filePath == './product')
+                filePath = './product.html';
+
+            if (filePath == './checkout')
+                filePath = './checkout.html';
+
+            if (filePath == './policy')
+                filePath = './policy.html';
+
+        } else {
+
+            filePath = './closed.html';
+
+        }
 
         var extname = path.extname(filePath);
         var contentType = 'text/html';
@@ -76,7 +110,18 @@ function server() {
                 }
             }
             else {
-                response.writeHead(200, { 'Content-Type': contentType });
+                let defaultHeaders = {
+                    'Content-Type': contentType,
+                    'Cache-Control': 'no-cache'
+                };
+
+                let mergedHeaders =
+                    Object.assign(
+                        defaultHeaders,
+                        additionalHeaders
+                    );
+
+                response.writeHead(200, mergedHeaders);
                 response.end(content, 'utf-8');
             }
         });
@@ -123,4 +168,16 @@ function downloadIMG(url) {
 
 function downloadJSON(json) {
     fs.writeFileSync('preloader.js', 'var prealoderData = ' + json);
+}
+
+function parseCookies (request) {
+    let list = {},
+        rc = request.headers.cookie;
+
+    rc && rc.split(';').forEach(function( cookie ) {
+        let parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
+
+    return list;
 }

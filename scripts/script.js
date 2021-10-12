@@ -42,7 +42,7 @@ $(() => {
                             'data-src': result[key].pairs.main_pair
                         })).append($('<div>', {
                             class: 'bubble'
-                        }).append($('<div>', {
+                        }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
                             class: 'item-name',
                             text: result[key].name
                         })).append($('<div>', {
@@ -55,11 +55,30 @@ $(() => {
 
                 post('seworld.products_out_of_stock').then(
                     result => {
+                        $('.grid-container').append($('<div>', {
+                            class: 'grid-item archive',
+                            text: 'Archive 檔案'
+                        }));
+
+                        console.log(result)
+
                         for (key in result) {
-                            $('.grid-container').append($('<div>', {
-                                class: 'grid-item archive',
-                                text: 'Archive 檔案'
-                            }));
+                            $('.grid-container').append($('<a>', {
+                                href: '/product?id=' + result[key].id,
+                                class: 'grid-item'
+                            }).append($('<img>', {
+                                'data-src': result[key].pairs.main_pair
+                            })).append($('<div>', {
+                                class: 'bubble'
+                            }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
+                                class: 'item-name',
+                                text: result[key].name
+                            })).append($('<div>', {
+                                class: 'price',
+                                text: result[key].price
+                            }))));
+
+                            lazyloadImg();
                         }
                     }
                 )
@@ -123,6 +142,7 @@ $(() => {
                             })));
                         
                         $('#size-wrapper').empty();
+                        console.log(result);
                         var sizes = Object.keys(result[key].variations);
                         
                         var size = getSizeWord(sizes[0]);
@@ -250,7 +270,7 @@ $(() => {
             order_item.data('product-price'),
             [],
             order_item.data('max-count'),
-            $(this).hasClass('minus')
+            !$(this).hasClass('minus')
         );
         basketUpdateTotal();
         showBasket();
@@ -420,10 +440,10 @@ function addToBasket(basket, product_id, product_name, size, price, image, max_c
         basket.products.forEach((product, id) => {
             if (product.id == product_id)
                 if (JSON.stringify(product.variation) == JSON.stringify(size)) {
-                    if (remove)
+                    if (remove) {
                         if (basket.products[id].basket_count < max_count)
                             basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
-                    else
+                    } else
                         basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
 
                     addProduct = false;

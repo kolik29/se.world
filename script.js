@@ -21,7 +21,7 @@ function setup() {
     // for (var i=1; i<=6; i++) {
     //     images[i] = loadImage('darvin'+i+'.svg');
     // }
-    images[0] = loadImage('preloader.jpg');
+    images[0] = loadImage('preloader.jpg?' + (new Date()).getMilliseconds());
 }
     
     function windowResized() {
@@ -123,6 +123,9 @@ function setup() {
 
 function countdownDate(name, date) {
     $('#new-item').text(name);
+
+    console.log(date)
+
     var countDownDate = new Date(Number(date) * 1000);
     
     // Update the count down every 1 second
