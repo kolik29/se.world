@@ -5,27 +5,16 @@ const path = require('path');
 const { json } = require('stream/consumers');
 const { stringify } = require('querystring');
 const url = require('url');
-const preloaderModule = require('./preloader');
 
 server();
 
-const products_expected = post('se.madfrenzy.com', 'seworld.products_expected', data => {
-    downloadJSON(JSON.stringify(data[0]));
+var prealoderData = '';
 
-    if (data[0] == undefined) {
-        downloadJSON('undefined');
-    } else {
-        downloadJSON(JSON.stringify(data[0]));
-        downloadIMG(data[0].pairs.main_pair);
-    }
-});
-
-products_expected;
+products_expected();
 
 setInterval(() => {
-    products_expected;
-    console.log((new Date()), 'Preloader update');
-}, 600000);
+    products_expected();
+}, 10000);
 
 function server() {
     const hostname = 'se.world';
@@ -55,7 +44,7 @@ function server() {
             }
 
             if (filePath == './') {
-                if (preloaderModule.prealoderData == undefined)
+                if (prealoderData == undefined)
                     filePath = './index.html';
                 else
                     filePath = './index_preloader.html';
@@ -110,7 +99,7 @@ function server() {
                 }
                 else {
                     response.writeHead(500);
-                    response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
+                    response.end('Sorry, check with the site admin for error: ' + error.code + ' ..\n');
                     response.end();
                 }
             }
@@ -166,13 +155,9 @@ function post(hostname, dispatch, callback) {
 
 function downloadIMG(url) {
     let file = fs.createWriteStream('preloader.jpg');
-    let request = https.get(url, response => {
+    https.get(url, response => {
         response.pipe(file);
     });
-}
-
-function downloadJSON(json) {
-    fs.writeFileSync('preloader.js', 'var prealoderData = ' + json + '; module.exports.prealoderData = prealoderData;');
 }
 
 function parseCookies (request) {
@@ -185,4 +170,17 @@ function parseCookies (request) {
     });
 
     return list;
+}
+
+function products_expected() {
+    post('se.madfrenzy.com', 'seworld.products_expected', data => {
+        if (data[0] == undefined)
+            prealoderData = undefined;
+        else {
+            prealoderData = JSON.stringify(data[0])
+            downloadIMG(data[0].pairs.main_pair);
+        }
+
+        console.log((new Date()), 'Preloader update');
+    });
 }
