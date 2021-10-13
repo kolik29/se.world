@@ -142,7 +142,6 @@ $(() => {
                             })));
                         
                         $('#size-wrapper').empty();
-                        console.log(result);
                         var sizes = Object.keys(result[key].variations);
                         
                         var size = getSizeWord(sizes[0]);
@@ -270,7 +269,7 @@ $(() => {
             order_item.data('product-price'),
             [],
             order_item.data('max-count'),
-            !$(this).hasClass('minus')
+            $(this).hasClass('minus')
         );
         basketUpdateTotal();
         showBasket();
@@ -395,11 +394,12 @@ function showBasket() {
                         'data-product-id': product.id,
                         'data-variation-id': product.variation[size],
                         'data-product-price': product.price,
-                        'data-product-name': product.name
+                        'data-product-name': product.name,
+                        'data-max-count': product.count
                         }).append($('<div>', {
                             class: 'minus',
                             text: '–'
-                        })).append($('<bag-product>', {
+                        })).append($('<div>', {
                             class: 'bag-product'
                             }).append($('<div>', {
                                 class: 'product-type',
@@ -440,11 +440,14 @@ function addToBasket(basket, product_id, product_name, size, price, image, max_c
         basket.products.forEach((product, id) => {
             if (product.id == product_id)
                 if (JSON.stringify(product.variation) == JSON.stringify(size)) {
-                    if (remove) {
-                        if (basket.products[id].basket_count < max_count)
-                            basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
-                    } else
-                        basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
+                    if (remove)
+                        basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
+                    else {
+                        console.log(basket.products[id].basket_count, max_count);
+                        if (basket.products[id].basket_count < max_count) {
+                            basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
+                        }
+                    }
 
                     addProduct = false;
                 }
@@ -463,6 +466,7 @@ function addToBasket(basket, product_id, product_name, size, price, image, max_c
             variation: size,
             price: price,
             main_pair: image,
+            count: max_count
         });
 
     localStorage.setItem('basket', JSON.stringify(basket));

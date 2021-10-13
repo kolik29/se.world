@@ -12,8 +12,12 @@ server();
 const products_expected = post('se.madfrenzy.com', 'seworld.products_expected', data => {
     downloadJSON(JSON.stringify(data[0]));
 
-    if (data != undefined)
+    if (data[0] == undefined) {
+        downloadJSON('undefined');
+    } else {
+        downloadJSON(JSON.stringify(data[0]));
         downloadIMG(data[0].pairs.main_pair);
+    }
 });
 
 products_expected;
@@ -24,7 +28,7 @@ setInterval(() => {
 }, 600000);
 
 function server() {
-    const hostname = '127.0.0.1';
+    const hostname = 'se.world';
     const port = 3000;
     const accessKey = 'csse';
 
