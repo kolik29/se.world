@@ -3,8 +3,6 @@ function fn_url(dispatch) {
 }
 
 function post(dispatch, data = {}) {
-    console.log(data);
-
     return new Promise((resolve, reject) => {
         $.post(fn_url(dispatch), data)
         .done(data => {

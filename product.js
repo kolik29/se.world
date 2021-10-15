@@ -121,14 +121,14 @@ window.onload = function() {
     // bubbleMobile.addEventListener('click', function() {showText(bubbleMobile)})
     // selectedItem.addEventListener('click', function() {showText(selectedItem)})
     
-    document.addEventListener('click', function(e) {
-        if (e.target)
-            if (e.target.classList.contains('bubble') || e.target.closest('.bubble'))
-                showText(selectedItem);
+    // document.addEventListener('click', function(e) {
+    //     if (e.target)
+    //         if (e.target.classList.contains('bubble') || e.target.closest('.bubble'))
+    //             showText(selectedItem);
         
-        if (e.target.classList.contains('bubble-mobile') || e.target.closest('.bubble-mobile'))
-            showText(bubbleMobile);
-    })
+    //     if (e.target.classList.contains('bubble-mobile') || e.target.closest('.bubble-mobile'))
+    //         showText(bubbleMobile);
+    // })
 
 
     // Change slide

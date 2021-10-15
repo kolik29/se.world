@@ -60,8 +60,6 @@ $(() => {
                             text: 'Archive 檔案'
                         }));
 
-                        console.log(result)
-
                         for (key in result) {
                             $('.grid-container').append($('<a>', {
                                 href: '/product?id=' + result[key].id,
@@ -89,7 +87,7 @@ $(() => {
         );
     }
             
-    if (url.pathname == '/product' || url.search != '') {
+    if (url.pathname == '/product' && url.search != '') {
         var currentProductId = Number(url.search.replace('?id=', ''));
         
         post('seworld.products_in_stock').then(
@@ -97,114 +95,35 @@ $(() => {
                 $('#related').empty();
                 $('.slider').empty();
 
-                var product_name = '';
-                for (key in result)
-                    if (result[key].id == Number(currentProductId)) {
-                        product_name = result[key].name;
+                getProductContent(result, currentProductId);
 
-                        var img_desk = '';
-
-                        if (typeof result[key].pairs.pairs == 'array' && result[key].pairs.pairs.length > 0)
-                            if (result[key].pairs.pairs[0]['desk'] !== undefined)
-                                result[key].pairs.pairs[0];
-
+                post('seworld.products_out_of_stock').then(
+                    result => {
                         $('#related').append($('<div>', {
-                            class: 'related-item item-selected'
-                        }).append($('<img>', {
-                            'data-src': result[key].pairs.main_pair
-                        })).append($('<div>', {
-                            class: 'bubble'
-                        }).append($('<div>', {
-                            class: 'bubble-flex'
-                        }).append($('<div>')
-                        .append($('<div>', {
-                            class: 'related-name',
-                            text: result[key].name
-                        })).append($('<div>', {
-                            class: 'price',
-                            text: result[key].price
-                        }))).append($('<div>', {
-                            class: 'show-more',
-                            html: 'Show text <br> ↓'
-                        }))).append($('<div>', {
-                            class: 'slide-text',
-                            text: img_desk
-                        }))));
-
-                        for (img_key in result[key].pairs.pairs)
-                            $('.slider').append($('<figure>', {
-                                class: 'slider-item'
-                            }).append($('<img>', {
-                                'data-src': result[key].pairs.pairs[img_key].detailed.https_image_path
-                            })).append($('<figcaption>', {
-                                class: 'description',
-                                // text: img.desc
-                            })));
-                        
-                        $('#size-wrapper').empty();
-                        var sizes = Object.keys(result[key].variations);
-                        
-                        var size = getSizeWord(sizes[0]);
-
-                        $('#size-wrapper').append($('<div>', {
-                            id: 'size',
-                            html: '<span class="short-size">' + sizes[0] + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
-                            'data-product-id': result[key].id,
-                            'data-variation-id': result[key].variations[sizes[0]].product_id,
-                            'data-price': result[key].price,
-                            'data-product-name': result[key].name,
-                            'data-max-count': result[key].count
-                        })).append($('<div>', {
-                            class: 'size-arrow',
-                            text: '^'
-                        })).append($('<ul>', {
-                            id: 'size-list'
+                            class: 'related-item archive',
+                            text: 'Archive 檔案'
                         }));
-                        
-                        for (variation_key in result[key].variations) {
-                            var size = getSizeWord(variation_key);
 
-                            $('#size-list').append($('<li>', {
-                                html: '<span class="short-size">' + variation_key + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
-                                'data-product-id': result[key].id,
-                                'data-variation-id': result[key].variations[variation_key].product_id,
-                                'data-price': result[key].price,
-                                'data-product-name': result[key].name
-                            }));
-                        }
-                        
-                        $('#size-wrapper').on('click', '#size-list li', function() {
-                            $(this).closest('#size-wrapper').find('#size')
-                                .data('product-id', $(this).data('product-id'))
-                                .data('variation-id', $(this).data('variation-id'))
-                                .data('price', $(this).data('price'))
-                                .data('product-name', $(this).data('product-name'));
-
-                            setTimeout(() => {
-                                $(this).closest('#size-wrapper').find('#size-list').removeClass('open');
-                            }, 50);
-                        });
-
-                        $('.slider .slider-item').eq(0).addClass('img-selected');
-
-                        $('.checkout-button.add').data('main-pair', result[key].pairs.main_pair);
-
-                        slider();
-                    } else
-                        $('#related').append($('<a>', {
-                            class: 'related-item',
-                            href: '/product?id=' + result[key].id
-                        }).append($('<img>', {
-                            'data-src': result[key].pairs.main_pair
-                        })).append($('<div>', {
-                            class: 'bubble'
-                        }).append($('<div>', {
-                            class: 'related-name',
-                            text: result[key].name
-                        })).append($('<div>', {
-                            class: 'price',
-                            text: result[key].price
-                        }))));
+                        for (key in result)
+                            $('#related').append($('<a>', {
+                                class: 'related-item',
+                                href: '/product?id=' + result[key].id
+                            }).append($('<img>', {
+                                'data-src': result[key].pairs.main_pair
+                            })).append($('<div>', {
+                                class: 'bubble'
+                            }).append($('<div>', {
+                                class: 'related-name',
+                                text: result[key].name
+                            })).append($('<div>', {
+                                class: 'price',
+                                text: result[key].price
+                            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                );
 
                 lazyloadImg();
                 
@@ -226,6 +145,7 @@ $(() => {
                         basket,
                         product_size_obj.data('product-id'),
                         product_size_obj.data('product-name'),
+                        product_size_obj.data('product-type'),
                         {
                             [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
                         },
@@ -246,8 +166,6 @@ $(() => {
     if (url.pathname == '/checkout') {
         basket = JSON.parse(localStorage.getItem('basket'));
 
-        console.log(basket.products)
-
         basket.products.forEach(item => {
             $('#products').append($('<img>', {
                 class: 'checkout-item',
@@ -263,6 +181,7 @@ $(() => {
             basket,
             order_item.data('product-id'),
             order_item.data('product-name'),
+            order_item.data('product-type'),
             {
                 [order_item.find('.product-size').text()]: order_item.data('variation-id')
             },
@@ -329,18 +248,33 @@ $(() => {
         $('#size').html($(this).html());
     });
     
-    lazyloadImg();        
+    lazyloadImg();
+
+    $('body').on('click', '.show-more', function() {
+        var bubble = $(this).closest('.bubble');
+        bubble.toggleClass('visible');
+        $('.bubble .slide-text').text('');
+
+        if (bubble.hasClass('visible')) {
+            bubble.find('.slide-text').html('Hide text <br> ↑');
+            $('.bubble .slide-text').text($('.slider-item.img-selected').text());
+        } else
+            bubble.find('.slide-text').html('Show text <br> ↓');
+    });
 });
 
 function getSizeWord(size) {
+    if (size == 'one size')
+        return ['ONE SIZE', ''];
+
     if (size[size.length - 1] == 'S')
-    return ['mall', '小的'];
+        return ['mall', '小的'];
     
     if (size[size.length - 1] == 'M')
-    return ['edium', '中等的'];
+        return ['edium', '中等的'];
     
     if (size[size.length - 1] == 'L')
-    return ['arge', '大的'];
+        return ['arge', '大的'];
 }
 
 function basketUpdateTotal() {
@@ -395,7 +329,8 @@ function showBasket() {
                         'data-variation-id': product.variation[size],
                         'data-product-price': product.price,
                         'data-product-name': product.name,
-                        'data-max-count': product.count
+                        'data-max-count': product.count,
+                        'data-product-type': product.type
                         }).append($('<div>', {
                             class: 'minus',
                             text: '–'
@@ -403,7 +338,7 @@ function showBasket() {
                             class: 'bag-product'
                             }).append($('<div>', {
                                 class: 'product-type',
-                                text: product.type || ''
+                                text: product.type
                             })).append($('<div>', {
                                 class: 'product-name',
                                 text: product.name
@@ -433,7 +368,7 @@ function showBasket() {
     }
 }
 
-function addToBasket(basket, product_id, product_name, size, price, image, max_count, remove = false) {
+function addToBasket(basket, product_id, product_name, product_type, size, price, image, max_count, remove = false) {
     var addProduct = true;
 
     if (basket.products.length > 0) {
@@ -442,12 +377,8 @@ function addToBasket(basket, product_id, product_name, size, price, image, max_c
                 if (JSON.stringify(product.variation) == JSON.stringify(size)) {
                     if (remove)
                         basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
-                    else {
-                        console.log(basket.products[id].basket_count, max_count);
-                        if (basket.products[id].basket_count < max_count) {
-                            basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
-                        }
-                    }
+                    else if (basket.products[id].basket_count < max_count)
+                        basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
 
                     addProduct = false;
                 }
@@ -462,7 +393,7 @@ function addToBasket(basket, product_id, product_name, size, price, image, max_c
             id: product_id,
             name: product_name,
             basket_count: 1,
-            type: 'T-shirt',
+            type: product_type,
             variation: size,
             price: price,
             main_pair: image,
@@ -586,4 +517,162 @@ function lazyloadImg() {
             })
         })
     })
+}
+
+function getProductContent(result, currentProductId) {
+    for (key in result)
+        if (result[key].id == Number(currentProductId)) {
+            product_name = result[key].name;
+
+            var img_desk = '';
+
+            if (typeof result[key].pairs.pairs == 'array' && result[key].pairs.pairs.length > 0)
+                if (result[key].pairs.pairs[0]['desk'] !== undefined)
+                    result[key].pairs.pairs[0];
+
+            $('#related').append($('<div>', {
+                class: 'related-item item-selected'
+            }).append($('<img>', {
+                'data-src': result[key].pairs.main_pair
+            })).append($('<div>', {
+                class: 'bubble'
+            }).append($('<div>', {
+                class: 'bubble-flex'
+            }).append($('<div>')
+            .append($('<div>', {
+                class: 'related-name',
+                text: result[key].name
+            })).append($('<div>', {
+                class: 'price',
+                text: result[key].price
+            }))).append($('<div>', {
+                class: 'show-more',
+                html: 'Show text <br> ↓'
+            }))).append($('<div>', {
+                class: 'slide-text',
+                text: img_desk
+            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+
+            $('.bubble.bubble-mobile .related-name').text(result[key].name)
+            $('.bubble.bubble-mobile .price').text(result[key].price)
+
+            var i = 0;
+
+            for (img_key in result[key].pairs.pairs) {
+                $('.slider').append($('<figure>', {
+                    class: 'slider-item'
+                }).append($('<img>', {
+                    'data-src': result[key].pairs.pairs[img_key].detailed.https_image_path
+                })).append($('<figcaption>', {
+                    class: 'description',
+                    text: result[key].pairs.descriptions[i]
+                })));
+
+                i++;
+            }
+            
+            $('#size-wrapper').empty();
+
+            if (result[key].variations != undefined) {
+                let sizes = Object.keys(result[key].variations),
+                    size = getSizeWord(sizes[0]);
+
+                $('#size-wrapper').append($('<div>', {
+                    id: 'size',
+                    html: '<span class="short-size">' + sizes[0] + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
+                    'data-product-id': result[key].id,
+                    'data-variation-id': result[key].variations[sizes[0]].product_id,
+                    'data-price': result[key].price,
+                    'data-product-name': result[key].name,
+                    'data-max-count': result[key].variations[sizes[0]].count,
+                    'data-product-type': result[key].type
+                })).append($('<div>', {
+                    class: 'size-arrow',
+                    text: '^'
+                })).append($('<ul>', {
+                    id: 'size-list'
+                }));
+
+                $('#size-list').append($('<li>', {
+                    html: '<span class="short-size">' + result[key].size + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
+                    'data-product-id': result[key].id,
+                    'data-variation-id': result[key].id,
+                    'data-price': result[key].price,
+                    'data-product-name': result[key].name,
+                    'data-max-count': result[key].count
+                }));
+
+                ['S', 'M', 'L', 'XL'].forEach(variation_key => {
+                    size = getSizeWord(variation_key);
+
+                    if (result[key].variations[variation_key] != undefined)
+                        $('#size-list').append($('<li>', {
+                            html: '<span class="short-size">' + variation_key + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
+                            'data-product-id': result[key].id,
+                            'data-variation-id': result[key].variations[variation_key].product_id,
+                            'data-price': result[key].price,
+                            'data-product-name': result[key].name,
+                            'data-max-count': result[key].variations[variation_key].count
+                        }));
+                });
+            } else {
+                let size = getSizeWord(result[key].size);
+
+                $('#size-wrapper').append($('<div>', {
+                    id: 'size',
+                    html: '<span class="short-size"></span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
+                    'data-product-id': result[key].id,
+                    'data-variation-id': result[key].id,
+                    'data-price': result[key].price,
+                    'data-product-name': result[key].name,
+                    'data-max-count': result[key].count,
+                    'data-product-type': result[key].type
+                })).append($('<div>', {
+                    class: 'size-arrow',
+                    text: '^'
+                })).append($('<ul>', {
+                    id: 'size-list'
+                }));
+
+                $('#size-list').append($('<li>', {
+                    html: '<span class="short-size"></span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
+                    'data-product-id': result[key].id,
+                    'data-variation-id': result[key].id,
+                    'data-price': result[key].price,
+                    'data-product-name': result[key].name,
+                    'data-max-count': result[key].count
+                }));
+            }
+
+            $('#size-wrapper').on('click', '#size-list li', function() {
+                $(this).closest('#size-wrapper').find('#size')
+                    .data('product-id', $(this).data('product-id'))
+                    .data('variation-id', $(this).data('variation-id'))
+                    .data('price', $(this).data('price'))
+                    .data('product-name', $(this).data('product-name'))
+                    .data('max-count', $(this).data('max-count'));
+
+                setTimeout(() => {
+                    $(this).closest('#size-wrapper').find('#size-list').removeClass('open');
+                }, 50);
+            });
+
+            $('.checkout-button.add').data('main-pair', result[key].pairs.main_pair);
+
+            slider();
+        } else
+            $('#related').append($('<a>', {
+                class: 'related-item',
+                href: '/product?id=' + result[key].id
+            }).append($('<img>', {
+                'data-src': result[key].pairs.main_pair
+            })).append($('<div>', {
+                class: 'bubble'
+            }).append($('<div>', {
+                class: 'related-name',
+                text: result[key].name
+            })).append($('<div>', {
+                class: 'price',
+                text: result[key].price
+            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
 }

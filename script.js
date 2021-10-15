@@ -10,10 +10,11 @@ window.addEventListener('resize', () => {
 var images = new Array();
 // var x = 102;
 // var y = 214;
-var x = 258
-var y = 168
+var x = 200
+var y = 300
 
-var container = document.getElementById('preloader');
+var container = document.getElementById('preloader'),
+    urlImg = 'preloader.jpg', preloaderImgWidth, preloaderImgHeight;
 
 function setup() {
     var canvas = createCanvas(container.offsetWidth, container.offsetHeight);
@@ -21,7 +22,7 @@ function setup() {
     // for (var i=1; i<=6; i++) {
     //     images[i] = loadImage('darvin'+i+'.svg');
     // }
-    images[0] = loadImage('preloader.jpg?' + (new Date()).getMilliseconds());
+    images[0] = loadImage(urlImg);
 }
     
     function windowResized() {
@@ -31,7 +32,15 @@ function setup() {
     var i = 1;
     function mouseMoved() {
         if (i<7) {
-            image(images[0], mouseX-x/2, mouseY-y/2, x, y);
+            if (preloaderImgWidth)
+                image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+            else {
+                getSize(urlImg, (width, height) => {
+                    preloderImgWidth = width / 10;
+                    preloderImgHeight = height / 10;
+                    image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                })
+            }
             i = i + 0.05;
         } else {
             i = 1;
@@ -45,7 +54,15 @@ function setup() {
     
     function touchMoved () {
         if (i<6) {
-            image(images[Math.trunc(i)], mouseX-x/2, mouseY-y/2, x, y);
+            if (preloaderImgWidth)
+                image(images[Math.trunc(i)], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+            else {
+                getSize(url, (width, height) => {
+                    preloderImgWidth = width / 10;
+                    preloderImgHeight = height / 10;
+                    image(images[Math.trunc(i)], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                })
+            }
             i = i + 0.05;
         } else {
             i = 1;
@@ -53,8 +70,16 @@ function setup() {
     }
     
     function touchMoved () {
-        if (i<6) {
-            image(images[0], mouseX-x/2, mouseY-y/2, x, y);
+        if (i<6) {            
+            if (preloaderImgWidth)
+                image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+            else {
+                getSize(url, (width, height) => {
+                    preloderImgWidth = width / 10;
+                    preloderImgHeight = height / 10;
+                    image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                })
+            }
             i = i + 0.05;
         } else {
             i = 1;
@@ -124,8 +149,6 @@ function setup() {
 function countdownDate(name, date) {
     $('#new-item').text(name);
 
-    console.log(date)
-
     var countDownDate = new Date(Number(date) * 1000);
     
     // Update the count down every 1 second
@@ -158,4 +181,12 @@ function countdownDate(name, date) {
             countdown[1].innerHTML = "EXPIRED";
         }
     }, 0);
+}
+
+function getSize(url, callback){   
+    const img = new Image();
+    img.addEventListener('load', function() {
+        callback(this.naturalWidth, this.naturalHeight);
+    });
+    img.src = url;
 }

@@ -14,7 +14,7 @@ products_expected();
 
 setInterval(() => {
     products_expected();
-}, 10000);
+}, 600000);
 
 function server() {
     const hostname = 'se.world';
