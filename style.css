@@ -993,8 +993,7 @@ input:-webkit-autofill::first-line {
     .grid-container {
         grid-template-columns: repeat(1,1fr);
         grid-gap: 1rem;
-    }
-    .bubble {
+    }.bubble {
         opacity: 1;
     }
     .triangle {
@@ -1038,7 +1037,7 @@ input:-webkit-autofill::first-line {
         width: fit-content;
         z-index: 10;
         margin: 0;
-        padding: calc(1* var(--vh)) 1rem;
+        padding: 0 1rem;
     }
     #slide-number {
         display: none !important;
@@ -1169,7 +1168,7 @@ input:-webkit-autofill::first-line {
         width: calc(100% - 1.33333333rem);
     }
     .sticky-scroll {
-        overflow-x: scroll;
+        overflow-x: hidden;
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
@@ -1205,9 +1204,6 @@ input:-webkit-autofill::first-line {
     }
     .item-selected::after {
         bottom: calc(12 * var(--vh) + 1px);
-    }
-    .related-item img {
-        height: calc(10 * var(--vh));
     }
     .bag {
         margin-top: -0.33333rem;
@@ -1247,4 +1243,53 @@ img[data-src] {
 .policy-text p,
 .policy-text h2 {
     font-size: 19px;
+}
+
+.bag-product .product-type {
+    display: none;
+}
+
+.checkout-wrapper .bag-product .product-type {
+    display: unset;
+}
+
+.related-item.archive {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+    .related-item.archive {
+        font-size: 20px;
+        text-align: center;
+    }   
+
+    .related-scroll {
+        overflow-y: hidden;
+        overflow-x: scroll;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+        height: calc(12 * var(--vh));
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .related-scroll::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+
+    .related-scroll #related {
+        position: absolute;
+    }
+}
+
+.related-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

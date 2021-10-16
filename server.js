@@ -14,7 +14,7 @@ products_expected();
 
 setInterval(() => {
     products_expected();
-}, 600000);
+}, 30000);
 
 function server() {
     const hostname = 'se.world';
@@ -160,6 +160,10 @@ function downloadIMG(url) {
     });
 }
 
+function downloadJSON(json) {
+    fs.writeFileSync('preloader.js', 'var prealoderData = ' + json + '; module.exports.prealoderData = prealoderData;');
+}
+
 function parseCookies (request) {
     let list = {},
         rc = request.headers.cookie;
@@ -179,6 +183,7 @@ function products_expected() {
         else {
             prealoderData = JSON.stringify(data[0])
             downloadIMG(data[0].pairs.main_pair);
+            downloadJSON(prealoderData);
         }
 
         console.log((new Date()), 'Preloader update');

@@ -1,3 +1,4 @@
+console.log(prealoderData)
 
 //P5 preloader
 
@@ -133,16 +134,6 @@ function setup() {
         try {
             countdownDate(prealoderData.name, prealoderData.date);
         } catch {}
-        
-        // Set the date we're counting down to
-        post('seworld.products_expected').then(
-            result => {
-                countdownDate(result[0].name, result[0].date);
-            },
-            error => {
-                console.log(error)
-            }
-        );
         
     }
 
