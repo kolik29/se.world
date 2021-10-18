@@ -34,21 +34,20 @@ $(() => {
                 $('.grid-container .grid-item:not(#new-element)').remove();
 
                 for (key in result) {
-                    if (Number(result[key].count) > 0)
-                        $('.grid-container').append($('<a>', {
-                            href: '/product?id=' + result[key].id,
-                            class: 'grid-item'
-                        }).append($('<img>', {
-                            'data-src': result[key].pairs.main_pair
-                        })).append($('<div>', {
-                            class: 'bubble'
-                        }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
-                            class: 'item-name',
-                            text: result[key].name
-                        })).append($('<div>', {
-                            class: 'price',
-                            text: result[key].price
-                        }))));
+                    $('.grid-container').append($('<a>', {
+                        href: '/product?id=' + result[key].id,
+                        class: 'grid-item'
+                    }).append($('<img>', {
+                        'data-src': result[key].pairs.main_pair
+                    })).append($('<div>', {
+                        class: 'bubble'
+                    }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
+                        class: 'item-name',
+                        text: result[key].name
+                    })).append($('<div>', {
+                        class: 'price',
+                        text: result[key].price
+                    }))));
 
                     lazyloadImg();
                 }
@@ -96,34 +95,6 @@ $(() => {
                 $('.slider').empty();
 
                 getProductContent(result, currentProductId);
-
-                post('seworld.products_out_of_stock').then(
-                    result => {
-                        $('#related').append($('<div>', {
-                            class: 'related-item archive',
-                            text: 'Archive 檔案'
-                        }));
-
-                        for (key in result)
-                            $('#related').append($('<a>', {
-                                class: 'related-item',
-                                href: '/product?id=' + result[key].id
-                            }).append($('<img>', {
-                                'data-src': result[key].pairs.main_pair
-                            })).append($('<div>', {
-                                class: 'bubble'
-                            }).append($('<div>', {
-                                class: 'related-name',
-                                text: result[key].name
-                            })).append($('<div>', {
-                                class: 'price',
-                                text: result[key].price
-                            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
-                    },
-                    error => {
-                        console.log(error);
-                    }
-                );
 
                 lazyloadImg();
                 
@@ -261,7 +232,33 @@ $(() => {
         } else
             bubble.find('.slide-text').html('Show text <br> ↓');
     });
+
+    _updateBag();
 });
+
+function _updateBag() {
+    if ($('#delivery-cost').length) {
+        var priceAll = 0;
+
+        $('.bag-product').each(function() {
+            priceAll += parseInt($(this).find('.product-price').text()) * parseInt($(this).find('.product-quantity').text())
+        })
+
+        $('#total').text(priceAll)
+
+        if (priceAll < 200) {
+            $('#delivery-cost').text('$' + (200 - priceAll) + ' left for free shipping').css({
+                'background-color': '#77B2D6',
+                'opacity': '0.5'
+            })
+        } else {
+            $('#delivery-cost').text('Free Express UPS delivery').css({
+                'background-color': '#FFDC00',
+                'opacity': '1'
+            })
+        }
+    }
+}
 
 function getSizeWord(size) {
     if (size == 'one size')
@@ -551,7 +548,8 @@ function getProductContent(result, currentProductId) {
             }))).append($('<div>', {
                 class: 'slide-text',
                 text: img_desk
-            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
+            .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'));
 
             $('.bubble.bubble-mobile .related-name').text(result[key].name)
             $('.bubble.bubble-mobile .price').text(result[key].price)
@@ -575,37 +573,58 @@ function getProductContent(result, currentProductId) {
 
             if (result[key].variations != undefined) {
                 let sizes = Object.keys(result[key].variations),
-                    size = getSizeWord(sizes[0]);
+                    size = getSizeWord(result[key].size);
 
-                $('#size-wrapper').append($('<div>', {
-                    id: 'size',
-                    html: '<span class="short-size">' + sizes[0] + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
-                    'data-product-id': result[key].id,
-                    'data-variation-id': result[key].variations[sizes[0]].product_id,
-                    'data-price': result[key].price,
-                    'data-product-name': result[key].name,
-                    'data-max-count': result[key].variations[sizes[0]].count,
-                    'data-product-type': result[key].type
-                })).append($('<div>', {
-                    class: 'size-arrow',
-                    text: '^'
-                })).append($('<ul>', {
-                    id: 'size-list'
-                }));
+                if (result[key].count > 0) {
+                    $('#size-wrapper').append($('<div>', {
+                        id: 'size',
+                        html: '<span class="short-size">' + result[key].size + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
+                        'data-product-id': result[key].id,
+                        'data-variation-id': result[key].variations[sizes[0]].product_id,
+                        'data-price': result[key].price,
+                        'data-product-name': result[key].name,
+                        'data-max-count': result[key].variations[sizes[0]].count,
+                        'data-product-type': result[key].type
+                    })).append($('<div>', {
+                        class: 'size-arrow',
+                        text: '^'
+                    })).append($('<ul>', {
+                        id: 'size-list'
+                    }));
 
-                $('#size-list').append($('<li>', {
-                    html: '<span class="short-size">' + result[key].size + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
-                    'data-product-id': result[key].id,
-                    'data-variation-id': result[key].id,
-                    'data-price': result[key].price,
-                    'data-product-name': result[key].name,
-                    'data-max-count': result[key].count
-                }));
+                    $('#size-list').append($('<li>', {
+                        html: '<span class="short-size">' + result[key].size + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
+                        'data-product-id': result[key].id,
+                        'data-variation-id': result[key].id,
+                        'data-price': result[key].price,
+                        'data-product-name': result[key].name,
+                        'data-max-count': result[key].count
+                    }));
+                } else {
+                    let variationSizeLetter = Object.keys(result[key].variations)[0];
+                    size = getSizeWord(variationSizeLetter);
+
+                    $('#size-wrapper').append($('<div>', {
+                        id: 'size',
+                        html: '<span class="short-size">' + variationSizeLetter + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
+                        'data-product-id': result[key].id,
+                        'data-variation-id': result[key].variations[sizes[0]].product_id,
+                        'data-price': result[key].price,
+                        'data-product-name': result[key].name,
+                        'data-max-count': result[key].variations[sizes[0]].count,
+                        'data-product-type': result[key].type
+                    })).append($('<div>', {
+                        class: 'size-arrow',
+                        text: '^'
+                    })).append($('<ul>', {
+                        id: 'size-list'
+                    }));
+                }
 
                 ['S', 'M', 'L', 'XL'].forEach(variation_key => {
                     size = getSizeWord(variation_key);
 
-                    if (result[key].variations[variation_key] != undefined)
+                    if (result[key].variations[variation_key] != undefined && result[key].variations[variation_key].count > 0)
                         $('#size-list').append($('<li>', {
                             html: '<span class="short-size">' + variation_key + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
                             'data-product-id': result[key].id,
@@ -620,7 +639,7 @@ function getProductContent(result, currentProductId) {
 
                 $('#size-wrapper').append($('<div>', {
                     id: 'size',
-                    html: '<span class="short-size"></span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
+                    html: '<span class="short-size">' + (result[key].size == 'one size' ? '' : result[key].size) + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
                     'data-product-id': result[key].id,
                     'data-variation-id': result[key].id,
                     'data-price': result[key].price,
@@ -635,7 +654,7 @@ function getProductContent(result, currentProductId) {
                 }));
 
                 $('#size-list').append($('<li>', {
-                    html: '<span class="short-size"></span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
+                    html: '<span class="short-size">' + (result[key].size == 'one size' ? '' : result[key].size) + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
                     'data-product-id': result[key].id,
                     'data-variation-id': result[key].id,
                     'data-price': result[key].price,

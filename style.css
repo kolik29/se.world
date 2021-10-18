@@ -1,13 +1,13 @@
 @font-face {
     font-family: 'SE';
     font-weight: bold;
-    src: url('SuisseIntlCond-Bold.otf') format('opentype');
+    src: url('SuisseIntlCond-Bold.otf?1') format('opentype');
 }
 
 @font-face {
     font-family: 'SE';
     font-weight: normal;
-    src: url('SuisseIntlCond-Medium.otf') format('opentype');
+    src: url('SuisseIntlCond-Medium.otf?1') format('opentype');
 }
 
 * {
@@ -651,10 +651,12 @@ a {
 }
 
 .related-item .bubble {
-    right: 1.4rem;
+    right: calc(50% - 1.6rem);
     top: initial;
-    bottom: 6rem;
+    bottom: calc(50% + 59.41px);
     pointer-events: none;
+    margin-top: 8px;
+    margin-right: -3px;
 }
 
 .related-item:hover .bubble {
@@ -662,8 +664,9 @@ a {
 }
 
 .related-item:first-child .bubble {
-    top: 5rem;
+    top: calc(50% + 59.41px);
     bottom: initial;
+    margin-top: -7px;
 }
 
 .related-item:first-child .bubble::after {
@@ -787,11 +790,6 @@ aside .item-selected:hover .bubble {
 
 .checkout-wrapper .product-price::before {
     content: '$';
-}
-
-
-.checkout-wrapper .product-name {
-    display: none;
 }
 
 .input-wrapper {

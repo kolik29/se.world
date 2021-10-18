@@ -1,5 +1,3 @@
-console.log(prealoderData)
-
 //P5 preloader
 
 document.querySelector(':root').style.setProperty('--vh', window.innerHeight/100 + 'px');
