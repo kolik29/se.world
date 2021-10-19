@@ -32,12 +32,12 @@ function setup() {
     function mouseMoved() {
         if (i<7) {
             if (preloaderImgWidth)
-                image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
             else {
                 getSize(urlImg, (width, height) => {
-                    preloderImgWidth = width / 10;
-                    preloderImgHeight = height / 10;
-                    image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                    preloaderImgWidth = width / 2;
+                    preloderImgHeight = height / 2;
+                    image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
                 })
             }
             i = i + 0.05;
@@ -54,12 +54,12 @@ function setup() {
     function touchMoved () {
         if (i<6) {
             if (preloaderImgWidth)
-                image(images[Math.trunc(i)], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
             else {
                 getSize(url, (width, height) => {
-                    preloderImgWidth = width / 10;
-                    preloderImgHeight = height / 10;
-                    image(images[Math.trunc(i)], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                    preloaderImgWidth = width / 2;
+                    preloderImgHeight = height / 2;
+                    image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
                 })
             }
             i = i + 0.05;
@@ -71,12 +71,12 @@ function setup() {
     function touchMoved () {
         if (i<6) {            
             if (preloaderImgWidth)
-                image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
             else {
                 getSize(url, (width, height) => {
-                    preloderImgWidth = width / 10;
-                    preloderImgHeight = height / 10;
-                    image(images[0], mouseX-preloderImgWidth/2, mouseY-preloderImgHeight/2, preloderImgWidth, preloderImgHeight);
+                    preloaderImgWidth = width / 2;
+                    preloderImgHeight = height / 2;
+                    image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
                 })
             }
             i = i + 0.05;

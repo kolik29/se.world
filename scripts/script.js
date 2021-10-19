@@ -38,7 +38,9 @@ $(() => {
                         href: '/product?id=' + result[key].id,
                         class: 'grid-item'
                     }).append($('<img>', {
-                        'data-src': result[key].pairs.main_pair
+                        'data-src': result[key].pairs.main_pair[420].image_path,
+                        'data-srcset': getSrcset(result[key].pairs.main_pair),
+                        'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
                     })).append($('<div>', {
                         class: 'bubble'
                     }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
@@ -64,7 +66,9 @@ $(() => {
                                 href: '/product?id=' + result[key].id,
                                 class: 'grid-item'
                             }).append($('<img>', {
-                                'data-src': result[key].pairs.main_pair
+                                'data-src': result[key].pairs.main_pair[420].image_path,
+                                'data-srcset': getSrcset(result[key].pairs.main_pair),
+                                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
                             })).append($('<div>', {
                                 class: 'bubble'
                             }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
@@ -140,7 +144,9 @@ $(() => {
         basket.products.forEach(item => {
             $('#products').append($('<img>', {
                 class: 'checkout-item',
-                'data-src': item.main_pair
+                'data-src': item.main_pair[420].image_path,
+                'data-srcset': getSrcset(item.main_pair),
+                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
             }));
         });
     }
@@ -506,8 +512,16 @@ function slider() {
 }
 
 function lazyloadImg() {
-    $('img[data-src]').each(function() {
-        $(this).attr('src', $(this).data('src'))
+    // $('img[data-src]').each(function() {
+    //     $(this).attr('src', $(this).data('src'))
+    //     $(this).on('load', function() {
+    //         $(this).css({
+    //             opacity: 1
+    //         })
+    //     })
+    // })
+    $('img[data-srcset]').each(function() {
+        $(this).attr('srcset', $(this).data('srcset'))
         $(this).on('load', function() {
             $(this).css({
                 opacity: 1
@@ -530,7 +544,9 @@ function getProductContent(result, currentProductId) {
             $('#related').append($('<div>', {
                 class: 'related-item item-selected'
             }).append($('<img>', {
-                'data-src': result[key].pairs.main_pair
+                'data-src': result[key].pairs.main_pair[420].image_path,
+                'data-srcset': getSrcset(result[key].pairs.main_pair),
+                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
             })).append($('<div>', {
                 class: 'bubble'
             }).append($('<div>', {
@@ -560,7 +576,9 @@ function getProductContent(result, currentProductId) {
                 $('.slider').append($('<figure>', {
                     class: 'slider-item'
                 }).append($('<img>', {
-                    'data-src': result[key].pairs.pairs[img_key].detailed.https_image_path
+                    'data-src': result[key].pairs.pairs[img_key].detailed.https_image_path[420].image_path,
+                    'data-srcset': getSrcset(result[key].pairs.pairs[img_key].detailed.https_image_path),
+                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
                 })).append($('<figcaption>', {
                     class: 'description',
                     text: result[key].pairs.descriptions[i]
@@ -684,7 +702,9 @@ function getProductContent(result, currentProductId) {
                 class: 'related-item',
                 href: '/product?id=' + result[key].id
             }).append($('<img>', {
-                'data-src': result[key].pairs.main_pair
+                'data-src': result[key].pairs.main_pair[420].image_path,
+                'data-srcset': getSrcset(result[key].pairs.main_pair),
+                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
             })).append($('<div>', {
                 class: 'bubble'
             }).append($('<div>', {
@@ -694,4 +714,8 @@ function getProductContent(result, currentProductId) {
                 class: 'price',
                 text: result[key].price
             })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+}
+
+function getSrcset(pair) {
+    return pair[420].image_path + ' 420w, ' + pair[800].image_path + ' 800w, ' + pair[1200].image_path + ' 1200w, ' + pair[1600].image_path + ' 1600w';
 }
