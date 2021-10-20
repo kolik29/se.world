@@ -2,7 +2,11 @@
     "name": "se.world",
     "version": "1.0.0",
     "dependencies": {
+        "cookie-parser": "^1.4.5",
+        "express": "^4.17.1",
+        "express-handlebars": "^5.3.4",
         "forever": "^4.0.1",
+        "hbs": "^4.1.2",
         "nocache": "^3.0.1"
     }
 }

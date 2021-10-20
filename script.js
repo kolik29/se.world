@@ -13,7 +13,7 @@ var x = 200
 var y = 300
 
 var container = document.getElementById('preloader'),
-    urlImg = 'preloader.jpg', preloaderImgWidth, preloaderImgHeight;
+    urlImg = 'preloader.jpg?' + (Date.now()).toString(), preloaderImgWidth, preloaderImgHeight;
 
 function setup() {
     var canvas = createCanvas(container.offsetWidth, container.offsetHeight);
@@ -23,86 +23,86 @@ function setup() {
     // }
     images[0] = loadImage(urlImg);
 }
-    
-    function windowResized() {
-        resizeCanvas(container.offsetWidth, container.offsetHeight);
-    }
-    
-    var i = 1;
-    function mouseMoved() {
-        if (i<7) {
-            if (preloaderImgWidth)
-                image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-            else {
-                getSize(urlImg, (width, height) => {
-                    preloaderImgWidth = width / 2;
-                    preloderImgHeight = height / 2;
+        function windowResized() {
+            resizeCanvas(container.offsetWidth, container.offsetHeight);
+        }
+        
+        var i = 1;
+        function mouseMoved() {
+            if (i<7) {
+                if (preloaderImgWidth)
                     image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                })
+                else {
+                    getSize(urlImg, (width, height) => {
+                        preloaderImgWidth = width / 2;
+                        preloderImgHeight = height / 2;
+                        image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
+                    })
+                }
+                i = i + 0.05;
+            } else {
+                i = 1;
             }
-            i = i + 0.05;
-        } else {
+        }
+        
+        function mousePressed() { 
+            clear(); 
             i = 1;
         }
-    }
-    
-    function mousePressed() { 
-        clear(); 
-        i = 1;
-    }
-    
-    function touchMoved () {
-        if (i<6) {
-            if (preloaderImgWidth)
-                image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-            else {
-                getSize(url, (width, height) => {
-                    preloaderImgWidth = width / 2;
-                    preloderImgHeight = height / 2;
+        
+        function touchMoved () {
+            if (i<6) {
+                if (preloaderImgWidth)
                     image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                })
+                else {
+                    getSize(url, (width, height) => {
+                        preloaderImgWidth = width / 2;
+                        preloderImgHeight = height / 2;
+                        image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
+                    })
+                }
+                i = i + 0.05;
+            } else {
+                i = 1;
             }
-            i = i + 0.05;
-        } else {
-            i = 1;
         }
-    }
-    
-    function touchMoved () {
-        if (i<6) {            
-            if (preloaderImgWidth)
-                image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-            else {
-                getSize(url, (width, height) => {
-                    preloaderImgWidth = width / 2;
-                    preloderImgHeight = height / 2;
+        
+        function touchMoved () {
+            if (i<6) {            
+                if (preloaderImgWidth)
                     image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                })
+                else {
+                    getSize(url, (width, height) => {
+                        preloaderImgWidth = width / 2;
+                        preloderImgHeight = height / 2;
+                        image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
+                    })
+                }
+                i = i + 0.05;
+            } else {
+                i = 1;
             }
-            i = i + 0.05;
-        } else {
-            i = 1;
         }
-    }
-    
     
     
     window.onload = function() {
         
-        function hidePreloader() {
-            container.classList.add('gone')
-            setTimeout(function() {
-                document.body.style.overflow = 'scroll'
-            },800)
-        }
-        
-        var preloader = document.getElementById('preloader');
-        preloader.addEventListener('click', function() {
-            hidePreloader()
-        })
-        preloader.addEventListener('wheel', function() {
-            hidePreloader()
-        })
+        try {
+            function hidePreloader() {
+                container.classList.add('gone')
+                setTimeout(function() {
+                    document.body.style.overflow = 'scroll'
+                },800)
+            }
+            
+            var preloader = document.getElementById('preloader');
+            preloader.addEventListener('click', function() {
+                hidePreloader()
+            })
+            preloader.addEventListener('wheel', function() {
+                hidePreloader()
+            })
+        } catch {}
         
         
         
@@ -128,9 +128,8 @@ function setup() {
         })
         
         // // Countdown
-
         try {
-            countdownDate(prealoderData.name, prealoderData.date);
+            countdownDate(preloaderData.name, preloaderData.date);
         } catch {}
         
     }
@@ -139,37 +138,39 @@ function countdownDate(name, date) {
     $('#new-item').text(name);
 
     var countDownDate = new Date(Number(date) * 1000);
-    
+
     // Update the count down every 1 second
-    var x = setInterval(function() {
-        
-        // Get today's date and time
-        var now = new Date().getTime();
-        
-        // Find the distance between now and the count down date
-        var distance = countDownDate - now;
-        
-        // Time calculations for days, hours, minutes and seconds
-        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        var milliseconds = Math.floor((distance % (1000)));
-        
-        var countdown = document.getElementsByClassName('countdown')
-        // Display the result in the element with id="demo"
-        countdown[0].innerHTML = 'Drop in ' + days + "d " + hours + "h "
-        + minutes + "m " + seconds + "s " + milliseconds + 'ms';
-        countdown[1].innerHTML = 'Drop in ' + days + "d " + hours + "h "
-        + minutes + "m " + seconds + "s " + milliseconds + 'ms';
-        
-        // If the count down is finished, write some text
-        if (distance < 0) {
-            clearInterval(x);
-            countdown[0].innerHTML = "EXPIRED";
-            countdown[1].innerHTML = "EXPIRED";
-        }
-    }, 0);
+    if ($('.countdown').length)
+        var x = setInterval(function() {
+            
+            // Get today's date and time
+            var now = new Date().getTime();
+            
+            // Find the distance between now and the count down date
+            var distance = countDownDate - now;
+            
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            var milliseconds = Math.floor((distance % (1000)));
+            
+            var countdown = document.getElementsByClassName('countdown')
+
+            // Display the result in the element with id="demo"
+            countdown[0].innerHTML = 'Drop in ' + days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s " + milliseconds + 'ms';
+            countdown[1].innerHTML = 'Drop in ' + days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s " + milliseconds + 'ms';
+            
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                countdown[0].innerHTML = "EXPIRED";
+                countdown[1].innerHTML = "EXPIRED";
+            }
+        }, 0);
 }
 
 function getSize(url, callback){   

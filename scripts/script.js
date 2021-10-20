@@ -1,6 +1,23 @@
 var url = new URL(location.href);
 
 $(() => {
+    if ($('.bubble.bubble-mobile').length) {
+        let observer = new MutationObserver(() => {
+            if ($('.bubble.bubble-mobile').hasClass('visible'))
+                $('.slider').css({
+                    'max-height': $('.slider').height()
+                })
+            else
+                $('.slider').css({
+                    'max-height': ''
+                })
+        });
+
+        observer.observe($('.bubble.bubble-mobile').get(0), {
+            attributes: true
+        })
+    }
+
     var basket = {};
 
     if (localStorage.getItem('basket') == null)
@@ -17,6 +34,8 @@ $(() => {
     if (url.pathname == '/' || url.pathname == '') {
         post('seworld.products_expected').then(
             result => {
+                result.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
+                
                 if (result.length)
                     $('#new-element .item-name').text(result[0].name);
                 else
@@ -34,39 +53,42 @@ $(() => {
                 $('.grid-container .grid-item:not(#new-element)').remove();
 
                 for (key in result) {
-                    $('.grid-container').append($('<a>', {
-                        href: '/product?id=' + result[key].id,
-                        class: 'grid-item'
-                    }).append($('<img>', {
-                        'data-src': result[key].pairs.main_pair[420].image_path,
-                        'data-srcset': getSrcset(result[key].pairs.main_pair),
-                        'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
-                    })).append($('<div>', {
-                        class: 'bubble'
-                    }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
-                        class: 'item-name',
-                        text: result[key].name
-                    })).append($('<div>', {
-                        class: 'price',
-                        text: result[key].price
-                    }))));
-
-                    lazyloadImg();
+                    try {
+                        $('.grid-container').append($('<a>', {
+                            href: '/product?id=' + result[key].id,
+                            class: 'grid-item'
+                        }).append($('<img>', {
+                            'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
+                            'data-srcset': getSrcset(result[key].pairs.main_pair),
+                            'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                        })).append($('<div>', {
+                            class: 'bubble'
+                        }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
+                            class: 'item-name',
+                            text: result[key].name
+                        })).append($('<div>', {
+                            class: 'price',
+                            text: result[key].price
+                        }))));
+                    } catch {}
                 }
+
+                lazyloadImg();
 
                 post('seworld.products_out_of_stock').then(
                     result => {
-                        $('.grid-container').append($('<div>', {
-                            class: 'grid-item archive',
-                            text: 'Archive 檔案'
-                        }));
+                        if (result.length)
+                            $('.grid-container').append($('<div>', {
+                                class: 'grid-item archive',
+                                text: 'Archive 檔案'
+                            }));
 
                         for (key in result) {
                             $('.grid-container').append($('<a>', {
                                 href: '/product?id=' + result[key].id,
                                 class: 'grid-item'
                             }).append($('<img>', {
-                                'data-src': result[key].pairs.main_pair[420].image_path,
+                                'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
                                 'data-srcset': getSrcset(result[key].pairs.main_pair),
                                 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
                             })).append($('<div>', {
@@ -141,12 +163,16 @@ $(() => {
     if (url.pathname == '/checkout') {
         basket = JSON.parse(localStorage.getItem('basket'));
 
+        console.log(basket)
+
         basket.products.forEach(item => {
+            console.log(item)
             $('#products').append($('<img>', {
                 class: 'checkout-item',
-                'data-src': item.main_pair[420].image_path,
+                'data-src': item.main_pair[420].image_path.replace('http://', 'https://'),
                 'data-srcset': getSrcset(item.main_pair),
-                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px',
+                'data-product-id': item.id
             }));
         });
     }
@@ -378,9 +404,14 @@ function addToBasket(basket, product_id, product_name, product_type, size, price
         basket.products.forEach((product, id) => {
             if (product.id == product_id)
                 if (JSON.stringify(product.variation) == JSON.stringify(size)) {
-                    if (remove)
+                    if (remove) {
                         basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
-                    else if (basket.products[id].basket_count < max_count)
+
+                        console.log($('.checkout-wrapper #products .checkout-item[data-product-id=' + basket.products[id].id + ']').eq(0))
+
+                        if (basket.products[id].basket_count <= 0)
+                            $('.checkout-wrapper #products .checkout-item[data-product-id=' + basket.products[id].id + ']').eq(0).remove()
+                    } else if (basket.products[id].basket_count < max_count)
                         basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
 
                     addProduct = false;
@@ -512,21 +543,15 @@ function slider() {
 }
 
 function lazyloadImg() {
-    // $('img[data-src]').each(function() {
-    //     $(this).attr('src', $(this).data('src'))
-    //     $(this).on('load', function() {
-    //         $(this).css({
-    //             opacity: 1
-    //         })
-    //     })
-    // })
-    $('img[data-srcset]').each(function() {
-        $(this).attr('srcset', $(this).data('srcset'))
-        $(this).on('load', function() {
+    $('img[data-src]').each(function() {
+        $(this).attr('src', $(this).data('src')).on('load', function() {
             $(this).css({
                 opacity: 1
             })
         })
+    })
+    $('img[data-srcset]').each(function() {
+        $(this).attr('srcset', $(this).data('srcset'))
     })
 }
 
@@ -544,7 +569,7 @@ function getProductContent(result, currentProductId) {
             $('#related').append($('<div>', {
                 class: 'related-item item-selected'
             }).append($('<img>', {
-                'data-src': result[key].pairs.main_pair[420].image_path,
+                'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
                 'data-srcset': getSrcset(result[key].pairs.main_pair),
                 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
             })).append($('<div>', {
@@ -576,8 +601,8 @@ function getProductContent(result, currentProductId) {
                 $('.slider').append($('<figure>', {
                     class: 'slider-item'
                 }).append($('<img>', {
-                    'data-src': result[key].pairs.pairs[img_key].detailed.https_image_path[420].image_path,
-                    'data-srcset': getSrcset(result[key].pairs.pairs[img_key].detailed.https_image_path),
+                    'data-src': result[key].pairs.pairs[img_key][420].image_path.replace('http://', 'https://'),
+                    'data-srcset': getSrcset(result[key].pairs.pairs[img_key]),
                     'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
                 })).append($('<figcaption>', {
                     class: 'description',
@@ -697,25 +722,31 @@ function getProductContent(result, currentProductId) {
             $('.checkout-button.add').data('main-pair', result[key].pairs.main_pair);
 
             slider();
-        } else
-            $('#related').append($('<a>', {
-                class: 'related-item',
-                href: '/product?id=' + result[key].id
-            }).append($('<img>', {
-                'data-src': result[key].pairs.main_pair[420].image_path,
-                'data-srcset': getSrcset(result[key].pairs.main_pair),
-                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
-            })).append($('<div>', {
-                class: 'bubble'
-            }).append($('<div>', {
-                class: 'related-name',
-                text: result[key].name
-            })).append($('<div>', {
-                class: 'price',
-                text: result[key].price
-            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+        } else {
+            if (Object.keys(result[key].pairs.main_pair[420]).length)
+                $('#related').append($('<a>', {
+                    class: 'related-item',
+                    href: '/product?id=' + result[key].id
+                }).append($('<img>', {
+                    'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
+                    'data-srcset': getSrcset(result[key].pairs.main_pair),
+                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                })).append($('<div>', {
+                    class: 'bubble'
+                }).append($('<div>', {
+                    class: 'related-name',
+                    text: result[key].name
+                })).append($('<div>', {
+                    class: 'price',
+                    text: result[key].price
+                })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+        }
 }
 
 function getSrcset(pair) {
-    return pair[420].image_path + ' 420w, ' + pair[800].image_path + ' 800w, ' + pair[1200].image_path + ' 1200w, ' + pair[1600].image_path + ' 1600w';
+    if ((typeof pair == 'array' && pair.length > 0) || (typeof pair == 'object' && Object.keys(pair).length > 0))
+        if (pair[420].image_path != undefined)
+            return pair[420].image_path.replace('http://', 'https://') + ' 420w, ' + pair[800].image_path.replace('http://', 'https://') + ' 800w, ' + pair[1200].image_path.replace('http://', 'https://') + ' 1200w, ' + pair[1600].image_path.replace('http://', 'https://') + ' 1600w';
+            
+    return undefined;
 }

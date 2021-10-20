@@ -1,13 +1,25 @@
 @font-face {
     font-family: 'SE';
+    src: url('fonts/SuisseIntlCondensed-Bold.eot');
+    src: url('fonts/SuisseIntlCondensed-Bold.eot?#iefix') format('embedded-opentype'),
+        url('fonts/SuisseIntlCondensed-Bold.svg#SuisseIntlCondensed-Bold') format('svg'),
+        url('fonts/SuisseIntlCondensed-Bold.ttf') format('truetype'),
+        url('fonts/SuisseIntlCondensed-Bold.woff') format('woff'),
+        url('fonts/SuisseIntlCondensed-Bold.woff2') format('woff2');
     font-weight: bold;
-    src: url('SuisseIntlCond-Bold.otf?1') format('opentype');
+    font-style: normal;
 }
 
 @font-face {
     font-family: 'SE';
+    src: url('fonts/SuisseIntlCondensed-Medium.eot');
+    src: url('fonts/SuisseIntlCondensed-Medium.eot?#iefix') format('embedded-opentype'),
+         url('fonts/SuisseIntlCondensed-Medium.svg#SuisseIntlCondensed-Medium') format('svg'),
+         url('fonts/SuisseIntlCondensed-Medium.ttf') format('truetype'),
+         url('fonts/SuisseIntlCondensed-Medium.woff') format('woff'),
+         url('fonts/SuisseIntlCondensed-Medium.woff2') format('woff2');
     font-weight: normal;
-    src: url('SuisseIntlCond-Medium.otf?1') format('opentype');
+    font-style: normal;
 }
 
 * {
@@ -1301,4 +1313,21 @@ img[data-src] {
 
 .related-item:not(.item-selected) {
     margin-top: 1px;
+}
+
+.related-item.item-selected:after {
+    background-color: #fff !important;
+    height: 100%;
+    width: 100%;
+    top: 1px;
+    left: 0;
+    z-index: -1;
+}
+
+#index .bubble:after {
+    background-color: #fff !important;
+}
+
+.display_none {
+    display: none;
 }

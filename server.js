@@ -1,209 +1,156 @@
-const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const querystring = require('querystring');
 const path = require('path');
-const { json } = require('stream/consumers');
-const { stringify } = require('querystring');
-const url = require('url');
 
-server();
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const expressHbs = require('express-handlebars');
+const hbs = require('hbs');
 
-var preloaderData = '';
+const app = express();
+const hostname = 'se.world';
+const port = 3000;
 
-products_expected();
+var preloaderData = require('./preloader');
 
-setInterval(() => {
-    products_expected();
-}, 30000);
+class Preloader {
+    online = false;
 
-function server() {
-    const hostname = 'se.world';
-    const port = 3000;
-    const sport = 3001;
-    const accessKey = 'csse';
+    update() {
+        this.post('se.madfrenzy.com', 'seworld.products_expected', pendingProduct => {
+            var preloader;
 
-    http.createServer((require, response) => {
-        app(require, response, accessKey, hostname);
-    }).listen(port);
+            if (pendingProduct[0] == undefined) {
+                preloader = undefined;
+                fs.writeFileSync('preloader.js', `var preloaderData = undefined; try { module.exports.preloaderData = preloaderData; } catch {}`);
+                this.online = false;
+            } else {
+                pendingProduct.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
 
-    https.createServer({
-        key: fs.readFileSync('cert/key.pem'),
-        cert: fs.readFileSync('cert/cert.pem'),
-    }, (require, response) => {
-        app(require, response, accessKey, hostname);
-    }).listen(sport);
-
-    console.log(`Server running at https://${hostname}:${port}/`);
-}
-
-function post(hostname, dispatch, callback) {
-    const data = {};
-
-    const options = {
-        hostname: hostname,
-        path: '/?dispatch=' + dispatch + '&store_access_key=csse&no_redirect',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-
-    const req = http.request(options).on('response', function(response) {
-        var data = '';
-        response.on('data', function (chunk) {
-            data += chunk;
-        });
-        response.on('end', function () {
-            callback(JSON.parse(data));
-        });
-        }).end();
-
-    req.on('error', error => {
-        console.error(error)
-    });
-
-    req.end();
-}
-
-function downloadIMG(url) {
-    let file = fs.createWriteStream('preloader.jpg');
-    https.get(url, response => {
-        response.pipe(file);
-    });
-}
-
-function downloadJSON(json) {
-    fs.writeFileSync('preloader.js', 'var preloaderData = ' + json + '; try { module.exports.preloaderData = preloaderData; } catch {}');
-}
-
-function parseCookies (request) {
-    let list = {},
-        rc = request.headers.cookie;
-
-    rc && rc.split(';').forEach(function( cookie ) {
-        let parts = cookie.split('=');
-        list[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-
-    return list;
-}
-
-function products_expected() {
-    post('se.madfrenzy.com', 'seworld.products_expected', data => {
-        if (data[0] == undefined)
-            preloaderData = undefined;
-        else {
-            data.sort(byField('date'));
-
-            preloaderData = JSON.stringify(data[0])
-            downloadIMG(data[0].pairs.main_pair[420].image_path.replace('http://', 'https://'));
-            downloadJSON(preloaderData);
-        }
-
-        console.log((new Date()), 'Preloader update');
-    });
-}
-
-function app(require, response, accessKey, hostname) {
-    var filePath = '.' + require.url.split('?')[0];
-
-    let queryObject =
-        url.parse(require.url,true).query;
-
-    let additionalHeaders = {};
-    let cookies = parseCookies(require);
-
-    let haveKey =
-        queryObject.key && queryObject.key === accessKey;
-
-    if (haveKey || cookies.key === accessKey) {
-
-        if (!cookies.key) {
-            additionalHeaders = {
-                'Set-Cookie': 'key=csse',
-                'Domain': hostname,
-                'Path': '/'
-            };
-        }
-
-        if (filePath == './') {
-            if (preloaderData == undefined)
-                filePath = './index.html';
-            else
-                filePath = './index_preloader.html';
-        }
-
-        if (filePath == './product')
-            filePath = './product.html';
-
-        if (filePath == './checkout')
-            filePath = './checkout.html';
-
-        if (filePath == './policy')
-            filePath = './policy.html';
-
-    } else {
-
-        filePath = './closed.html';
-
-    }
-
-    var extname = path.extname(filePath);
-    var contentType = 'text/html';
-
-    switch (extname) {
-        case '.js':
-            contentType = 'text/javascript';
-        break;
-        case '.css':
-            contentType = 'text/css';
-        break;
-        case '.png':
-            contentType = 'image/png';
-        break;
-        case '.jpg':
-            contentType = 'image/jpg';
-        break;
-        case '.svg':
-            contentType = 'image/svg+xml';
-        break;
-        case '.html':
-            contentType = 'text/html';
-        break;
-    }
-
-    fs.readFile(filePath, function(error, content) {
-        if (error) {
-            if(error.code == 'ENOENT'){
-                fs.readFile('./404.html', function(error, content) {
-                    response.writeHead(200, { 'Content-Type': contentType });
-                    response.end(content, 'utf-8');
+                preloader = JSON.stringify({
+                    name: pendingProduct[0].name,
+                    date: pendingProduct[0].date
                 });
+
+                fs.writeFileSync('preloader.js', `var preloaderData = ${preloader}; try { module.exports.preloaderData = preloaderData; } catch {}`);
+
+                let file = fs.createWriteStream('preloader.jpg');
+                https.get(pendingProduct[0].pairs.main_pair[420].image_path.replace('http://', 'https://'), response => {
+                    response.pipe(file);
+                });
+                
+                console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
+                this.online = true;
             }
-            else {
-                response.writeHead(500);
-                response.end('Sorry, check with the site admin for error: ' + error.code + ' ..\n');
-                response.end();
+        });
+    }
+
+    intervalUpdate(interval) {
+        this.update();
+        setInterval(() => {
+            this.update();
+        }, interval);
+    }
+
+
+    post(hostname, dispatch, callback) {
+        const data = {};
+
+        const options = {
+            hostname: hostname,
+            path: '/?dispatch=' + dispatch + '&store_access_key=csse&no_redirect',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             }
         }
-        else {
-            let defaultHeaders = {
-                'Content-Type': contentType,
-                'Cache-Control': 'no-cache'
-            };
 
-            let mergedHeaders =
-                Object.assign(
-                    defaultHeaders,
-                    additionalHeaders
-                );
+        const req = https.request(options).on('response', function(response) {
+            var data = '';
+            response.on('data', function (chunk) {
+                    data += chunk;
+                });
+                response.on('end', function () {
+                    callback(JSON.parse(data));
+                });
+            }).end();
 
-            response.writeHead(200, mergedHeaders);
-            response.end(content, 'utf-8');
+        req.on('error', error => {
+            console.error(error)
+        });
+
+        req.end();
+    }
+}
+
+class Cookie {
+    confirm(req, res, accessKey) {
+        let originalUrlDecode = (querystring.decode(req.originalUrl.replace('?', '').replace('/', '')));
+
+        if (originalUrlDecode.key)
+            res.cookie('key', originalUrlDecode.key);
+
+        if (req.cookies.key == accessKey || originalUrlDecode.key == accessKey)
+            return true;
+
+        return false;
+    }
+}
+
+let preloader = new Preloader();
+preloader.intervalUpdate(30000);
+
+let cookie = new Cookie(),
+    routes = [
+        {
+            url: '',
+            file: 'index.hbs',
+            index: true,
+        },
+        {
+            url: 'product',
+            file: 'product.html'
+        },
+        {
+            url: 'checkout',
+            file: 'checkout.html'
+        },
+        {
+            url: 'policy',
+            file: 'policy.html'
         }
+    ];
+
+app.use(cookieParser());
+app.use(express.static('public'));
+
+app.engine(
+    'hbs',
+    expressHbs({
+        layoutsDir: '/',
+        defaultLayout: false,
+        extname: 'hbs',
+    })
+);
+app.set('view engine', 'hbs');
+hbs.registerPartials(__dirname + '/');
+
+routes.forEach((rout) => {
+    app.use('/' + rout.url, (req, res) => {
+        if (cookie.confirm(req, res, 'csse')) {
+            if (rout.index) {
+                res.render(rout.file, {
+                    timestamp: Date.now(),
+                    hide: preloader.online ? '' : 'display_none'
+                });
+            } else
+                res.sendFile(path.join(__dirname + '/' + rout.file));
+        } else
+            res.sendFile(path.join(__dirname + '/closed.html'));
     });
-}
+});
 
-function byField(field) {
-    return (a, b) => a[field] > b[field] ? 1 : -1;
-}
+app.listen(port, () => {
+    console.log(`Server running at https://${hostname}:${port}/`);
+});
