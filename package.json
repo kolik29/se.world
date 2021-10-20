@@ -2,6 +2,7 @@
     "name": "se.world",
     "version": "1.0.0",
     "dependencies": {
+        "forever": "^4.0.1",
         "nocache": "^3.0.1"
     }
 }

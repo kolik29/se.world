@@ -32,8 +32,6 @@ window.onload = function() {
         }
         total.innerHTML = priceAll
 
-        console.log(priceAll)
-
         if (priceAll < 200) {
             deliveryCost.innerHTML = '$' + (200 - priceAll) + ' left for free shipping'
             deliveryCost.style.backgroundColor = '#77B2D6'
