@@ -15,62 +15,65 @@
     <script src="scripts/script.js?{{timestamp}}"></script>
 </head>
 <body>
-    <div id="preloader" class="{{hide}}">
-        <div id="new-item"></div>
-        <div class="countdown"></div>
+    <div class="wrapper">
+        <div id="preloader" class="{{hide}}">
+            <div id="new-item"></div>
+            <div class="countdown"></div>
+        </div>
+        <header>
+            <div class="menu">
+                <a href="/"><img class="logotype" src="logotype.svg" alt=""></a>
+                <div class="rotating-icon">
+                    <div id="cart">
+                        <img src="cart.svg" alt="">
+                        <div id="counter">0</div>
+                    </div>
+                    <div id="about">info</div>
+                </div>
+            </div>
+            <div class="bag">
+                <div class="about-wrapper">
+                    <div class="h1">About 關於</div>
+                    <p class="studio-info">
+                    We strive to concentrate on the smallest details and take cues from various aspects of the world around us, all forms of art ever created and the phenomena of time.
+                    </p>
+                    <p class="contacts">
+                        hi@se.world <br>
+                        +7 916 709 69 68
+                    </p>
+                    <p class="policy">Find about our <a target="_blanc" href="policy">Terms & Policy.</a></p>
+                </div>
+                <div id="empty-bag">Nothing in the bag yet</div>
+                <div class="bag-items">
+                    <div id="order-list">
+                    </div>
+                    <div class="input-wrapper">
+                        <a href="checkout" id="checkout" class="action-line">
+                            <div>Total</div>
+                            <div id="total"></div>
+                            <button id="buy" class="checkout-button">BUY</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="grid-container">
+            <div class="grid-item" id="archive">Archive 檔案</div>
+            <div class="grid-item {{hide}}" id='new-element'>
+                <img src="alien.svg" alt="">
+                <div class="bubble">
+                    <div class="item-name"></div>
+                    <div class="countdown"></div>
+                    <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </div>
-    <header>
-        <div class="menu">
-            <a href="/"><img class="logotype" src="logotype.svg" alt=""></a>
-            <div class="rotating-icon">
-                <div id="cart">
-                    <img src="cart.svg" alt="">
-                    <div id="counter">0</div>
-                </div>
-                <div id="about">info</div>
-            </div>
-        </div>
-        <div class="bag">
-            <div class="about-wrapper">
-                <div class="h1">About 關於</div>
-                <p class="studio-info">
-                We strive to concentrate on the smallest details and take cues from various aspects of the world around us, all forms of art ever created and the phenomena of time.
-                </p>
-                <p class="contacts">
-                    hi@se.world <br>
-                    +7 916 709 69 68
-                </p>
-                <p class="policy">Find about our <a target="_blanc" href="policy">Terms & Policy.</a></p>
-            </div>
-            <div id="empty-bag">Nothing in the bag yet</div>
-            <div class="bag-items">
-                <div id="order-list">
-                </div>
-                <div class="input-wrapper">
-                    <a href="checkout" id="checkout" class="action-line">
-                        <div>Total</div>
-                        <div id="total"></div>
-                        <button id="buy" class="checkout-button">BUY</button>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-    <div class="grid-container">
-        <div class="grid-item" id="archive">Archive 檔案</div>
-        <div class="grid-item {{hide}}" id='new-element'>
-            <img src="alien.svg" alt="">
-            <div class="bubble">
-                <div class="item-name"></div>
-                <div class="countdown"></div>
-                <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
-                    </g>
-                </svg>
-            </div>
-        </div>
-    </div>
-</body>
+
     <script src="script.js?{{timestamp}}"></script>
+</body>
 </html>

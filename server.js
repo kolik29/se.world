@@ -137,7 +137,7 @@ app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/');
 
 routes.forEach((rout) => {
-    app.use('/' + rout.url, (req, res) => {
+    app.get('/' + rout.url, (req, res) => {
         if (cookie.confirm(req, res, 'csse')) {
             if (rout.index) {
                 res.render(rout.file, {

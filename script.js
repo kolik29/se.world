@@ -93,6 +93,11 @@ function setup() {
                 setTimeout(function() {
                     document.body.style.overflow = 'scroll'
                 },800)
+
+                $('body > .wrapper').removeClass('preloader-overflow').css({
+                    'height': '',
+                    'max-height': '',
+                });
             }
             
             var preloader = document.getElementById('preloader');

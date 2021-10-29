@@ -233,7 +233,6 @@ header {
     position: fixed;
     left: 0;
     width: 100%;
-    margin-top: -0.5rem;
     font-size: 1rem;
     cursor: default;
     display: none;
@@ -434,7 +433,7 @@ a {
 
 @media screen and (max-width: 768px) {
     .bubble,
-    .bubble::after,
+    /* .bubble::after, */
     .item-selected,
     .item-selected:after {
         background-color: unset !important;
@@ -1226,9 +1225,6 @@ input:-webkit-autofill::first-line {
     .item-selected::after {
         bottom: calc(12 * var(--vh) + 1px);
     }
-    .bag {
-        margin-top: -0.33333rem;
-    }
 }
 
 #order-list .product-price {
@@ -1330,4 +1326,22 @@ img[data-src] {
 
 .display_none {
     display: none;
+}
+
+body > .preloader-overflow {
+    overflow: hidden;
+    max-height: 100vh;
+}
+
+@media screen and (max-width: 768px) {
+    .wrapper .bubble,
+    .wrapper .item-selected,
+    .wrapper .item-selected:after {
+        background-color: #fff !important;
+    }
+}
+
+#preloader {
+    width: 100vw;
+    height: 100vh;
 }
