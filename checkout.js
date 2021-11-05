@@ -30,7 +30,6 @@ window.onload = function() {
         for (i=0; i<products.length; i++) {
             priceAll = priceAll + parseInt(prices[i].innerHTML) * parseInt(products[i].innerHTML)
         }
-        total.innerHTML = priceAll
 
         if (priceAll < 200) {
             deliveryCost.innerHTML = '$' + (200 - priceAll) + ' left for free shipping'

@@ -188,7 +188,7 @@ window.onload = function() {
             priceAll = priceAll + parseInt(prices[i].innerHTML) * parseInt(products[i].innerHTML)
         }
         counter.innerHTML = quantityAll
-        total.innerHTML = priceAll
+        // total.innerHTML = priceAll
     }
     
     //Update quantity

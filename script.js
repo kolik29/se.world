@@ -11,6 +11,8 @@ var images = new Array();
 // var y = 214;
 var x = 200
 var y = 300
+var width = 300,
+    height = 300;
 
 var container = document.getElementById('preloader'),
     urlImg = 'preloader.jpg?' + (Date.now()).toString(), preloaderImgWidth, preloaderImgHeight;
@@ -21,27 +23,31 @@ function setup() {
     // for (var i=1; i<=6; i++) {
     //     images[i] = loadImage('darvin'+i+'.svg');
     // }
-    images[0] = loadImage(urlImg);
+    // console.log(preloaderData)
+    // images[0] = loadImage(urlImg);
+
+    var i = 0;
+    preloaderData.images.forEach(item => {
+        images[i] = loadImage(item);
+        i++;
+    })
 }
         function windowResized() {
             resizeCanvas(container.offsetWidth, container.offsetHeight);
         }
         
-        var i = 1;
+        var i = 0;
         function mouseMoved() {
-            if (i<7) {
-                if (preloaderImgWidth)
-                    image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                else {
-                    getSize(urlImg, (width, height) => {
-                        preloaderImgWidth = width / 2;
-                        preloderImgHeight = height / 2;
-                        image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                    })
-                }
+            if (i<images.length) {
+                console.log(images)
+                getSize(images[Math.trunc(i)], (width, height) => {
+                    preloaderImgWidth = width / 2;
+                    preloderImgHeight = height / 2;
+                    image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
+                })
                 i = i + 0.05;
             } else {
-                i = 1;
+                i = 0;
             }
         }
         
@@ -51,36 +57,28 @@ function setup() {
         }
         
         function touchMoved () {
-            if (i<6) {
-                if (preloaderImgWidth)
+            if (i<images.length) {
+                getSize(images[Math.trunc(i)], (width, height) => {
+                    preloaderImgWidth = width / 2;
+                    preloderImgHeight = height / 2;
                     image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                else {
-                    getSize(url, (width, height) => {
-                        preloaderImgWidth = width / 2;
-                        preloderImgHeight = height / 2;
-                        image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                    })
-                }
+                })
                 i = i + 0.05;
             } else {
-                i = 1;
+                i = 0;
             }
         }
         
         function touchMoved () {
-            if (i<6) {            
-                if (preloaderImgWidth)
-                    image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                else {
-                    getSize(url, (width, height) => {
-                        preloaderImgWidth = width / 2;
-                        preloderImgHeight = height / 2;
-                        image(images[0], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
-                    })
-                }
+            if (i<images.length) {       
+                getSize(images[Math.trunc(i)], (width, height) => {
+                    preloaderImgWidth = width / 2;
+                    preloderImgHeight = height / 2;
+                    image(images[Math.trunc(i)], mouseX-preloaderImgWidth/2, mouseY-preloderImgHeight/2, preloaderImgWidth, preloderImgHeight);
+                })
                 i = i + 0.05;
             } else {
-                i = 1;
+                i = 0;
             }
         }
     
@@ -178,10 +176,6 @@ function countdownDate(name, date) {
         }, 0);
 }
 
-function getSize(url, callback){   
-    const img = new Image();
-    img.addEventListener('load', function() {
-        callback(this.naturalWidth, this.naturalHeight);
-    });
-    img.src = url;
+function getSize(img, callback){   
+    callback(img.width, img.height);
 }
