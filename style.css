@@ -104,9 +104,9 @@ canvas {
 }
 
 .gone {
-    transform: translateY(-100%);
-    -webkit-transform: translateY(-100%);
-    -ms-transform: translateY(-100%);
+    transform: translateY(-100vh);
+    -webkit-transform: translateY(-100vh);
+    -ms-transform: translateY(-100vh);
     -webkit-transition: transform .8s cubic-bezier(0.75, 0.1, 0.18, 1);
     -webkit-transition: -webkit-transform .8s cubic-bezier(0.75, 0.1, 0.18, 1);
     transition: -webkit-transform .8s cubic-bezier(0.75, 0.1, 0.18, 1);
@@ -230,7 +230,7 @@ header {
 }
 
 .bag {
-    position: fixed;
+    position: absolute;
     left: 0;
     width: 100%;
     font-size: 1rem;
@@ -1343,5 +1343,27 @@ body > .preloader-overflow {
 
 #preloader {
     width: 100vw;
-    height: 100vh;
+    height: 100%;
+}
+
+body > .wrapper {
+    min-height: 100vh;
+}
+
+#size-wrapper.one_size {
+    cursor: default;
+}
+
+#size-wrapper.one_size #size:after {
+    display: none;
+}
+
+@media screen and (orientation: landscape) {
+    #size-wrapper {
+        height: calc(1em + 0.45rem);
+    }    
+}
+
+.slide-text div::first-letter {
+    text-transform: uppercase;
 }

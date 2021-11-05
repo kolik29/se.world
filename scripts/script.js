@@ -1,12 +1,7 @@
 var url = new URL(location.href);
 
 $(() => {
-    $('body > .wrapper').addClass('preloader-overflow').css({
-        'height': $('body').height(),
-        'max-height': $('body').height(),
-    }).on('scroll', function(e) {
-        e.preventDefault();
-    });
+    bodyPosition();
 
     $('.rotating-icon').on('click', function() {
         setTimeout(() => {
@@ -135,8 +130,15 @@ $(() => {
     }
             
     if (url.pathname == '/product' && url.search != '') {
+        $('body > .wrapper').addClass('preloader-overflow').css({
+            'height': $('body').height(),
+            'max-height': $('body').height(),
+        }).on('scroll', function(e) {
+            e.preventDefault();
+        });
+
         var currentProductId = Number(url.search.replace('?id=', ''));
-        
+
         post('seworld.products_in_stock').then(
             result => {
                 $('#related').empty();
@@ -276,19 +278,90 @@ $(() => {
 
     $('body').on('click', '.bubble', function() {
         $(this).toggleClass('visible');
-        $('.bubble .slide-text').text('');
+        $('.bubble .slide-text').html('');
 
         if ($(this).hasClass('visible')) {
             $(this).find('.show-more').html('Hide text <br> ↑');
-            $('.bubble .slide-text').text($('.slider-item.img-selected').text());
+            $('.bubble .slide-text').html(textSplit($('.slider-item.img-selected').text()));
         } else
             $(this).find('.show-more').html('Show text <br> ↓');
     });
 
-    _updateBag();
+    updateBag();
+
+    $('#related').on('click', 'a.related-item', function(e) {
+        e.preventDefault();
+
+        if (!$(e.target).hasClass('bubble'), $(e.target).closest('.bubble').length == 0) {
+            console.log($(this).find('img'))
+            $(this).find('img').removeAttr('data-src');
+
+            let prevRelatedItem = $('#related a.related-item.item-selected');
+            prevRelatedItem.removeClass('item-selected');
+
+            $(this).addClass('item-selected');
+
+            window.history.pushState('Product', 'Product', $(this).attr('href'));
+            
+            let linkURL = new URL(window.location.origin + $(this).attr('href'));
+
+            var currentProductId = linkURL.searchParams.get('id');
+            
+            post('seworld.products_in_stock').then(
+                result => {
+                    prevRelatedItem.find('.bubble').remove();
+                    prevRelatedItem.find('.triangle-mobile').remove();
+                    prevRelatedItem.append($('<div>', {
+                        class: 'bubble'
+                    }).append($('<div>', {
+                        class: 'related-name',
+                        text: result[key].name
+                    })).append($('<div>', {
+                        class: 'price',
+                        text: result[key].price
+                    })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'));
+
+                    $('.slider').empty();
+
+                    getProductContent(result, currentProductId, true);
+
+                    lazyloadImg();
+                    
+                    $('.slider').append($('<button>', {
+                        id: 'prev-img'
+                    })).append($('<button>', {
+                        id: 'next-img'
+                    }));
+                    
+                    $('.checkout-button.add').on('click', function() {
+                        var product_size_obj = $(this).closest('#purchase').find('#size');
+                        var image = $(this).data('main-pair');
+
+                        addToBasket(
+                            basket,
+                            product_size_obj.data('product-id'),
+                            product_size_obj.data('product-name'),
+                            product_size_obj.data('product-type'),
+                            {
+                                [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
+                            },
+                            product_size_obj.data('price'),
+                            image,
+                            product_size_obj.data('max-count')
+                        );
+                        basketUpdateTotal();
+                        showBasket();
+                    });
+                },
+                error => {
+                    console.log(error);
+                }
+            );
+        }
+    })
 });
 
-function _updateBag() {
+function updateBag() {
     if ($('#delivery-cost').length) {
         var priceAll = 0;
 
@@ -296,34 +369,40 @@ function _updateBag() {
             priceAll += parseInt($(this).find('.product-price').text()) * parseInt($(this).find('.product-quantity').text())
         })
 
-        $('#total').text(priceAll)
-
         if (priceAll < 200) {
             $('#delivery-cost').text('$' + (200 - priceAll) + ' left for free shipping').css({
                 'background-color': '#77B2D6',
                 'opacity': '0.5'
             })
+            priceAll += 20;
         } else {
             $('#delivery-cost').text('Free Express UPS delivery').css({
                 'background-color': '#FFDC00',
                 'opacity': '1'
             })
         }
+
+        $('#total').text('$' + priceAll)
     }
 }
 
 function getSizeWord(size) {
-    if (size == 'one size')
-        return ['ONE SIZE', ''];
+    try {
+        if (size == 'one size')
+            return ['ONE SIZE', ''];
 
-    if (size[size.length - 1] == 'S')
-        return ['mall', '小的'];
-    
-    if (size[size.length - 1] == 'M')
-        return ['edium', '中等的'];
-    
-    if (size[size.length - 1] == 'L')
-        return ['arge', '大的'];
+        if (size[size.length - 1] == 'S')
+            return ['mall', '小的'];
+        
+        if (size[size.length - 1] == 'M')
+            return ['edium', '中等的'];
+        
+        if (size[size.length - 1] == 'L')
+            return ['arge', '大的'];
+    }
+    catch {
+        return ['', ''];
+    }
 }
 
 function basketUpdateTotal() {
@@ -366,7 +445,11 @@ function showBasket() {
             $('.bag-items').addClass('flex-open');
             $('.order-item').remove();
             $('#counter').text(basket.count);
-            $('#total').text(basket.full_price);
+
+            if (Number(basket.full_price.replace(/[^\d]/g, '')) < 200)
+                $('#total').text('$' + (Number(basket.full_price.replace(/[^\d]/g, '')) + 20));
+            else
+                $('#total').text('$' + Number(basket.full_price.replace(/[^\d]/g, '')));
 
             basket.products.forEach(product => {
                 var size = Object.keys(product.variation)[0];
@@ -412,7 +495,7 @@ function showBasket() {
                 display: ''
             });
             $('#counter').text(0);
-            localStorage.removeItem('basket')
+            localStorage.removeItem('basket');
         }
     }
 }
@@ -462,21 +545,52 @@ function addToBasket(basket, product_id, product_name, product_type, size, price
 function slider() {
     var slideText = document.getElementsByClassName('slide-text')
     var addText = function(slideN) {
-        slideText[0].innerHTML = thisImg[slideN].children[1].innerHTML
-        slideText[1].innerHTML = thisImg[slideN].children[1].innerHTML
+        slideText[0].innerHTML = textSplit(thisImg[slideN].children[1].innerHTML)
+        slideText[1].innerHTML = textSplit(thisImg[slideN].children[1].innerHTML)
     }
+
+    $('#indicator .line').remove();
+
+    $('.slider .slider-item').each(() => {
+        $('#indicator').append($('<div>', {
+            class: 'line'
+        }))
+    })
+
+    let url = new URL(location.href);
+
+    if (url.hash != '') {
+        if (url.hash.includes('#slide-')) {
+            $('#indicator .line').eq(Number(url.hash.replace('#slide-', '')) - 1).addClass('line-selected')
+        }
+    }
+
+    $('body').on('click', '#prev-img', () => {
+        let currentIndicator = $('#indicator .line.line-selected');
+        
+        if (currentIndicator.prev().length)
+            currentIndicator.prev().addClass('line-selected');
+        else
+            $('#indicator .line').last().addClass('line-selected');
+
+        currentIndicator.removeClass('line-selected');
+    })
+
+    $('body').on('click', '#next-img', () => {
+        let currentIndicator = $('#indicator .line.line-selected');
+        
+        if (currentIndicator.next().length)
+            currentIndicator.next().addClass('line-selected');
+        else
+            $('#indicator .line').first().addClass('line-selected');
+
+        currentIndicator.removeClass('line-selected');
+    })
 
     var nextButton = document.getElementById('next-img')
     var prevButton = document.getElementById('prev-img')
     thisImg = document.getElementsByClassName('slider-item')
-    var line = document.getElementsByClassName('line')
-    var indicator = document.getElementById('indicator')
     var arrowNumber = document.getElementById('slide-number')
-
-    for (i=0; i<thisImg.length-1; i++) {
-        var clone = line[0].cloneNode(true)
-        indicator.append(clone)
-    }
 
     j = 0
     if (window.location.hash) {
@@ -487,7 +601,6 @@ function slider() {
     }
 
     thisImg[j].classList.add('img-selected')
-    line[j].classList.add('line-selected')
     arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
     
     document.addEventListener('click', function(e) {
@@ -495,17 +608,13 @@ function slider() {
             if (e.target.id == 'next-img')
             if (j < thisImg.length-1) {
                 thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
                 thisImg[j+1].classList.add('img-selected')
-                line[j+1].classList.add('line-selected')
                 j++
                 window.location.hash = 'slide-' + (j + 1)
                 addText(j)
             } else {
                 thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
                 thisImg[0].classList.add('img-selected')
-                line[0].classList.add('line-selected')
                 j = 0
                 window.location.hash = 'slide-' + (j + 1)
                 addText(j)
@@ -515,17 +624,13 @@ function slider() {
             if (e.target.id == 'prev-img')
             if (j>0) {
                 thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
                 thisImg[j-1].classList.add('img-selected')
-                line[j-1].classList.add('line-selected')
                 j--
                 window.location.hash = 'slide-' + (j + 1)
                 addText(j)
             } else {
                 thisImg[j].classList.remove('img-selected')
-                line[j].classList.remove('line-selected')
                 thisImg[thisImg.length-1].classList.add('img-selected')
-                line[thisImg.length-1].classList.add('line-selected')
                 j = thisImg.length-1
                 window.location.hash = 'slide-' + (j + 1)
                 addText(j)
@@ -573,8 +678,8 @@ function lazyloadImg(i = 0) {
         .css({
             opacity: 1
         })
-        .attr('width', $(this).width())
-        .attr('height', $(this).height())
+        // .attr('width', $(this).width())
+        // .attr('height', $(this).height())
         .attr('srcset', $(this).data('srcset'))
         .addClass('loaded');
 
@@ -585,7 +690,7 @@ function lazyloadImg(i = 0) {
     });
 }
 
-function getProductContent(result, currentProductId) {
+function getProductContent(result, currentProductId, related = false) {
     for (key in result)
         if (result[key].id == Number(currentProductId)) {
             product_name = result[key].name;
@@ -596,31 +701,55 @@ function getProductContent(result, currentProductId) {
                 if (result[key].pairs.pairs[0]['desk'] !== undefined)
                     result[key].pairs.pairs[0];
 
-            $('#related').append($('<div>', {
-                class: 'related-item item-selected'
-            }).append($('<img>', {
-                'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
-                'data-srcset': getSrcset(result[key].pairs.main_pair),
-                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
-            })).append($('<div>', {
-                class: 'bubble'
-            }).append($('<div>', {
-                class: 'bubble-flex'
-            }).append($('<div>')
-            .append($('<div>', {
-                class: 'related-name',
-                text: result[key].name
-            })).append($('<div>', {
-                class: 'price',
-                text: result[key].price
-            }))).append($('<div>', {
-                class: 'show-more',
-                html: 'Show text <br> ↓'
-            }))).append($('<div>', {
-                class: 'slide-text',
-                text: img_desk
-            })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
-            .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'));
+            if (!related) {
+                $('#related').append($('<a>', {
+                    class: 'related-item item-selected',
+                    href: '/product?id=' + result[key].id
+                }).append($('<img>', {
+                    'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
+                    'data-srcset': getSrcset(result[key].pairs.main_pair),
+                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                })).append($('<div>', {
+                    class: 'bubble'
+                }).append($('<div>', {
+                    class: 'bubble-flex'
+                }).append($('<div>')
+                .append($('<div>', {
+                    class: 'related-name',
+                    text: result[key].name
+                })).append($('<div>', {
+                    class: 'price',
+                    text: result[key].price
+                }))).append($('<div>', {
+                    class: 'show-more',
+                    html: 'Show text <br> ↓'
+                }))).append($('<div>', {
+                    class: 'slide-text',
+                    // html: textSplit(img_desk)
+                })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
+                .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'));
+            } else {
+                $('.related-item.item-selected .bubble').remove();
+                $('.related-item.item-selected').append($('<div>', {
+                    class: 'bubble'
+                }).append($('<div>', {
+                    class: 'bubble-flex'
+                }).append($('<div>')
+                .append($('<div>', {
+                    class: 'related-name',
+                    text: result[key].name
+                })).append($('<div>', {
+                    class: 'price',
+                    text: result[key].price
+                }))).append($('<div>', {
+                    class: 'show-more',
+                    html: 'Show text <br> ↓'
+                }))).append($('<div>', {
+                    class: 'slide-text',
+                    // html: textSplit(img_desk)
+                })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
+                .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>');
+            }
 
             $('.bubble.bubble-mobile .related-name').text(result[key].name)
             $('.bubble.bubble-mobile .price').text(result[key].price)
@@ -647,7 +776,9 @@ function getProductContent(result, currentProductId) {
             if (result[key].variations == undefined) {
                 let size = getSizeWord(result[key].size);
 
-                $('#size-wrapper').append($('<div>', {
+                $('#size-wrapper')
+                .addClass('one_size')
+                .append($('<div>', {
                     id: 'size',
                     html: '<span class="short-size">' + (result[key].size == 'one size' ? '' : result[key].size) + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
                     'data-product-id': result[key].id,
@@ -689,6 +820,9 @@ function getProductContent(result, currentProductId) {
                 } else {
                     let variationSizeLetter = Object.keys(result[key].variations)[0];
                         size = getSizeWord(variationSizeLetter);
+
+                        if (size == undefined)
+                            size = ['', ''];
 
                         $('#size-wrapper').append($('<div>', {
                             id: 'size',
@@ -739,23 +873,25 @@ function getProductContent(result, currentProductId) {
 
             slider();
         } else {
-            if (Object.keys(result[key].pairs.main_pair[420]).length)
-                $('#related').append($('<a>', {
-                    class: 'related-item',
-                    href: '/product?id=' + result[key].id
-                }).append($('<img>', {
-                    'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
-                    'data-srcset': getSrcset(result[key].pairs.main_pair),
-                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
-                })).append($('<div>', {
-                    class: 'bubble'
-                }).append($('<div>', {
-                    class: 'related-name',
-                    text: result[key].name
-                })).append($('<div>', {
-                    class: 'price',
-                    text: result[key].price
-                })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+            if (!related) {
+                if (Object.keys(result[key].pairs.main_pair[420]).length)
+                    $('#related').append($('<a>', {
+                        class: 'related-item',
+                        href: '/product?id=' + result[key].id
+                    }).append($('<img>', {
+                        'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
+                        'data-srcset': getSrcset(result[key].pairs.main_pair),
+                        'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                    })).append($('<div>', {
+                        class: 'bubble'
+                    }).append($('<div>', {
+                        class: 'related-name',
+                        text: result[key].name
+                    })).append($('<div>', {
+                        class: 'price',
+                        text: result[key].price
+                    })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
+            }
         }
 
     lazyloadImg();
@@ -773,4 +909,40 @@ function updateBagTop() {
     $('header > .bag').css({
         'top': $('header .menu').outerHeight()
     });
+}
+
+function bodyPosition() {
+    if ($('#preloader').length && !$('#preloader').hasClass('display_none')) {
+        $('body').css({
+            'position': 'fixed'
+        });
+        
+        const callback = function(mutationsList, observer) {
+            if ($(mutationsList[0].target).hasClass('gone'))
+                $('body').css({
+                    'position': ''
+                });
+                setTimeout(() => {
+                    $('#preloader').remove();
+                }, 800);
+        };
+
+        const observer = new MutationObserver(callback);
+
+        observer.observe($('#preloader').get(0), {
+            attributes: true,
+            childList: false,
+            subtree: false
+        });
+    }
+}
+
+function textSplit(text) {
+    text = text.split('/');
+
+    text.forEach((item, i) => {
+        text[i] = '<div>' + item.trim() + '</div>';
+    })
+
+    return text.join('');
 }
