@@ -1,0 +1,22 @@
+.grid-container {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.order-success {
+    margin-top: -18px;
+}
+
+.order-success__body {
+    margin-top: 7px;
+    line-height: 1.1rem;
+}
+
+.order-success__footer {
+    margin-top: 24px;
+}
+
+.order-success__footer a {
+    color: #d7d6d2;
+}

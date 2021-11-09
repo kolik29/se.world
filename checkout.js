@@ -9,18 +9,19 @@ window.onload = function() {
             }
         })
         
-    var items = document.getElementsByClassName('checkout-item')
+    // var items = document.getElementsByClassName('checkout-item')
     
-    for (i=0; i<items.length; i++) {
-        var gridXa = Math.floor(Math.random()*3 + 1)
-        var gridYa = Math.floor(Math.random()*3 + 1)
-        items[i].style.gridColumn = gridXa + ' / ' + (gridXa + 3)
-        items[i].style.gridRow = gridYa + ' / ' + (gridYa + 3)
-    }
+    // for (i=0; i<items.length; i++) {
+    //     var gridXa = Math.floor(Math.random()*3 + 1)
+    //     var gridYa = Math.floor(Math.random()*3 + 1)
+    //     items[i].style.gridColumn = gridXa + ' / ' + (gridXa + 3)
+    //     items[i].style.gridRow = gridYa + ' / ' + (gridYa + 3)
+    // }
 
     var bagProducts = document.getElementsByClassName('order-item')
     var total = document.getElementById('total')
     var deliveryCost = document.getElementById('delivery-cost')
+    var delivery = document.getElementById('delivery')
 
     //Update bag
     var updateBag = function() {
@@ -33,12 +34,12 @@ window.onload = function() {
 
         if (priceAll < 200) {
             deliveryCost.innerHTML = '$' + (200 - priceAll) + ' left for free shipping'
-            deliveryCost.style.backgroundColor = '#77B2D6'
-            deliveryCost.style.opacity = '0.5'
+            delivery.style.backgroundColor = '#77B2D6'
+            delivery.style.opacity = '0.5'
         } else {
             deliveryCost.innerHTML = 'Free Express UPS delivery'
-            deliveryCost.style.backgroundColor = '#FFDC00'
-            deliveryCost.style.opacity = '1'
+            delivery.style.backgroundColor = '#FFDC00'
+            delivery.style.opacity = '1'
         }
     }
 

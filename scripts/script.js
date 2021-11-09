@@ -1,6 +1,268 @@
-var url = new URL(location.href);
+var url = new URL(location.href),
+    basket = {};
+
+if (localStorage.getItem('basket') == null)
+    basket = {
+        products: [],
+        full_price: 0,
+        count: 0
+    }
+else
+    basket = JSON.parse(localStorage.getItem('basket'));
+
+if (url.pathname == '/' || url.pathname == '') {
+    post('seworld.products_expected').then(
+        result => {
+            result.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
+            
+            if (result.length)
+                $('#new-element .item-name').text(result[0].name);
+            else
+                $('#new-element .item-name').css({
+                    display: 'none'
+                })
+        },
+        error => {
+            console.log(error)
+        }
+    );
+        
+    post('seworld.products_in_stock').then(
+        result => {
+            $('.grid-container .grid-item:not(#new-element)').remove();
+
+            for (key in result) {
+                try {
+                    $('.grid-container').append($('<a>', {
+                        href: '/product?id=' + result[key].id,
+                        class: 'grid-item'
+                    }).append($('<img>', {
+                        'data-src': result[key].pairs.main_pair[420].image_path,
+                        'data-srcset': getSrcset(result[key].pairs.main_pair),
+                        'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
+                    })).append($('<div>', {
+                        class: 'bubble'
+                    }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
+                        class: 'item-name',
+                        text: result[key].name
+                    })).append($('<div>', {
+                        class: 'price',
+                        text: result[key].price
+                    }))));
+                } catch {}
+            }
+
+            post('seworld.products_out_of_stock').then(
+                result => {
+                    if (Object.keys(result).length)
+                        $('.grid-container').append($('<div>', {
+                            class: 'grid-item archive lazyload',
+                            text: 'Archive 檔案'
+                        }).prepend('<span class="js-archive-closer"></span>'));
+
+                    for (key in result) {
+                        $('.grid-container').append($('<a>', {
+                            href: '/product?id=' + result[key].id,
+                            class: 'grid-item display_none'
+                        }).append($('<img>', {
+                            'data-src': result[key].pairs.main_pair[420].image_path,
+                            'data-srcset': getSrcset(result[key].pairs.main_pair),
+                            'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
+                        })).append($('<div>', {
+                            class: 'bubble'
+                        }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
+                            class: 'item-name',
+                            text: result[key].name
+                        })).append($('<div>', {
+                            class: 'price',
+                            text: result[key].price
+                        }))));
+                    }
+
+                    lazyloadImg();
+
+                    const observer = new MutationObserver(function(mutationsList, observer) {
+                        for (let mutation of mutationsList) {
+                            if (mutation.type === 'attributes') {
+                                if (mutation.attributeName == 'style') {
+                                    $('.grid-item.archive.lazyload').css({
+                                        'opacity': 1
+                                    })
+                                }
+                            }
+                        }
+                    });
+
+                    // Начинаем наблюдение за настроенными изменениями целевого элемента
+                    observer.observe($('.grid-item.archive.lazyload').next('.grid-item').find('img').get(0), {
+                        attributes: true,
+                        childList: false,
+                        subtree: false
+                    });
+                }
+            )
+        },
+        error => {
+            console.log(error)
+        }
+    );
+}
+            
+if (url.pathname == '/product' && url.search != '') {
+    $('body > .wrapper').addClass('preloader-overflow').css({
+        'height': $('body').height(),
+        'max-height': $('body').height(),
+    }).on('scroll', function(e) {
+        e.preventDefault();
+    });
+
+    var currentProductId = Number(url.search.replace('?id=', ''));
+
+    post('seworld.products_in_stock').then(
+        result => {
+            $('#related').empty();
+            $('.slider').empty();
+
+            getProductContent(result, currentProductId);
+
+            lazyloadImg();
+            
+            $('#related').css({
+                opacity: 1
+            });
+            
+            $('.checkout-button.add').on('click', function() {
+                var product_size_obj = $(this).closest('#purchase').find('#size');
+                var image = $(this).data('main-pair');
+
+                addToBasket(
+                    basket,
+                    product_size_obj.data('product-id'),
+                    product_size_obj.data('product-name'),
+                    product_size_obj.data('product-type'),
+                    {
+                        [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
+                    },
+                    product_size_obj.data('price'),
+                    image,
+                    product_size_obj.data('max-count'),
+                    product_size_obj.data('details-main-pair')
+                );
+                basketUpdateTotal();
+                showBasket();
+            });
+
+            post('seworld.products_out_of_stock').then(
+                result => {
+                    if (Object.keys(result).length) {
+                        $('#related').append($('<div>', {
+                            class: 'related-item archive',
+                            text: 'Archive 檔案'
+                        }));
+            
+                        getProductContent(result, currentProductId);
+            
+                        lazyloadImg();
+                        
+                        $('#related').css({
+                            opacity: 1
+                        });
+                    }
+                        
+                    $('.slider').append($('<button>', {
+                        id: 'prev-img'
+                    })).append($('<button>', {
+                        id: 'next-img'
+                    }));
+                },
+                error => {
+                    console.log(error);
+                }
+            );
+        },
+        error => {
+            console.log(error);
+        }
+    );
+}
+
+if (url.pathname == '/checkout') {
+    basket = JSON.parse(localStorage.getItem('basket'));
+
+    $(() => {
+        basket.products.forEach(product => {
+            $('#products').append($('<div>', {
+                class: 'checkout-item'
+            }).css({
+                'grid-column-start': randomInt(1, 3),
+                'grid-row-start': randomInt(1, 3),
+                'grid-column-end': 'span 3',
+                'grid-row-end': 'span 3',
+                'data-product-id': product.id
+            }).append($('<img>', {
+                'data-src': product.details_main_pair
+            })));
+        });
+
+        lazyloadImg();
+    })
+}
+
+function randomInt(min, max) {
+    let rand = min + Math.random() * (max + 1 - min);
+    return Math.floor(rand)
+}
+
+function sliderSwipe() {
+    $('body').on('click', 'a.related-item .bubble', function(e) {
+        e.preventDefault();
+    })
+
+    let touchCoords = [];
+
+    $('.slider').on('touchmove', function(e) {
+        touchCoords.push([
+            e.originalEvent.targetTouches[0].clientX,
+            e.originalEvent.targetTouches[0].clientY
+        ])
+    })
+    
+    $('.slider').on('touchend', function() {
+        let touchCoordsHalfLength = Math.trunc(touchCoords.length / 2), firstCoord = [0, 0], lastCoord = [0, 0];
+
+        for (let i = 0; i < touchCoordsHalfLength; i++) {
+            firstCoord[0] += touchCoords[i][0];
+            firstCoord[1] += touchCoords[i][1];
+        }
+
+        for (let i = touchCoordsHalfLength; i < touchCoordsHalfLength * 2; i++) {
+            lastCoord[0] += touchCoords[i][0];
+            lastCoord[1] += touchCoords[i][1];
+        }
+
+        firstCoord = [firstCoord[0] / touchCoordsHalfLength, firstCoord[1] / touchCoordsHalfLength];
+        lastCoord = [lastCoord[0] / touchCoordsHalfLength, lastCoord[1] / touchCoordsHalfLength];
+
+        if (Math.abs(firstCoord[0] - lastCoord[0]) > Math.abs(firstCoord[1] - lastCoord[1])) {
+            if (firstCoord[0] > lastCoord[0])
+                $('#next-img').trigger('click');
+            
+            if (firstCoord[0] < lastCoord[0])
+                $('#prev-img').trigger('click');
+        }
+        
+        touchCoords = [];
+    })
+}
 
 $(() => {
+    sliderSwipe();
+
+    $('body').on('click', '.grid-item.archive', function() {
+        $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');
+    })
+
+    showBasket();
     bodyPosition();
 
     $('.rotating-icon').on('click', function() {
@@ -37,171 +299,6 @@ $(() => {
         })
     }
 
-    var basket = {};
-
-    if (localStorage.getItem('basket') == null)
-        basket = {
-            products: [],
-            full_price: 0,
-            count: 0
-        }
-    else {
-        basket = JSON.parse(localStorage.getItem('basket'));
-        showBasket();
-    }
-
-    if (url.pathname == '/' || url.pathname == '') {
-        post('seworld.products_expected').then(
-            result => {
-                result.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
-                
-                if (result.length)
-                    $('#new-element .item-name').text(result[0].name);
-                else
-                    $('#new-element .item-name').css({
-                        display: 'none'
-                    })
-            },
-            error => {
-                console.log(error)
-            }
-        );
-            
-        post('seworld.products_in_stock').then(
-            result => {
-                $('.grid-container .grid-item:not(#new-element)').remove();
-
-                for (key in result) {
-                    try {
-                        $('.grid-container').append($('<a>', {
-                            href: '/product?id=' + result[key].id,
-                            class: 'grid-item'
-                        }).append($('<img>', {
-                            'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
-                            'data-srcset': getSrcset(result[key].pairs.main_pair),
-                            'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
-                        })).append($('<div>', {
-                            class: 'bubble'
-                        }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
-                            class: 'item-name',
-                            text: result[key].name
-                        })).append($('<div>', {
-                            class: 'price',
-                            text: result[key].price
-                        }))));
-                    } catch {}
-                }
-
-                post('seworld.products_out_of_stock').then(
-                    result => {
-                        if (Object.keys(result).length)
-                            $('.grid-container').append($('<div>', {
-                                class: 'grid-item archive',
-                                text: 'Archive 檔案'
-                            }));
-
-                        for (key in result) {
-                            $('.grid-container').append($('<a>', {
-                                href: '/product?id=' + result[key].id,
-                                class: 'grid-item'
-                            }).append($('<img>', {
-                                'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
-                                'data-srcset': getSrcset(result[key].pairs.main_pair),
-                                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
-                            })).append($('<div>', {
-                                class: 'bubble'
-                            }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
-                                class: 'item-name',
-                                text: result[key].name
-                            })).append($('<div>', {
-                                class: 'price',
-                                text: result[key].price
-                            }))));
-                        }
-
-                        lazyloadImg();
-                    }
-                )
-            },
-            error => {
-                console.log(error)
-            }
-        );
-    }
-            
-    if (url.pathname == '/product' && url.search != '') {
-        $('body > .wrapper').addClass('preloader-overflow').css({
-            'height': $('body').height(),
-            'max-height': $('body').height(),
-        }).on('scroll', function(e) {
-            e.preventDefault();
-        });
-
-        var currentProductId = Number(url.search.replace('?id=', ''));
-
-        post('seworld.products_in_stock').then(
-            result => {
-                $('#related').empty();
-                $('.slider').empty();
-
-                getProductContent(result, currentProductId);
-
-                lazyloadImg();
-                
-                $('#related').css({
-                    opacity: 1
-                });
-                
-                $('.slider').append($('<button>', {
-                    id: 'prev-img'
-                })).append($('<button>', {
-                    id: 'next-img'
-                }));
-                
-                $('.checkout-button.add').on('click', function() {
-                    var product_size_obj = $(this).closest('#purchase').find('#size');
-                    var image = $(this).data('main-pair');
-
-                    addToBasket(
-                        basket,
-                        product_size_obj.data('product-id'),
-                        product_size_obj.data('product-name'),
-                        product_size_obj.data('product-type'),
-                        {
-                            [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
-                        },
-                        product_size_obj.data('price'),
-                        image,
-                        product_size_obj.data('max-count')
-                    );
-                    basketUpdateTotal();
-                    showBasket();
-                });
-            },
-            error => {
-                console.log(error);
-            }
-        );
-    }
-
-    if (url.pathname == '/checkout') {
-        basket = JSON.parse(localStorage.getItem('basket'));
-
-        console.log(basket)
-
-        basket.products.forEach(item => {
-            $('#products').append($('<img>', {
-                class: 'checkout-item',
-                'data-src': item.main_pair[420].image_path.replace('http://', 'https://'),
-                'data-srcset': getSrcset(item.main_pair),
-                'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px',
-                'data-product-id': item.id
-            }));
-        });
-
-        lazyloadImg();
-    }
-
     $('body').on('click', '#order-list .order-item .plus, #order-list .order-item .minus', function() {
         var order_item = $(this).closest('.order-item');
 
@@ -216,6 +313,7 @@ $(() => {
             order_item.data('product-price'),
             [],
             order_item.data('max-count'),
+            '',
             $(this).hasClass('minus')
         );
         basketUpdateTotal();
@@ -253,7 +351,12 @@ $(() => {
 
         if (formSubmit) {
             basket = JSON.parse(localStorage.getItem('basket'));
-            data = Object.assign(basket, { customer: customer });
+            data = Object.assign(basket, { customer: customer, custom_shipping: {
+                "delivery_name": "UPS Express®",
+                "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
+                "delivery_price": (parseInt(basket.full_price.match(/\d+/)) < 200) ? 20 : 0,
+                "payment_id": 21
+            }});
 
             post('seworld.create_order', data).then(
                 result => {
@@ -309,6 +412,7 @@ $(() => {
             
             post('seworld.products_in_stock').then(
                 result => {
+                    console.log(result[key])
                     prevRelatedItem.find('.bubble').remove();
                     prevRelatedItem.find('.triangle-mobile').remove();
                     prevRelatedItem.append($('<div>', {
@@ -370,13 +474,15 @@ function updateBag() {
         })
 
         if (priceAll < 200) {
-            $('#delivery-cost').text('$' + (200 - priceAll) + ' left for free shipping').css({
+            $('#delivery-cost').text('$' + (200 - priceAll) + ' left for free shipping');
+            $('#delivery').css({
                 'background-color': '#77B2D6',
                 'opacity': '0.5'
             })
             priceAll += 20;
         } else {
-            $('#delivery-cost').text('Free Express UPS delivery').css({
+            $('#delivery-cost').text('Free Express UPS delivery');
+            $('#delivery').css({
                 'background-color': '#FFDC00',
                 'opacity': '1'
             })
@@ -500,7 +606,7 @@ function showBasket() {
     }
 }
 
-function addToBasket(basket, product_id, product_name, product_type, size, price, image, max_count, remove = false) {
+function addToBasket(basket, product_id, product_name, product_type, size, price, image, max_count, details_main_pair = '', remove = false) {
     var addProduct = true;
 
     if (basket.products.length > 0) {
@@ -509,8 +615,6 @@ function addToBasket(basket, product_id, product_name, product_type, size, price
                 if (JSON.stringify(product.variation) == JSON.stringify(size)) {
                     if (remove) {
                         basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
-
-                        console.log($('.checkout-wrapper #products .checkout-item[data-product-id=' + basket.products[id].id + ']').eq(0))
 
                         if (basket.products[id].basket_count <= 0)
                             $('.checkout-wrapper #products .checkout-item[data-product-id=' + basket.products[id].id + ']').eq(0).remove()
@@ -534,7 +638,8 @@ function addToBasket(basket, product_id, product_name, product_type, size, price
             variation: size,
             price: price,
             main_pair: image,
-            count: max_count
+            count: max_count,
+            details_main_pair: details_main_pair
         });
 
     localStorage.setItem('basket', JSON.stringify(basket));
@@ -560,10 +665,10 @@ function slider() {
     let url = new URL(location.href);
 
     if (url.hash != '') {
-        if (url.hash.includes('#slide-')) {
-            $('#indicator .line').eq(Number(url.hash.replace('#slide-', '')) - 1).addClass('line-selected')
-        }
-    }
+        if (url.hash.includes('#slide-'))
+            $('#indicator .line').eq(Number(url.hash.replace('#slide-', '')) - 1).addClass('line-selected');
+    } else
+        $('#indicator .line').first().addClass('line-selected');
 
     $('body').on('click', '#prev-img', () => {
         let currentIndicator = $('#indicator .line.line-selected');
@@ -667,26 +772,52 @@ function slider() {
     purchase.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
 }
 
-function lazyloadImg(i = 0) {
+function lazyloadImg(i = 0, callback = '') {
     let images = $('img[data-src]');
 
     images.eq(i)
     .attr('src', images.eq(i).data('src'))
     .on('load', function() {
-        $(this)
-        .off('load')
-        .css({
-            opacity: 1
-        })
-        // .attr('width', $(this).width())
-        // .attr('height', $(this).height())
-        .attr('srcset', $(this).data('srcset'))
-        .addClass('loaded');
+        if ($(this).data('srcset')) {
+            let srcset = [],
+                dataSrcset = $(this).data('srcset'),
+                dataSrcsetKeys = Object.keys(dataSrcset);
 
-        i++;
+            dataSrcsetKeys.forEach(item => {
+                if (!isNaN(Number(item))) {
+                    if (Number(item) < Math.trunc($(this).width())) {
+                        srcset.push(dataSrcset[item].image_path + ' ' + item + 'w');
+                    }
+                }
+            });
 
-        if (i < images.length)
-            lazyloadImg(i);
+            $(this)
+            .off('load')
+            .css({
+                opacity: 1
+            })
+            .attr('width', Math.trunc($(this).width()))
+            .attr('height', Math.trunc($(this).height()))
+            .attr('srcset', srcset.join(', '))
+            .addClass('loaded');
+
+            if ($(window).width() < 768 && $(this).closest('grid-item'))
+                $(this).next('.bubble').css({
+                    'opacity': 1
+                });
+
+            i++;
+
+            if (i < images.length)
+                lazyloadImg(i, callback);
+            else {
+                if (callback != '')
+                    try {
+                        callback();
+                    } catch {}
+                    
+            }
+        }
     });
 }
 
@@ -706,9 +837,9 @@ function getProductContent(result, currentProductId, related = false) {
                     class: 'related-item item-selected',
                     href: '/product?id=' + result[key].id
                 }).append($('<img>', {
-                    'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
+                    'data-src': result[key].pairs.main_pair[420].image_path,
                     'data-srcset': getSrcset(result[key].pairs.main_pair),
-                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                 })).append($('<div>', {
                     class: 'bubble'
                 }).append($('<div>', {
@@ -728,6 +859,24 @@ function getProductContent(result, currentProductId, related = false) {
                     // html: textSplit(img_desk)
                 })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
                 .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'));
+
+                const observer = new MutationObserver(function(mutationsList, observer) {
+                    for (let mutation of mutationsList) {
+                        if (mutation.type === 'attributes') {
+                            if (mutation.attributeName == 'style') {
+                                $('.related-item.item-selected .bubble').css({
+                                    'opacity': 1
+                                })
+                            }
+                        }
+                    }
+                });
+
+                observer.observe($('.related-item.item-selected img').get(0), {
+                    attributes: true,
+                    childList: false,
+                    subtree: false
+                });
             } else {
                 $('.related-item.item-selected .bubble').remove();
                 $('.related-item.item-selected').append($('<div>', {
@@ -760,9 +909,9 @@ function getProductContent(result, currentProductId, related = false) {
                 $('.slider').append($('<figure>', {
                     class: 'slider-item'
                 }).append($('<img>', {
-                    'data-src': result[key].pairs.pairs[img_key][420].image_path.replace('http://', 'https://'),
+                    'data-src': result[key].pairs.pairs[img_key][420].image_path,
                     'data-srcset': getSrcset(result[key].pairs.pairs[img_key]),
-                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                    'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                 })).append($('<figcaption>', {
                     class: 'description',
                     text: result[key].pairs.descriptions[i]
@@ -786,7 +935,8 @@ function getProductContent(result, currentProductId, related = false) {
                     'data-price': result[key].price,
                     'data-product-name': result[key].name,
                     'data-max-count': result[key].count,
-                    'data-product-type': result[key].type
+                    'data-product-type': result[key].type,
+                    'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
                 }))
             } else {
                 let sizes = Object.keys(result[key].variations),
@@ -801,7 +951,8 @@ function getProductContent(result, currentProductId, related = false) {
                         'data-price': result[key].price,
                         'data-product-name': result[key].name,
                         'data-max-count': result[key].variations[sizes[0]].count,
-                        'data-product-type': result[key].type
+                        'data-product-type': result[key].type,
+                        'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
                     })).append($('<div>', {
                         class: 'size-arrow',
                         text: '^'
@@ -815,7 +966,8 @@ function getProductContent(result, currentProductId, related = false) {
                         'data-variation-id': result[key].id,
                         'data-price': result[key].price,
                         'data-product-name': result[key].name,
-                        'data-max-count': result[key].count
+                        'data-max-count': result[key].count,
+                        'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
                     }));
                 } else {
                     let variationSizeLetter = Object.keys(result[key].variations)[0];
@@ -832,7 +984,8 @@ function getProductContent(result, currentProductId, related = false) {
                             'data-price': result[key].price,
                             'data-product-name': result[key].name,
                             'data-max-count': result[key].variations[sizes[0]].count,
-                            'data-product-type': result[key].type
+                            'data-product-type': result[key].type,
+                            'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
                         })).append($('<div>', {
                             class: 'size-arrow',
                             text: '^'
@@ -851,7 +1004,8 @@ function getProductContent(result, currentProductId, related = false) {
                                 'data-variation-id': result[key].variations[variation_key].product_id,
                                 'data-price': result[key].price,
                                 'data-product-name': result[key].name,
-                                'data-max-count': result[key].variations[variation_key].count
+                                'data-max-count': result[key].variations[variation_key].count,
+                                'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
                             }));
                     });
             }
@@ -879,9 +1033,9 @@ function getProductContent(result, currentProductId, related = false) {
                         class: 'related-item',
                         href: '/product?id=' + result[key].id
                     }).append($('<img>', {
-                        'data-src': result[key].pairs.main_pair[420].image_path.replace('http://', 'https://'),
+                        'data-src': result[key].pairs.main_pair[420].image_path,
                         'data-srcset': getSrcset(result[key].pairs.main_pair),
-                        'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, (max-width: 1600px) 1600px'
+                        'sizes': '(max-width: 420px) 420px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                     })).append($('<div>', {
                         class: 'bubble'
                     }).append($('<div>', {
@@ -894,13 +1048,15 @@ function getProductContent(result, currentProductId, related = false) {
             }
         }
 
-    lazyloadImg();
+    lazyloadImg(0, () => {
+        $(window).scrollTop($('.related-item.item-selected').offset().top - (($(window).height() / 2) - ($('.related-item.item-selected').height() / 2)));
+    });
 }
 
 function getSrcset(pair) {
     if ((typeof pair == 'array' && pair.length > 0) || (typeof pair == 'object' && Object.keys(pair).length > 0))
         if (pair[420].image_path != undefined)
-            return pair[420].image_path.replace('http://', 'https://') + ' 420w, ' + pair[800].image_path.replace('http://', 'https://') + ' 800w, ' + pair[1200].image_path.replace('http://', 'https://') + ' 1200w, ' + pair[1600].image_path.replace('http://', 'https://') + ' 1600w';
+            return JSON.stringify(pair);
             
     return undefined;
 }

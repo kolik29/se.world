@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="scripts/jquery-3.6.0.min.js"></script>
+    <title>Order success</title>
+    
     <link rel="stylesheet" href="style.css">
-    <title>Signature Element</title>
-
-    <script src="scripts/ajax.js"></script>
-    <script src="preloader.js"></script>
-    <script src="scripts/script.js"></script>
+    <link rel="stylesheet" href="css/success-order.css">
+    
+    <script src="scripts/jquery-3.6.0.min.js"></script>
+    <script src="scripts/order-success.js"></script>
 </head>
 <body>
     <header>
@@ -51,8 +51,20 @@
         </div>
     </header>
     <div class="grid-container">
-        <div class="grid-item" id="archive">Archive 檔案</div>
+        <div class="order-success">
+            <h1>Order 命令 #<span id="order_id"></span></h1>
+
+            <div class="order-success__body">
+                <div>Dear, <span id="customer_name"></span>, thank you for purchase!</div>
+                <div>You order will be shipped to <span id="customer_address"></span> within <span id="delivery_time"></span> days.</div>
+            </div>
+
+            <div class="order-success__footer">
+                <div>SE you again. <a href="/">Back to shop</a></div>
+            </div>
+        </div>
     </div>
-</body>
+
     <script src="script.js?1"></script>
+</body>
 </html>

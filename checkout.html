@@ -10,6 +10,9 @@
     <script src="scripts/jquery-3.6.0.min.js"></script>
     <script src="scripts/ajax.js"></script>
     <script src="scripts/script.js"></script>
+
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=6b5c7a6d-4b7b-4150-ac66-e879dc5bf9f5" type="text/javascript"></script>
+    <script src="scripts/geoposition.js"></script>
 </head>
 <body>
     <header>
@@ -26,22 +29,25 @@
                 Express UPS: $20 (Free over $200)
             </p>
             <p class="continents">
-                Europe | North America <span class="ship-days">2 days</span> <br>
-                Asia Pacific | Middle East <span class="ship-days">4 days</span> <br>
-                South America | Africa | Islands <span class="ship-days">6 days</span>
+                Europe | Asia | North America  <span class="ship-days">3 days</span> <br>
+                South America | Middle East | Africa | Australia <span class="ship-days">6 days</span> <br>
             </p>
             <p class="payment-info">
-                Order payment: Debit/Credit card <br>
-                [via 3-D Secure protocol]
+                *Free shipping for all orders from Russia! <br>
+                Moscow | Saint Petersburg 3 days <br>
+                The rest of Russia 6 days <br>
+                Order payment online: Debit | Credit card (via Stripe)
             </p>
         </div>
         <form class="bag-items">
             <div id="order-list">
-                <div id="delivery-cost"></div>
+                <div id="delivery">
+                    <span id="delivery-cost"></span>&nbsp;<span id="delivery-time"></span>
+                </div>
             </div>
             <div class="input-wrapper">
                 <input type="text" placeholder="Country" name="country">
-                <input type="text" placeholder="State" name="state">
+                <input type="text" placeholder="City" name="state">
                 <input type="text" placeholder="Street" name="street">
                 <input type="text" placeholder="Building" name="building">
                 <input type="text" placeholder="Apartment/Office" name="apartment">
@@ -55,7 +61,7 @@
             </div>
         </form>
         <div class="about-wrapper">
-            <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="policy">Terms & Policy.</a></p>
+            <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="/policy.html">Terms & Policy.</a></p>
         </div>
     </div>
 </body>

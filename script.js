@@ -27,10 +27,12 @@ function setup() {
     // images[0] = loadImage(urlImg);
 
     var i = 0;
-    preloaderData.images.forEach(item => {
-        images[i] = loadImage(item);
-        i++;
-    })
+    try {
+        preloaderData.images.forEach(item => {
+            images[i] = loadImage(item);
+            i++;
+        })
+    } catch {}
 }
         function windowResized() {
             resizeCanvas(container.offsetWidth, container.offsetHeight);
