@@ -1238,7 +1238,6 @@ img[data-src] {
 }
 
 .policy-text {
-    color: #000;
     padding: 0 15px;
 }
 
@@ -1406,6 +1405,10 @@ body > .wrapper {
     height: 100%;
 }
 
+.grid-item.archive .js-archive-closer {
+    margin-right: .5rem;
+}
+
 .grid-item.archive .js-archive-closer:after {
     content: '+';
 }
@@ -1446,4 +1449,8 @@ body > .wrapper {
 
 .contacts a:hover {
     opacity: 0.5;
+}
+
+.checkout-wrapper .input-wrapper input {
+    font-family: 'Helvetica';
 }

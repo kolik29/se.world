@@ -154,12 +154,7 @@ if (url.pathname == '/product' && url.search != '') {
 
             post('seworld.products_out_of_stock').then(
                 result => {
-                    if (Object.keys(result).length) {
-                        $('#related').append($('<div>', {
-                            class: 'related-item archive',
-                            text: 'Archive 檔案'
-                        }));
-            
+                    if (Object.keys(result).length) {            
                         getProductContent(result, currentProductId);
             
                         lazyloadImg();
@@ -396,7 +391,6 @@ $(() => {
         e.preventDefault();
 
         if (!$(e.target).hasClass('bubble'), $(e.target).closest('.bubble').length == 0) {
-            console.log($(this).find('img'))
             $(this).find('img').removeAttr('data-src');
 
             let prevRelatedItem = $('#related a.related-item.item-selected');
@@ -412,7 +406,9 @@ $(() => {
             
             post('seworld.products_in_stock').then(
                 result => {
-                    console.log(result[key])
+                    let resultKeys = Object.keys(result);
+                    key = resultKeys[resultKeys.length - 1];
+                    
                     prevRelatedItem.find('.bubble').remove();
                     prevRelatedItem.find('.triangle-mobile').remove();
                     prevRelatedItem.append($('<div>', {
@@ -785,9 +781,9 @@ function lazyloadImg(i = 0, callback = '') {
 
             dataSrcsetKeys.forEach(item => {
                 if (!isNaN(Number(item))) {
-                    if (Number(item) < Math.trunc($(this).width())) {
+                    // if (Number(item) < Math.trunc($(this).width())) {
                         srcset.push(dataSrcset[item].image_path + ' ' + item + 'w');
-                    }
+                    // }
                 }
             });
 
