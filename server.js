@@ -26,23 +26,25 @@ class Preloader {
                 fs.writeFileSync('preloader.js', `var preloaderData = undefined; try { module.exports.preloaderData = preloaderData; } catch {}`);
                 this.online = false;
             } else {
-                pendingProduct.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
-                let preloaderImages = [pendingProduct[0].preloader_main_pair.detailed.image_path];
+                if (Object.keys(pendingProduct[0].preloader_main_pair).length) {
+                    pendingProduct.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
+                    let preloaderImages = [pendingProduct[0].preloader_main_pair.detailed.image_path];
 
-                Object.keys(pendingProduct[0].preloader_image_pairs).forEach((key) => {
-                    preloaderImages.push(pendingProduct[0].preloader_image_pairs[key].detailed.image_path);
-                })
+                    Object.keys(pendingProduct[0].preloader_image_pairs).forEach((key) => {
+                        preloaderImages.push(pendingProduct[0].preloader_image_pairs[key].detailed.image_path);
+                    })
 
-                preloader = JSON.stringify({
-                    name: pendingProduct[0].name,
-                    date: pendingProduct[0].date,
-                    images: preloaderImages
-                });
+                    preloader = JSON.stringify({
+                        name: pendingProduct[0].name,
+                        date: pendingProduct[0].date,
+                        images: preloaderImages
+                    });
 
-                fs.writeFileSync('preloader.js', `var preloaderData = ${preloader}; try { module.exports.preloaderData = preloaderData; } catch {}`);
-                
-                console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
-                this.online = true;
+                    fs.writeFileSync('preloader.js', `var preloaderData = ${preloader}; try { module.exports.preloaderData = preloaderData; } catch {}`);
+                    
+                    console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
+                    this.online = true;
+                }
             }
         });
     }
