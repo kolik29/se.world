@@ -9,14 +9,11 @@ const expressHbs = require('express-handlebars');
 const hbs = require('hbs');
 
 const app = express();
-const hostname = 'testcs.se.world';
-const port = 3001;
-
-const webp=require('webp-converter');
 
 const webp=require('webp-converter');
 
 var preloaderData = require('./preloader');
+var serverConfig = require('./server-config.js');
 
 class Preloader {
     online = false;
@@ -192,6 +189,7 @@ app.engine(
 );
 app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/');
+app.set('views', path.join(__dirname, 'views'));
 
 webp.grant_permission();
 
@@ -232,6 +230,6 @@ function setRoutes() {
     });
 }
 
-app.listen(port, () => {
-    console.log(`Server running at https://${hostname}:${port}/`);
+app.listen(serverConfig.config.port, () => {
+    console.log(`Server running at https://${serverConfig.config.hostname}:${serverConfig.config.port}/`);
 });
