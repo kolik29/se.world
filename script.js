@@ -106,6 +106,8 @@ function setup() {
             })
             preloader.addEventListener('wheel', function() {
                 hidePreloader()
+            }, {
+                passive: true
             })
         } catch {}
         
