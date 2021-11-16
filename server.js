@@ -19,7 +19,7 @@ class Preloader {
     online = false;
 
     update() {
-        post('testcsse.madfrenzy.com', 'seworld.products_expected', pendingProduct => {
+        post('se.madfrenzy.com', 'seworld.products_expected', pendingProduct => {
             var preloader;
 
             if (pendingProduct[0] == undefined) {
@@ -192,7 +192,7 @@ app.engine(
     })
 );
 app.set('view engine', 'hbs');
-hbs.registerPartials(path.join(__dirname));
+hbs.registerPartials(__dirname + '/');
 app.set('views', path.join(__dirname, 'views'));
 
 webp.grant_permission();
