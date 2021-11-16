@@ -32,15 +32,15 @@ window.onload = function() {
             priceAll = priceAll + parseInt(prices[i].innerHTML) * parseInt(products[i].innerHTML)
         }
 
-        if (priceAll < 200) {
-            deliveryCost.innerHTML = '$' + (200 - priceAll) + ' left for free shipping'
-            delivery.style.backgroundColor = '#77B2D6'
-            delivery.style.opacity = '0.5'
-        } else {
-            deliveryCost.innerHTML = 'Free Express UPS delivery'
-            delivery.style.backgroundColor = '#FFDC00'
-            delivery.style.opacity = '1'
-        }
+        // if (priceAll < 200) {
+        //     deliveryCost.innerHTML = '$' + (200 - priceAll) + ' left for free shipping'
+        //     delivery.style.backgroundColor = '#77B2D6'
+        //     delivery.style.opacity = '0.5'
+        // } else {
+        //     deliveryCost.innerHTML = 'Free Express UPS delivery'
+        //     delivery.style.backgroundColor = '#FFDC00'
+        //     delivery.style.opacity = '1'
+        // }
     }
 
     //Update quantity
