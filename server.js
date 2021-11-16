@@ -9,12 +9,11 @@ const expressHbs = require('express-handlebars');
 const hbs = require('hbs');
 
 const app = express();
-const hostname = 'testcs.se.world';
-const port = 3001;
 
-const webp=require('webp-converter');
+const webp = require('webp-converter');
 
 var preloaderData = require('./preloader');
+var serverConfig = require('./server-config.js');
 
 class Preloader {
     online = false;
@@ -183,13 +182,18 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.engine(
     'hbs',
     expressHbs({
-        layoutsDir: '/',
+        extname:'hbs',
+        layoutsDir: path.join(__dirname, 'views'),
         defaultLayout: false,
-        extname: 'hbs',
+        helpers: __dirname,
+        partialsDir: [
+            __dirname
+        ]
     })
 );
 app.set('view engine', 'hbs');
-hbs.registerPartials(__dirname + '/');
+hbs.registerPartials(path.join(__dirname));
+app.set('views', path.join(__dirname, 'views'));
 
 webp.grant_permission();
 
@@ -206,7 +210,7 @@ function setRoutes() {
             let name = image.split('/');
             name = name[name.length - 1];
     
-            const result = webp.cwebp(image, 'images/' + name.split('.')[0] + '.webp', "-q 10", logging="-v");
+            const result = webp.cwebp(image, path.join(__dirname, 'images/' + name.split('.')[0] + '.webp'), "-q 10", logging="-v");
             result.then((response) => {
                 console.log(response);
             });
@@ -230,6 +234,6 @@ function setRoutes() {
     });
 }
 
-app.listen(port, () => {
-    console.log(`Server running at https://${hostname}:${port}/`);
+app.listen(serverConfig.config.port, () => {
+    console.log(`Server running at https://${serverConfig.config.hostname}:${serverConfig.config.port}/`);
 });
