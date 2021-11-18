@@ -41,7 +41,6 @@ function setup() {
         var i = 0;
         function mouseMoved() {
             if (i<images.length) {
-                console.log(images)
                 getSize(images[Math.trunc(i)], (width, height) => {
                     preloaderImgWidth = width / 2;
                     preloderImgHeight = height / 2;
@@ -165,11 +164,13 @@ function countdownDate(name, date) {
             
             var countdown = document.getElementsByClassName('countdown')
 
-            // Display the result in the element with id="demo"
-            countdown[0].innerHTML = 'Drop in ' + days + "d " + hours + "h "
-            + minutes + "m " + seconds + "s " + milliseconds + 'ms';
-            countdown[1].innerHTML = 'Drop in ' + days + "d " + hours + "h "
-            + minutes + "m " + seconds + "s " + milliseconds + 'ms';
+            try {
+                // Display the result in the element with id="demo"
+                countdown[0].innerHTML = 'Drop in ' + days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s " + milliseconds + 'ms';
+                countdown[1].innerHTML = 'Drop in ' + days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s " + milliseconds + 'ms';
+            } catch {}
             
             // If the count down is finished, write some text
             if (distance < 0) {
