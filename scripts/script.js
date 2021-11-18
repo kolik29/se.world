@@ -515,26 +515,6 @@ $(() => {
                     })).append($('<button>', {
                         id: 'next-img'
                     }));
-                    
-                    // $('.checkout-button.add').on('click', function() {
-                    //     var product_size_obj = $(this).closest('#purchase').find('#size');
-                    //     var image = $(this).data('main-pair');
-
-                    //     addToBasket(
-                    //         basket,
-                    //         product_size_obj.data('product-id'),
-                    //         product_size_obj.data('product-name'),
-                    //         product_size_obj.data('product-type'),
-                    //         {
-                    //             [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
-                    //         },
-                    //         product_size_obj.data('price'),
-                    //         image,
-                    //         product_size_obj.data('max-count')
-                    //     );
-                    //     basketUpdateTotal();
-                    //     showBasket();
-                    // });
 
                     post('seworld.products_out_of_stock').then(
                         result => {
@@ -670,10 +650,7 @@ function showBasket() {
             $('.order-item').remove();
             $('#counter').text(basket.count);
 
-            // if (Number(basket.full_price.replace(/[^\d]/g, '')) < 200)
-            //     $('#total').text('$' + (Number(basket.full_price.replace(/[^\d]/g, '')) + 20));
-            // else
-                $('#total').text('$' + Number(basket.full_price.replace(/[^\d]/g, '')));
+            $('#total').text('$' + Number(basket.full_price.replace(/[^\d]/g, '')));
 
             basket.products.forEach(product => {
                 var size = Object.keys(product.variation)[0];
@@ -863,41 +840,43 @@ function slider() {
 function lazyloadImg(i = 0, callback = '') {
     let images = $('img[data-src]');
 
-    images.eq(i)
-    .attr('width', Math.trunc(images.eq(i).width()))
-    .attr('height', Math.trunc(images.eq(i).height()))
-    .attr('src', images.eq(i).data('src'))
-    .on('load', function() {
-        $(this)
-        .off('load')
-        .css({
-            opacity: 1
-        })
-        .addClass('loaded');
+    try {
+        images.eq(i)
+        .attr('width', Math.trunc(images.eq(i).width()))
+        .attr('height', Math.trunc(images.eq(i).height()))
+        .attr('src', images.eq(i).data('src'))
+        .on('load', function() {
+            $(this)
+            .off('load')
+            .css({
+                opacity: 1
+            })
+            .addClass('loaded');
 
-        if ($(window).width() < 768 && $(this).closest('grid-item'))
-            $(this).next('.bubble').css({
-                'opacity': 1
-            });
+            if ($(window).width() < 768 && $(this).closest('grid-item'))
+                $(this).next('.bubble').css({
+                    'opacity': 1
+                });
 
-        i++;
+            i++;
 
-        if (i < images.length)
-            lazyloadImg(i, callback);
-        else {
-            if (callback != '')
-                try {
-                    callback();
-                } catch {}
-        }
-    });
+            if (i < images.length)
+                lazyloadImg(i, callback);
+            else {
+                if (callback != '')
+                    try {
+                        callback();
+                    } catch {}
+            }
+        });
+    } catch {}
 }
 
 function srcConvert(src) {
     if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
-        return src.image_path + '?store_access_key=cs';
+        return src.image_path + '?store_access_key=csse';
     else
-        return 'images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
+        return 'images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp' + '?store_access_key=csse';
 }
 
 function getProductContent(result, currentProductId, related = false) {
@@ -1027,7 +1006,7 @@ function getProductContent(result, currentProductId, related = false) {
                 $('.slider').append($('<figure>', {
                     class: 'slider-item'
                 }).append($('<img>', {
-                    'data-src': result[key].pairs.pairs[img_key]['1600'].image_path,
+                    'data-src': srcConvert(result[key].pairs.pairs[img_key]['1600']),
                     // 'data-srcset': getSrcset(result[key].pairs.pairs[img_key]),
                     // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                 })).append($('<figcaption>', {

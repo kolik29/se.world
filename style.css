@@ -1470,7 +1470,6 @@ body > .wrapper {
     position: fixed;
     top: 0;
     right: 0;
-    display: none !important;
 }
 
 .swiper-related {
@@ -1513,4 +1512,14 @@ body > .wrapper {
         height: calc(12 * var(--vh)) !important;
         width: auto !important;
     }
+}
+
+.rotating-icon {
+    width: 9vw;
+    padding-bottom: 9.6%;
+    position: relative;
+}
+
+.rotating-icon #cart {
+    position: absolute;
 }

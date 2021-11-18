@@ -19,6 +19,7 @@ $(() => {
     }
 
     $('.input-wrapper input[name="country"]').on('change, keyup', function() {
+		console.log($(this).val())
         let country = countries_data.find(__country => __country.name.toLowerCase() == $(this).val().trim().toLowerCase());
 
         if (country == undefined)
@@ -47,8 +48,9 @@ $(() => {
                 })
             } else {
                 $('.input-wrapper input[name="country"]').data('country-code', '');
-                updateBag();
             }
+
+			updateBag();
         }
     })
 })
