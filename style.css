@@ -1515,11 +1515,27 @@ body > .wrapper {
 }
 
 .rotating-icon {
-    width: 9vw;
-    padding-bottom: 9.6%;
+    width: 3.5vw;
     position: relative;
+}
+
+@media (orientation: portrait) {
+    .rotating-icon {
+        width: 9vw;
+    }
 }
 
 .rotating-icon #cart {
     position: absolute;
+}
+
+.rotating-icon #about {
+    height: 0;
+    padding-top: 100%;
+}
+
+.rotating-icon #about span {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }
