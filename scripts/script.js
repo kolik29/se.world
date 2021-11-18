@@ -37,7 +37,7 @@ if (url.pathname == '/' || url.pathname == '') {
                         href: '/' + result[key].seo_name,
                         class: 'grid-item'
                     }).append($('<img>', {
-                        'data-src': result[key].pairs.main_pair['1600'].image_path,
+                        'data-src': srcConvert(result[key].pairs.main_pair['1600']),
                         // 'data-srcset': getSrcset(result[key].pairs.main_pair),
                         // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                     })).append($('<div>', {
@@ -65,7 +65,7 @@ if (url.pathname == '/' || url.pathname == '') {
                             href: '/' + result[key].seo_name,
                             class: 'grid-item display_none'
                         }).append($('<img>', {
-                            'data-src': result[key].pairs.main_pair['1600'].image_path,
+                            'data-src': srcConvert(result[key].pairs.main_pair['1600']),
                             // 'data-srcset': getSrcset(result[key].pairs.main_pair),
                             // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                         })).append($('<div>', {
@@ -170,8 +170,6 @@ function productPage() {
             
                         if (currentProductId)
                             currentProductId = currentProductId.id;
-
-                        console.log(typeof result, currentProductId)
                
                         getProductContent(result, currentProductId);
             
@@ -269,6 +267,15 @@ function sliderSwipe() {
 }
 
 $(() => {
+    $('input[name="phone"]').on('keydown', function(e) {
+        if ("1234567890".indexOf(e.key) == -1 && (e.key != 'Backspace' && e.key != 'Delete' && e.key != 'ArrowRight' && e.key != 'ArrowLeft'))
+            e.preventDefault();
+    });
+    
+    $('input[name="phone"]').on('change', function() {
+        $(this).val($(this).val().replace(/\D/, ''));
+    });
+
     if ($('body.product-page').length)
         productPage();
 
@@ -854,33 +861,12 @@ function slider() {
 }
 
 function lazyloadImg(i = 0, callback = '') {
-    let images = $('img[data-src]'),
-        // srcset = [],
-        // dataSrcset = images.eq(i).data('srcset'),
-        // dataSrcsetKeys = Object.keys(dataSrcset),
-        imageName = images.eq(i).data('src').split('/'),
-        src = '';
-
-    imageName = imageName[imageName.length - 1];
-
-    if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15) {
-        src = images.eq(i).data('src');
-    } else
-        src = 'images/' + imageName.split('.')[0] + '.webp'
-
-    // dataSrcsetKeys.forEach(item => {
-    //     if (!isNaN(Number(item))) {
-    //         // if (Number(item) < Math.trunc($(this).width())) {
-    //             srcset.push(dataSrcset[item].image_path + ' ' + item + 'w');
-    //         // }
-    //     }
-    // });
+    let images = $('img[data-src]');
 
     images.eq(i)
     .attr('width', Math.trunc(images.eq(i).width()))
     .attr('height', Math.trunc(images.eq(i).height()))
-    .attr('src', src)
-    // .attr('srcset', srcset.join(', '))
+    .attr('src', images.eq(i).data('src'))
     .on('load', function() {
         $(this)
         .off('load')
@@ -907,9 +893,15 @@ function lazyloadImg(i = 0, callback = '') {
     });
 }
 
+function srcConvert(src) {
+    if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
+        return src.image_path + '?store_access_key=cs';
+    else
+        return 'images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
+}
+
 function getProductContent(result, currentProductId, related = false) {
     for (key in result) {
-        console.log(result[key].id, Number(currentProductId))
         if (result[key].id == Number(currentProductId)) {
             product_name = result[key].name;
 
@@ -925,7 +917,7 @@ function getProductContent(result, currentProductId, related = false) {
                     class: 'related-item item-selected',
                     href: '/' + result[key].seo_name
                 }).append($('<img>', {
-                    'data-src': result[key].pairs.main_pair['1600'].image_path,
+                    'data-src': srcConvert(result[key].pairs.main_pair['1600']),
                     // 'data-srcset': getSrcset(result[key].pairs.main_pair),
                     // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                 })).append($('<div>', {
@@ -956,7 +948,7 @@ function getProductContent(result, currentProductId, related = false) {
                     class: 'related-item item-selected',
                     href: '/' + result[key].seo_name
                 }).append($('<img>', {
-                    'data-src': result[key].pairs.main_pair['1600'].image_path,
+                    'data-src': srcConvert(result[key].pairs.main_pair['1600']),
                     // 'data-srcset': getSrcset(result[key].pairs.main_pair),
                     // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                 }))
@@ -1169,7 +1161,7 @@ function getProductContent(result, currentProductId, related = false) {
                         class: 'related-item',
                         href: '/' + result[key].seo_name
                     }).append($('<img>', {
-                        'data-src': result[key].pairs.main_pair['1600'].image_path,
+                        'data-src': srcConvert(result[key].pairs.main_pair['1600']),
                         // 'data-srcset': getSrcset(result[key].pairs.main_pair),
                         // 'sizes': '(max-width: 420px) 420px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                     })).append($('<div>', {
@@ -1191,7 +1183,7 @@ function getProductContent(result, currentProductId, related = false) {
                         href: '/' + result[key].seo_name
                     })
                     .append($('<img>', {
-                        'data-src': result[key].pairs.main_pair['1600'].image_path,
+                        'data-src': srcConvert(result[key].pairs.main_pair['1600']),
                         // 'data-srcset': getSrcset(result[key].pairs.main_pair),
                         // 'sizes': '(max-width: 420px) 420px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
                     }))
