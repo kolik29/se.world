@@ -16,7 +16,7 @@
 </head>
 <body>
     <div class="wrapper">
-        <div id="preloader" class="{{hide}}">
+        <div id="preloader" class="{{preloader_hide}}">
             <div id="new-item"></div>
             <div class="countdown"></div>
         </div>
@@ -28,7 +28,9 @@
                         <img src="/cart.svg" alt="">
                         <div id="counter">0</div>
                     </div>
-                    <div id="about">info</div>
+                    <div id="about">
+                        <span>info</span>
+                    </div>
                 </div>
             </div>
             <div class="bag">
@@ -58,8 +60,7 @@
             </div>
         </header>
         <div class="grid-container">
-            <div class="grid-item" id="archive">Archive 檔案</div>
-            <div class="grid-item {{hide}}" id='new-element'>
+            <div class="grid-item {{product_hide}}" id='new-element'>
                 <img src="/alien.svg" alt="">
                 <div class="bubble">
                     <div class="item-name"></div>

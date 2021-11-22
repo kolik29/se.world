@@ -7,14 +7,14 @@ window.addEventListener('resize', () => {
 window.onload = function() {
     
     //Img Preload
-    [].forEach.call(document.querySelectorAll('img[data-src]'), function(img) {
-        img.setAttribute('src', img.getAttribute('data-src'))
-        img.onload = function() {
-            img.removeAttribute('data-src')
-            related.style.opacity = '1'
-            img.style.opacity = '1'
-        }
-    })
+    // [].forEach.call(document.querySelectorAll('img[data-src]'), function(img) {
+    //     img.setAttribute('src', img.getAttribute('data-src'))
+    //     img.onload = function() {
+    //         img.removeAttribute('data-src')
+    //         related.style.opacity = '1'
+    //         img.style.opacity = '1'
+    //     }
+    // })
     //Scroll to selected item
     const el = document.getElementsByClassName('item-selected')[0]
     setTimeout(function() {

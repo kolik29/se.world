@@ -10,7 +10,7 @@ const hbs = require('hbs');
 
 const app = express();
 
-const webp=require('webp-converter');
+const webp = require('webp-converter');
 
 var preloaderData = require('./preloader');
 var serverConfig = require('./server-config.js');
@@ -19,7 +19,7 @@ class Preloader {
     online = false;
 
     update() {
-        post('se.madfrenzy.com', 'seworld.products_expected', pendingProduct => {
+        post(serverConfig.config.postHost, 'seworld.products_expected', pendingProduct => {
             var preloader;
 
             if (pendingProduct[0] == undefined) {
@@ -42,9 +42,10 @@ class Preloader {
                     });
 
                     fs.writeFileSync('preloader.js', `var preloaderData = ${preloader}; try { module.exports.preloaderData = preloaderData; } catch {}`);
-                    
+
                     console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
-                    this.online = true;
+                    this.online = pendingProduct[0].show_preloader;
+                    this.product = true;
                 }
             }
         });
@@ -133,7 +134,7 @@ function updateRoutes(callback) {
         }
     ];
 
-    post('se.madfrenzy.com', 'seworld.products_in_stock', result => {
+    post(serverConfig.config.postHost, 'seworld.products_in_stock', result => {
         Object.keys(result).forEach(product_key => {
             let product = result[product_key];
 
@@ -152,7 +153,7 @@ function updateRoutes(callback) {
             } catch {}
         })
     
-        post('se.madfrenzy.com', 'seworld.products_out_of_stock', result => {
+        post(serverConfig.config.postHost, 'seworld.products_out_of_stock', result => {
             Object.keys(result).forEach(product_key => {
                 let product = result[product_key];
 
@@ -182,9 +183,13 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.engine(
     'hbs',
     expressHbs({
-        layoutsDir: '/',
+        extname:'hbs',
+        layoutsDir: path.join(__dirname, 'views'),
         defaultLayout: false,
-        extname: 'hbs',
+        helpers: __dirname,
+        partialsDir: [
+            __dirname
+        ]
     })
 );
 app.set('view engine', 'hbs');
@@ -194,11 +199,6 @@ app.set('views', path.join(__dirname, 'views'));
 webp.grant_permission();
 
 setRoutes();
-// setInterval(() => {
-//     setRoutes();
-//     console.log(routes);
-// }, 3600000);
-// }, 60000);
 
 function setRoutes() {
     updateRoutes(() => {
@@ -206,25 +206,29 @@ function setRoutes() {
             let name = image.split('/');
             name = name[name.length - 1];
     
-            const result = webp.cwebp(image, 'images/' + name.split('.')[0] + '.webp', "-q 10", logging="-v");
+            const result = webp.cwebp(image, path.join(__dirname, 'images/' + name.split('.')[0] + '.webp'), "-q 10", logging="-v");
             result.then((response) => {
-                console.log(response);
+                console.log(name.split('.')[0] + '.webp');
             });
         })
 
         routes.forEach((rout) => {
             app.get('/' + rout.url, (req, res) => {
-                if (rout.index) {
-                    res.render(rout.file, {
-                        timestamp: Date.now(),
-                        hide: preloader.online ? '' : 'display_none'
-                    });
-                } else {
-                    if (rout.url == 'update_cache')
-                        setRoutes();
-                    else
-                        res.sendFile(path.join(__dirname + '/' + rout.file));
-                }
+                if (cookie.confirm(req, res, 'csse')) {
+                    if (rout.index) {
+                        res.render(rout.file, {
+                            timestamp: Date.now(),
+                            preloader_hide: preloader.online ? '' : 'display_none',
+                            product_hide: preloader.product ? '' : 'display_none',
+                        });
+                    } else {
+                        if (rout.url == 'update_cache')
+                            setRoutes();
+                        else
+                            res.sendFile(path.join(__dirname + '/' + rout.file));
+                    }
+                } else
+                    res.sendFile(path.join(__dirname + '/closed.html'));
             });
         });
     });
