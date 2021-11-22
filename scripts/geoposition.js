@@ -19,7 +19,6 @@ $(() => {
     }
 
     $('.input-wrapper input[name="country"]').on('change, keyup', function() {
-		console.log($(this).val())
         let country = countries_data.find(__country => __country.name.toLowerCase() == $(this).val().trim().toLowerCase());
 
         if (country == undefined)
@@ -47,7 +46,7 @@ $(() => {
                     'opacity': '1'
                 })
             } else {
-                $('.input-wrapper input[name="country"]').data('country-code', '');
+                $('.input-wrapper input[name="country"]').data('country-code', country.code);
             }
 
 			updateBag();
@@ -8104,7 +8103,7 @@ function setDelivery(countryData) {
             city = cities_data[countryData.code].find(city => city.name.toLowerCase() === $(this).val().trim().toLowerCase());
 
             if (city == undefined) {
-                if ($('.input-wrapper input[name="country"]').toLowerCase() != 'россия' && $('.input-wrapper input[name="country"]').toLowerCase() != 'russia')
+                if ($('.input-wrapper input[name="country"]').val().toLowerCase() != 'россия' && $('.input-wrapper input[name="country"]').val().toLowerCase() != 'russia')
                     $('#delivery-time').text('')
             } else
                 $('#delivery-time').text('(' + city.deliveries_time + ' ' + declOfNum(city.deliveries_time, ['day', 'days']) + ')');
