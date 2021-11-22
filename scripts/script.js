@@ -566,11 +566,16 @@ $(() => {
                                 });
                             }
                                 
-                            $('.slider').append($('<button>', {
-                                id: 'prev-img'
-                            })).append($('<button>', {
-                                id: 'next-img'
-                            }));
+                            if ($('.slider #prev-img').length) {
+                                $('.slider #prev-img').remove();
+                                $('.slider #next-img').remove();
+
+                                $('.slider').append($('<button>', {
+                                    id: 'prev-img'
+                                })).append($('<button>', {
+                                    id: 'next-img'
+                                }));
+                            }
                         },
                         error => {
                             console.log(error);
