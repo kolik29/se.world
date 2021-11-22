@@ -1572,4 +1572,8 @@ body > .wrapper {
     .js-swiper-related {
         display: none;
     }
+
+    .wrapper .grid-container .grid-item .bubble {
+        opacity: 1;
+    }
 }
