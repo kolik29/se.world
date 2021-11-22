@@ -46,9 +46,10 @@ $(() => {
                     'opacity': '1'
                 })
             } else {
-                $('.input-wrapper input[name="country"]').data('country-code', '');
-                updateBag();
+                $('.input-wrapper input[name="country"]').data('country-code', country.code);
             }
+
+			updateBag();
         }
     })
 })
@@ -8101,8 +8102,10 @@ function setDelivery(countryData) {
         $('.input-wrapper input[name="state"]').on('change, keyup', function() {
             city = cities_data[countryData.code].find(city => city.name.toLowerCase() === $(this).val().trim().toLowerCase());
 
+			console.log($(this).val().trim().toLowerCase())
+
             if (city == undefined) {
-                if ($('.input-wrapper input[name="country"]').toLowerCase() != 'россия' && $('.input-wrapper input[name="country"]').toLowerCase() != 'russia')
+                if ($('.input-wrapper input[name="country"]').val().toLowerCase() != 'россия' && $('.input-wrapper input[name="country"]').val().toLowerCase() != 'russia')
                     $('#delivery-time').text('')
             } else
                 $('#delivery-time').text('(' + city.deliveries_time + ' ' + declOfNum(city.deliveries_time, ['day', 'days']) + ')');
