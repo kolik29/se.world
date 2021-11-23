@@ -1524,7 +1524,6 @@ body > .wrapper {
 
 .related-item {
     width: 100%;
-    height: 100px;
     display: flex;
     text-align: center;
     align-items: center;
@@ -1560,7 +1559,7 @@ body > .wrapper {
     display: none;
 }
 
-.bubble .price {
+.bubble {
     text-align: initial;
 }
 

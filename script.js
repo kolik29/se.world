@@ -132,15 +132,17 @@ function setup() {
                 bag.classList.remove('open')
             }
         })
-        
+
         // // Countdown
         try {
             countdownDate(preloaderData.name, preloaderData.date);
-        } catch {}
+        } catch {
+            countdownDate();
+        }
         
     }
 
-function countdownDate(name, date) {
+function countdownDate(name = '', date = '') {
     $('#new-item').text(name);
 
     var countDownDate = new Date(Number(date) * 1000);
@@ -154,6 +156,8 @@ function countdownDate(name, date) {
             
             // Find the distance between now and the count down date
             var distance = countDownDate - now;
+
+            console.log(distance)
             
             // Time calculations for days, hours, minutes and seconds
             var days = Math.floor(distance / (1000 * 60 * 60 * 24));

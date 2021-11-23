@@ -26,10 +26,14 @@ class Preloader {
                 preloader = undefined;
                 fs.writeFileSync('preloader.js', `var preloaderData = undefined; try { module.exports.preloaderData = preloaderData; } catch {}`);
                 this.online = false;
+                this.product = false;
             } else {
-                if (Object.keys(pendingProduct[0].preloader_main_pair).length) {
+                if (Object.keys(pendingProduct[0]).length) {
                     pendingProduct.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
-                    let preloaderImages = [pendingProduct[0].preloader_main_pair.detailed.image_path];
+                    let preloaderImages = [];
+
+                    if (Object.keys(pendingProduct[0].preloader_main_pair).length)
+                        preloaderImages = [pendingProduct[0].preloader_main_pair.detailed.image_path];
 
                     Object.keys(pendingProduct[0].preloader_image_pairs).forEach((key) => {
                         preloaderImages.push(pendingProduct[0].preloader_image_pairs[key].detailed.image_path);
@@ -45,8 +49,9 @@ class Preloader {
 
                     console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
                     this.online = pendingProduct[0].show_preloader;
-                    this.product = true;
                 }
+
+                this.product = true;
             }
         });
     }
@@ -78,7 +83,7 @@ function post(hostname, dispatch, callback) {
 
     const options = {
         hostname: hostname,
-        path: '/?dispatch=' + dispatch + '&store_access_key=csse&no_redirect',
+        path: '/?dispatch=' + dispatch,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -201,6 +206,8 @@ webp.grant_permission();
 setRoutes();
 
 function setRoutes() {
+    preloader.update();
+
     updateRoutes(() => {
         images.forEach(image => {
             let name = image.split('/');
@@ -214,7 +221,7 @@ function setRoutes() {
 
         routes.forEach((rout) => {
             app.get('/' + rout.url, (req, res) => {
-                if (cookie.confirm(req, res, 'csse')) {
+                // if (cookie.confirm(req, res, 'csse')) {
                     if (rout.index) {
                         res.render(rout.file, {
                             timestamp: Date.now(),
@@ -227,8 +234,8 @@ function setRoutes() {
                         else
                             res.sendFile(path.join(__dirname + '/' + rout.file));
                     }
-                } else
-                    res.sendFile(path.join(__dirname + '/closed.html'));
+                // } else
+                //     res.sendFile(path.join(__dirname + '/closed.html'));
             });
         });
     });

@@ -1164,7 +1164,7 @@ function getProductContent(result, currentProductId, related = false) {
                 if (Object.keys(result[key].pairs.main_pair[420]).length)
                     $('#related')
                     .append($('<a>', {
-                        class: 'related-item 1',
+                        class: 'related-item',
                         href: '/' + result[key].seo_name
                     }).append($('<img>', {
                         'data-src': srcConvert(result[key].pairs.main_pair['1600']),
