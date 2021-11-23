@@ -18,7 +18,7 @@ var serverConfig = require('./server-config.js');
 class Preloader {
     online = false;
 
-    update() {
+    update(callback = undefined) {
         post(serverConfig.config.postHost, 'seworld.products_expected', pendingProduct => {
             var preloader;
 
@@ -49,10 +49,29 @@ class Preloader {
 
                     console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
                     this.online = pendingProduct[0].show_preloader;
+
+                    // const result = webp.cwebp(image, path.join(__dirname, 'images/' + name.split('.')[0] + '.webp'), "-q 10", logging="-v");
+
+                    let prelaoderImages = [];
+
+                    for (let key of Object.keys(pendingProduct[0].preloader_image_pairs)) {
+                        if (pendingProduct[0].preloader_image_pairs[key].absolute_path) {
+                            let name = pendingProduct[0].preloader_image_pairs[key].absolute_path.split('/');
+                            name = name[name.length - 1];
+
+                            const result = webp.cwebp(pendingProduct[0].preloader_image_pairs[key].absolute_path, path.join(__dirname, 'images/' + name.split('.')[0] + '.webp'), "-q 10", logging="-v");
+                            result.then((response) => {
+                                console.log(name.split('.')[0] + '.webp');
+                            });
+                        }
+                    }
                 }
 
                 this.product = true;
             }
+
+            if (callback)
+                callback();
         });
     }
 
@@ -221,7 +240,7 @@ function setRoutes() {
 
         routes.forEach((rout) => {
             app.get('/' + rout.url, (req, res) => {
-                // if (cookie.confirm(req, res, 'csse')) {
+                if (cookie.confirm(req, res, 'csse')) {
                     if (rout.index) {
                         res.render(rout.file, {
                             timestamp: Date.now(),
@@ -234,8 +253,8 @@ function setRoutes() {
                         else
                             res.sendFile(path.join(__dirname + '/' + rout.file));
                     }
-                // } else
-                //     res.sendFile(path.join(__dirname + '/closed.html'));
+                } else
+                    res.sendFile(path.join(__dirname + '/closed.html'));
             });
         });
     });

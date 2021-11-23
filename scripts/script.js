@@ -904,9 +904,9 @@ function lazyloadImg(i = 0, callback = '') {
 
 function srcConvert(src) {
     if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
-        return src.image_path + '?store_access_key=csse&no_redirect';
+        return '/' + src.image_path + '?store_access_key=csse&no_redirect';
     else
-        return 'images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
+        return '/images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
 }
 
 var swiperInited = false;
