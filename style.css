@@ -1576,3 +1576,10 @@ body > .wrapper {
         opacity: 1;
     }
 }
+
+@media (orientation: portrait) {
+    .js-swiper-related {
+        display: none;
+    }
+    
+}

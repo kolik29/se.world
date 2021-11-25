@@ -285,6 +285,12 @@ function sliderSwipe() {
 }
 
 $(() => {
+    setTimeout(() => {
+        $(':root').css({
+            '--vh': $(window).height() / 100 + 'px'
+        });
+    }, 500);
+
     $('input[name="phone"]').on('keydown', function(e) {
         if ("1234567890".indexOf(e.key) == -1 && (e.key != 'Backspace' && e.key != 'Delete' && e.key != 'ArrowRight' && e.key != 'ArrowLeft'))
             e.preventDefault();
@@ -904,7 +910,7 @@ function lazyloadImg(i = 0, callback = '') {
 
 function srcConvert(src) {
     if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
-        return '/' + src.image_path + '?store_access_key=csse&no_redirect';
+        return src.image_path + '?store_access_key=csse&no_redirect';
     else
         return '/images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
 }
