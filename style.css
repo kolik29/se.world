@@ -1432,7 +1432,7 @@ body > .wrapper {
 }
 
 .grid-item.archive.active .js-archive-closer:before {
-    content: '-';
+    content: '−';
 }
 
 #indicator {

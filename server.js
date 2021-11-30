@@ -240,7 +240,7 @@ function setRoutes() {
 
         routes.forEach((rout) => {
             app.get('/' + rout.url, (req, res) => {
-                if (cookie.confirm(req, res, 'csse')) {
+                // if (cookie.confirm(req, res, 'csse')) {
                     if (rout.index) {
                         res.render(rout.file, {
                             timestamp: Date.now(),
@@ -253,8 +253,8 @@ function setRoutes() {
                         else
                             res.sendFile(path.join(__dirname + '/' + rout.file));
                     }
-                } else
-                    res.sendFile(path.join(__dirname + '/closed.html'));
+                // } else
+                //     res.sendFile(path.join(__dirname + '/closed.html'));
             });
         });
     });

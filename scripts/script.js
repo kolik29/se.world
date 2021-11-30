@@ -852,9 +852,17 @@ function slider() {
     
     //Slide number position
     function moveNumber(e) {
+        if ($(e.target).closest('.js-swiper-related').length || $(e.target).hasClass('.js-swiper-related'))
+            $('#slide-number').css({
+                'opacity': 0
+            });
+        else
+            $('#slide-number').css({
+                'opacity': 1
+            });
+        
         var pageX = e.pageX
         var pageY = e.pageY
-        arrowNumber.style.opacity = 1
         arrowNumber.style.left = pageX + 'px'
         arrowNumber.style.top = pageY - pageYOffset + 'px'
     }
