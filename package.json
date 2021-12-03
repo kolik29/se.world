@@ -8,8 +8,10 @@
         "forever": "^4.0.1",
         "gm": "^1.23.1",
         "hbs": "^4.1.2",
+        "is-progressive": "^4.0.0",
         "nocache": "^3.0.1",
         "redis": "^4.0.0",
+        "redis-json": "^6.0.2",
         "webp-converter": "^2.3.3"
     }
 }

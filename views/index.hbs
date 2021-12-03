@@ -4,21 +4,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/scripts/jquery-3.6.0.min.js"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css"/>
     <link rel="stylesheet" href="/style.css?{{timestamp}}">
-    <script src="/p5.min.js"></script>
-    <script src="/p5.dom.min.js"></script>
+    
     <title>Signature Element</title>
-
-    <script src="/scripts/ajax.js?{{timestamp}}"></script>
-    <script src="/preloader.js?{{timestamp}}"></script>
-    <script src="/scripts/script.js?{{timestamp}}"></script>
 </head>
 <body>
     <div class="wrapper">
-        <div id="preloader" class="{{preloader_hide}}">
-            <div id="new-item"></div>
-            <div class="countdown"></div>
+        <div id="preloader" class="{{#if preloader.hide}}display_none{{/if}}" data-images="{{preloader.product.preloader_image_pairs}}">
+            <div id="new-item">{{preloader.product.name}}</div>
+            <div class="countdown" data-expected-time="{{preloader.product.date}}"></div>
         </div>
         <header>
             <div class="menu">
@@ -41,9 +37,9 @@
                     </p>
                     <p class="contacts">
                         hi@se.world <br>
-                        <a href="shipping-and-returns.html">Shipping & Returns</a>
+                        <a href="shipping-and-returns">Shipping & Returns</a>
                     </p>
-                    <p class="policy">Find about our <a target="_blanc" href="/policy.html">Terms & Policy.</a></p>
+                    <p class="policy">Find about our <a target="_blanc" href="/policy">Terms & Policy.</a></p>
                 </div>
                 <div id="empty-bag">Nothing in the bag yet</div>
                 <div class="bag-items">
@@ -60,11 +56,12 @@
             </div>
         </header>
         <div class="grid-container">
-            <div class="grid-item {{product_hide}}" id='new-element'>
+            {{#if preloader.product.show}}
+            <div class="grid-item" id='new-element'>
                 <img src="/alien.svg" alt="">
                 <div class="bubble">
-                    <div class="item-name"></div>
-                    <div class="countdown"></div>
+                    <div class="item-name">{{preloader.product.name}}</div>
+                    <div class="countdown" data-countdown={{preloader.product.name}}></div>
                     <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
@@ -72,10 +69,58 @@
                     </svg>
                 </div>
             </div>
+            {{/if}}
+            {{#each products_in_stock}}
+            <a href="/{{this.seo_name}}" class="grid-item">
+                <img data-src="{{this.pairs.main_pair.[420]}}" width="242" height="229">
+                <div class="bubble">
+                    <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                        </g>
+                    </svg>
+                    <div class="item-name">
+                        {{this.name}}
+                    </div>
+                    <div class="price">
+                        {{this.price}}
+                    </div>
+                </div>
+            </a>
+            {{/each}}
+            {{#if show_archive}}
+            <div class="grid-item archive lazyload" style="opacity: 1;">
+                <span class="js-archive-closer"></span>Archive 檔案
+            </div>
+            {{/if}}
+            {{#each products_out_of_stock}}
+            <a href="/{{this.seo_name}}" class="grid-item display_none">
+                <img data-src="{{this.pairs.main_pair.[420]}}" width="242" height="229">
+                <div class="bubble">
+                    <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                        </g>
+                    </svg>
+                    <div class="item-name">
+                        {{this.name}}
+                    </div>
+                    <div class="price">
+                        {{this.price}}
+                    </div>
+                </div>
+            </a>
+            {{/each}}
         </div>
     </div>
 
-    <script src="/script.js?1?{{timestamp}}"></script>
+    <script src="/scripts/jquery-3.6.0.min.js"></script>
+    <script src="/p5.min.js"></script>
+    <script src="/p5.dom.min.js"></script>
+    <script src="/script.js?{{timestamp}}"></script>
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+    <script src="/scripts/ajax.js?{{timestamp}}"></script>
+    <script src="/scripts/script.js?{{timestamp}}"></script>
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript" >

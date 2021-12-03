@@ -10,104 +10,6 @@ if (localStorage.getItem('basket') == null)
 else
     basket = JSON.parse(localStorage.getItem('basket'));
 
-if (url.pathname == '/' || url.pathname == '') {
-    post('seworld.products_expected').then(
-        result => {
-            result.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
-            
-            if (result.length)
-                $('#new-element .item-name').text(result[0].name);
-            else
-                $('#new-element .item-name').css({
-                    display: 'none'
-                })
-        },
-        error => {
-            console.log(error)
-        }
-    );
-        
-    post('seworld.products_in_stock').then(
-        result => {
-            $('.grid-container .grid-item:not(#new-element)').remove();
-
-            for (key in result) {
-                try {
-                    $('.grid-container').append($('<a>', {
-                        href: '/' + result[key].seo_name,
-                        class: 'grid-item'
-                    }).append($('<img>', {
-                        'data-src': srcConvert(result[key].pairs.main_pair['1600']),
-                        // 'data-srcset': getSrcset(result[key].pairs.main_pair),
-                        // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
-                    })).append($('<div>', {
-                        class: 'bubble'
-                    }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
-                        class: 'item-name',
-                        text: result[key].name
-                    })).append($('<div>', {
-                        class: 'price',
-                        text: result[key].price
-                    }))));
-                } catch {}
-            }
-
-            post('seworld.products_out_of_stock').then(
-                result => {
-                    if (Object.keys(result).length)
-                        $('.grid-container').append($('<div>', {
-                            class: 'grid-item archive lazyload',
-                            text: 'Archive 檔案'
-                        }).prepend('<span class="js-archive-closer"></span>'));
-
-                    for (key in result) {
-                        $('.grid-container').append($('<a>', {
-                            href: '/' + result[key].seo_name,
-                            class: 'grid-item display_none'
-                        }).append($('<img>', {
-                            'data-src': srcConvert(result[key].pairs.main_pair['1600']),
-                            // 'data-srcset': getSrcset(result[key].pairs.main_pair),
-                            // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
-                        })).append($('<div>', {
-                            class: 'bubble'
-                        }).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>').append($('<div>', {
-                            class: 'item-name',
-                            text: result[key].name
-                        })).append($('<div>', {
-                            class: 'price',
-                            text: result[key].price
-                        }))));
-                    }
-
-                    lazyloadImg();
-
-                    const observer = new MutationObserver(function(mutationsList, observer) {
-                        for (let mutation of mutationsList) {
-                            if (mutation.type === 'attributes') {
-                                if (mutation.attributeName == 'style') {
-                                    $('.grid-item.archive.lazyload').css({
-                                        'opacity': 1
-                                    })
-                                }
-                            }
-                        }
-                    });
-
-                    // Начинаем наблюдение за настроенными изменениями целевого элемента
-                    observer.observe($('.grid-item.archive.lazyload').next('.grid-item').find('img').get(0), {
-                        attributes: true,
-                        childList: false,
-                        subtree: false
-                    });
-                }
-            )
-        },
-        error => {
-            console.log(error)
-        }
-    );
-}
-
 function productPage() {
     $('body > .wrapper').addClass('preloader-overflow').css({
         'height': $('body').height(),
@@ -115,104 +17,6 @@ function productPage() {
     }).on('scroll', function(e) {
         e.preventDefault();
     });
-
-    var currentProductId;
-
-    post('seworld.products_in_stock').then(
-        result => {
-            $('#related').empty();
-            $('.slider').empty();
-
-            if (typeof result == 'object')
-                currentProductId = (Object.values(result).find(product => product.seo_name === url.pathname.replace('/', '')))
-            else
-                currentProductId = (result.find(product => product.seo_name === url.pathname.replace('/', '')));
-
-            if (currentProductId)
-                currentProductId = currentProductId.id;
-
-            getProductContent(result, currentProductId);
-
-            lazyloadImg();
-            
-            $('#related').css({
-                opacity: 1
-            });
-            
-            $('.checkout-button.add').on('click', function() {
-                var product_size_obj = $(this).closest('#purchase').find('#size');
-                var image = $(this).data('main-pair');
-
-                addToBasket(
-                    basket,
-                    product_size_obj.data('product-id'),
-                    product_size_obj.data('product-name'),
-                    product_size_obj.data('product-type'),
-                    {
-                        [product_size_obj.find('.short-size').text()]: product_size_obj.data('variation-id')
-                    },
-                    product_size_obj.data('price'),
-                    image,
-                    product_size_obj.data('max-count'),
-                    product_size_obj.data('details-main-pair')
-                );
-                basketUpdateTotal();
-                showBasket();
-            });
-
-            post('seworld.products_out_of_stock').then(
-                result => {
-                    if (Object.keys(result).length) {         
-                        if (typeof result == 'object')
-                            currentProductId = (Object.values(result).find(product => product.seo_name === url.pathname.replace('/', '')))
-                        else
-                            currentProductId = (result.find(product => product.seo_name === url.pathname.replace('/', '')));
-            
-                        if (currentProductId)
-                            currentProductId = currentProductId.id;
-               
-                        getProductContent(result, currentProductId);
-            
-                        lazyloadImg();
-
-                        if (!swiperInited)
-                            var swiper = new Swiper('.js-swiper-related', {
-                                direction: 'vertical',
-                                slidesPerView: 'auto',
-                                autoHeight: true,
-                                loop: true,
-                                mousewheel: true,
-                                freeMode: true,
-                                centeredSlides: true,
-                                slideToClickedSlide: true,
-                                on: {
-                                    afterInit: function() {
-                                        swiperInited = true;
-                                        this.slideToLoop($('.swiper-related .swiper-slide .related-item.item-selected').closest('.swiper-slide').data('swiper-slide-index'));
-                                    }
-                                }
-                            });
-                        
-                        $('#related').css({
-                            opacity: 1
-                        });
-                    }
-                        
-                    $('.slider').append($('<button>', {
-                        id: 'prev-img'
-                    })).append($('<button>', {
-                        id: 'next-img'
-                    }));
-                },
-                error => {
-                    console.log(error);
-                }
-            );
-        },
-        error => {
-            console.log(error);
-        }
-    );
 }
 
 if (url.pathname == '/checkout') {
@@ -285,82 +89,92 @@ function sliderSwipe() {
 }
 
 $(() => {
-    setTimeout(() => {
-        $(':root').css({
-            '--vh': $(window).height() / 100 + 'px'
-        });
-    }, 500);
-
-    $('input[name="phone"]').on('keydown', function(e) {
-        if ("1234567890".indexOf(e.key) == -1 && (e.key != 'Backspace' && e.key != 'Delete' && e.key != 'ArrowRight' && e.key != 'ArrowLeft'))
-            e.preventDefault();
-    });
-    
-    $('input[name="phone"]').on('change', function() {
-        $(this).val($(this).val().replace(/\D/, ''));
-    });
-
-    if ($('body.product-page').length)
-        productPage();
-
-    $('body').on('click', '.js-swiper-related .bubble, .related-scroll .bubble, .sticky-scroll .bubble.bubble-mobile', function() {
-        $(this).toggleClass('visible');
-        $('.bubble .slide-text').html('');
-
-        if ($(this).hasClass('visible')) {
-            $(this).find('.show-more').html('Hide text <br> ↑');
-            $('.bubble .slide-text').html(textSplit($('.slider-item.img-selected').text()));
-        } else
-            $(this).find('.show-more').html('Show text <br> ↓');
-    });
-    
-    $('body').on('click', '#next-img', () => {
-        let currentIndicator = $('#indicator .line.line-selected');
-        let currentSlide = $('.slider .slider-item.img-selected');
-
-        if (currentSlide.next('.slider-item').length) {
-            currentIndicator.removeClass('line-selected').next().addClass('line-selected');
-            currentSlide.removeClass('img-selected').next().addClass('img-selected');
-        } else {
-            currentIndicator.removeClass('line-selected');
-            $('#indicator .line').first().addClass('line-selected');
-            currentSlide.removeClass('img-selected');
-            $('.slider .slider-item').first().addClass('img-selected');
+    var swiper = new Swiper('.js-swiper-related', {
+        direction: 'vertical',
+        slidesPerView: 'auto',
+        autoHeight: true,
+        loop: true,
+        mousewheel: true,
+        freeMode: true,
+        centeredSlides: true,
+        slideToClickedSlide: true,
+        on: {
+            afterInit: function() {
+                swiperInited = true;
+                this.slideToLoop($('.swiper-related .swiper-slide .related-item.item-selected').closest('.swiper-slide').data('swiper-slide-index'));
+            }
         }
-
-        // window.location.hash = 'slide-' + ($('.slider .slider-item.img-selected').index() + 1)
-
-        $('#slide-number').text(($('.slider .slider-item.img-selected').index() + 1) + '/' + $('.slider .slider-item').length);
     })
-
-    $('body').on('click', '#prev-img', () => {
-        let currentIndicator = $('#indicator .line.line-selected');
-        let currentSlide = $('.slider .slider-item.img-selected');
-        
-        if (currentSlide.prev('.slider-item').length) {
-            currentIndicator.prev().addClass('line-selected');
-            currentSlide.prev().addClass('img-selected');
-        } else {
-            $('#indicator .line').last().addClass('line-selected');
-            $('.slider .slider-item').last().addClass('img-selected');
-        }
-
-        currentIndicator.removeClass('line-selected');
-        currentSlide.removeClass('img-selected');
-
-        // window.location.hash = 'slide-' + ($('.slider .slider-item.img-selected').index() + 1)
-
-        $('#slide-number').text(($('.slider .slider-item.img-selected').index() + 1) + '/' + $('.slider .slider-item').length);
-    })
-
-    sliderSwipe();
 
     $('body').on('click', '.grid-item.archive', function() {
         $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');
     })
 
+    $('body').on('click', 'a.related-item', function(e) {
+        e.preventDefault();
+
+        if (!$(e.target).hasClass('item-selected') && $(e.target).closest('.item-selected').length == 0) {
+            $(this).find('img').removeAttr('data-src');
+
+            let prevRelatedItem = $('a.related-item.item-selected')
+
+            prevRelatedItem.removeClass('item-selected');
+            prevRelatedItem.find('.show-more').remove();
+            prevRelatedItem.find('.slide-text').remove();
+
+            $(this).addClass('item-selected');
+
+            window.history.pushState('Product', 'Product', $(this).attr('href'));
+            url = new URL(location.href);
+
+            $.get($(this).attr('href'), data => {
+                $(data).each(function() {
+                    if ($(this).hasClass('js-swiper-related'))
+                        $('.js-swiper-related .related-item.item-selected .bubble').html($(this).find('.related-item.item-selected .bubble').html());
+                })
+
+                $('.fixed-wrapp').html($(data).find('.fixed-wrapp').html());
+
+                $('#slide-number').text('1/' + $('.slider .slider-item').length)
+
+                lazyloadImg();
+            })
+        }
+    })
+
+    $('body').on('click', '.item-selected .bubble', function() {
+        if ($(this).hasClass('visible'))
+            $(this).removeClass('visible').find('.show-more').html('Show text <br> ↓')
+        else
+            $(this).addClass('visible').find('.show-more').html('Hide text <br> ↑')
+    })
+
+    $('body').on('mousemove', function(e) {
+        if ($(e.target).hasClass('js-swiper-related') || $(e.target).closest('.js-swiper-related'))
+            $('#slider-number').css({
+                'display': 'none'
+            })
+        else
+            $('#slider-number').css({
+                'display': ''
+            })
+    })
+
+    $('input[name="phone"]').on('keydown', function(e) {
+        if ("1234567890".indexOf(e.key) == -1 && (e.key != 'Backspace' && e.key != 'Delete' && e.key != 'ArrowRight' && e.key != 'ArrowLeft'))
+            e.preventDefault();
+    })
+    
+    $('input[name="phone"]').on('change', function() {
+        $(this).val($(this).val().replace(/\D/, ''));
+    })
+
+    if ($('body.product-page').length)
+        productPage();
+
+    sliderSwipe();
+
     showBasket();
-    bodyPosition();
 
     $('.rotating-icon').on('click', function() {
         setTimeout(() => {
@@ -371,34 +185,29 @@ $(() => {
         }, 50);
     })
 
-    if ($('.bubble.bubble-mobile').length) {
-        let observer = new MutationObserver(() => {
-            if ($('.bubble.bubble-mobile').hasClass('visible'))
-                $('.slider').css({
-                    'max-height': $('.slider').height()
-                })
-            else
-                $('.slider').css({
-                    'max-height': ''
-                })
-        });
+    $('body').on('click', '.checkout-button.add', function() {
+        let order_item, product_size;
 
-        observer.observe($('.bubble.bubble-mobile').get(0), {
-            attributes: true
-        })
-    }
+        if ($(this).hasClass('plus') || $(this).hasClass('minus')) {
+            order_item = $(this).closest('.order-item');
+            product_size = {
+                [order_item.find('.product-size').text()]: order_item.data('variation-id')
+            }
+        }
 
-    $('body').on('click', '#order-list .order-item .plus, #order-list .order-item .minus', function() {
-        var order_item = $(this).closest('.order-item');
+        if ($(this).hasClass('add')) {
+            order_item = $('#size');
+            product_size = {
+                [order_item.find('.short-size').text()]: order_item.data('variation-id')
+            }
+        }
 
         addToBasket(
             basket,
             order_item.data('product-id'),
             order_item.data('product-name'),
             order_item.data('product-type'),
-            {
-                [order_item.find('.product-size').text()]: order_item.data('variation-id')
-            },
+            product_size,
             order_item.data('product-price'),
             [],
             order_item.data('max-count'),
@@ -481,119 +290,7 @@ $(() => {
 
     updateBag();
 
-    $('body').on('click', 'a.related-item', function(e) {
-        e.preventDefault();
-
-        if (!$(e.target).hasClass('bubble'), $(e.target).closest('.bubble').length == 0) {
-            $(this).find('img').removeAttr('data-src');
-
-            let prevRelatedItem = $('a.related-item.item-selected'),
-                currentProductId;
-
-            prevRelatedItem.removeClass('item-selected');
-
-            $(this).addClass('item-selected');
-
-            window.history.pushState('Product', 'Product', $(this).attr('href'));
-            url = new URL(location.href);
-
-            post('seworld.products_in_stock').then(
-                result => {
-                    let resultKeys = Object.keys(result);
-                    key = resultKeys[resultKeys.length - 1];
-                    
-                    prevRelatedItem.find('.bubble').remove();
-                    prevRelatedItem.find('.triangle-mobile').remove();
-                    prevRelatedItem.append($('<div>', {
-                        class: 'bubble'
-                    }).append($('<div>', {
-                        class: 'related-name',
-                        text: result[key].name
-                    })).append($('<div>', {
-                        class: 'price',
-                        text: result[key].price
-                    })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'));
-
-                    $('.slider').empty();
-
-                    if (typeof result == 'object')
-                        currentProductId = (Object.values(result).find(product => product.seo_name === url.pathname.replace('/', '')))
-                    else
-                        currentProductId = (result.find(product => product.seo_name === url.pathname.replace('/', '')));
-        
-                    if (currentProductId)
-                        currentProductId = currentProductId.id;
-
-                    getProductContent(result, currentProductId, true);
-
-                    lazyloadImg();
-                    
-                    $('.slider').append($('<button>', {
-                        id: 'prev-img'
-                    })).append($('<button>', {
-                        id: 'next-img'
-                    }));
-
-                    post('seworld.products_out_of_stock').then(
-                        result => {
-                            if (Object.keys(result).length) {       
-                                if (typeof result == 'object')
-                                    currentProductId = (Object.values(result).find(product => product.seo_name === url.pathname.replace('/', '')))
-                                else
-                                    currentProductId = (result.find(product => product.seo_name === url.pathname.replace('/', '')));
-                    
-                                if (currentProductId)
-                                    currentProductId = currentProductId.id;
-     
-                                getProductContent(result, currentProductId, true);
-                    
-                                lazyloadImg();
-
-                                if (!swiperInited)
-                                    var swiper = new Swiper('.js-swiper-related', {
-                                        direction: 'vertical',
-                                        slidesPerView: 'auto',
-                                        autoHeight: true,
-                                        loop: true,
-                                        mousewheel: true,
-                                        freeMode: true,
-                                        centeredSlides: true,
-                                        slideToClickedSlide: true,
-                                        on: {
-                                            afterInit: function() {
-                                                swiperInited = true;
-                                                this.slideToLoop($('.swiper-related .swiper-slide .related-item.item-selected').closest('.swiper-slide').data('swiper-slide-index'));
-                                            }
-                                        }
-                                    });
-                                
-                                $('#related').css({
-                                    opacity: 1
-                                });
-                            }
-                                
-                            if ($('.slider #prev-img').length) {
-                                $('.slider #prev-img').remove();
-                                $('.slider #next-img').remove();
-
-                                $('.slider').append($('<button>', {
-                                    id: 'prev-img'
-                                })).append($('<button>', {
-                                    id: 'next-img'
-                                }));
-                            }
-                        },
-                        error => {
-                            console.log(error);
-                        }
-                    );
-                },
-                error => {
-                    console.log(error);
-                }
-            );
-        }
-    })
+    lazyloadImg();
 });
 
 function updateBag() {
@@ -628,25 +325,6 @@ function updateBag() {
         }
 
         $('#total').text('$' + priceAll)
-    }
-}
-
-function getSizeWord(size) {
-    try {
-        if (size == 'one size')
-            return ['ONE SIZE', ''];
-
-        if (size[size.length - 1] == 'S')
-            return ['mall', '小的'];
-        
-        if (size[size.length - 1] == 'M')
-            return ['edium', '中等的'];
-        
-        if (size[size.length - 1] == 'L')
-            return ['arge', '大的'];
-    }
-    catch {
-        return ['', ''];
     }
 }
 
@@ -783,477 +461,45 @@ function addToBasket(basket, product_id, product_name, product_type, size, price
     showBasket();
 }
 
-function slider() {
-    var slideText = document.getElementsByClassName('slide-text')
-    var addText = function(slideN) {
-        slideText[0].innerHTML = textSplit(thisImg[slideN].children[1].innerHTML)
-        slideText[1].innerHTML = textSplit(thisImg[slideN].children[1].innerHTML)
-    }
-
-    $('#indicator .line').remove();
-
-    $('.slider .slider-item').each(() => {
-        $('#indicator').append($('<div>', {
-            class: 'line'
-        }))
-    })
-
-    var nextButton = document.getElementById('next-img')
-    var prevButton = document.getElementById('prev-img')
-    thisImg = document.getElementsByClassName('slider-item')
-    var arrowNumber = document.getElementById('slide-number')
-
-    j = 0
-    if (window.location.hash) {
-        var slideNumber = window.location.hash.substring(1).match(/\d+/)[0]
-        j = (slideNumber - 1)
-    } else {
-        j = 0
-    }
-
-    thisImg[j].classList.add('img-selected')
-    arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
-    
-    document.addEventListener('click', function(e) {
-        if (e.target) {
-            if (e.target.id == 'next-img')
-            if (j < thisImg.length-1) {
-                // thisImg[j].classList.remove('img-selected')
-                // thisImg[j+1].classList.add('img-selected')
-                j++
-                // window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            } else {
-                // thisImg[j].classList.remove('img-selected')
-                // thisImg[0].classList.add('img-selected')
-                j = 0
-                // window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            }
-            // arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
-
-            if (e.target.id == 'prev-img')
-            if (j>0) {
-                // thisImg[j].classList.remove('img-selected')
-                // thisImg[j-1].classList.add('img-selected')
-                j--
-                // window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            } else {
-                // thisImg[j].classList.remove('img-selected')
-                // thisImg[thisImg.length-1].classList.add('img-selected')
-                j = thisImg.length-1
-                // window.location.hash = 'slide-' + (j + 1)
-                addText(j)
-            }
-            // arrowNumber.innerHTML = j + 1 + '/' + thisImg.length
-        }
-    })
-    
-    //Slide number position
-    function moveNumber(e) {
-        if ($(e.target).closest('.js-swiper-related').length || $(e.target).hasClass('.js-swiper-related'))
-            $('#slide-number').css({
-                'opacity': 0
-            });
-        else
-            $('#slide-number').css({
-                'opacity': 1
-            });
-        
-        var pageX = e.pageX
-        var pageY = e.pageY
-        arrowNumber.style.left = pageX + 'px'
-        arrowNumber.style.top = pageY - pageYOffset + 'px'
-    }
-
-    document.addEventListener('mousemove', moveNumber)
-
-    //Mouse out of document
-    document.addEventListener('mouseout', function(){
-        arrowNumber.style.opacity = '0'
-    })
-
-    var purchase = document.getElementById('purchase')
-    var header = document.querySelector('header')
-    var related = document.getElementById('related')
-    
-    // related.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
-    // related.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
-    header.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
-    header.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
-    purchase.addEventListener('mouseenter', function(){arrowNumber.style.display = 'none'})
-    purchase.addEventListener('mouseleave', function(){arrowNumber.style.display = 'block'})
-}
-
 function lazyloadImg(i = 0, callback = '') {
-    let images = $('img[data-src]');
+    // let images = $('img[data-src]');
 
-    try {
-        images.eq(i)
-        .attr('width', Math.trunc(images.eq(i).width()))
-        .attr('height', Math.trunc(images.eq(i).height()))
-        .attr('src', images.eq(i).data('src'))
-        .on('load', function() {
+    // try {
+    //     images.eq(i)
+    //     .attr('width', Math.trunc(images.eq(i).width()))
+    //     .attr('height', Math.trunc(images.eq(i).height()))
+    //     .attr('src', images.eq(i).data('src'))
+    //     .on('load', function() {
+    //         $(this)
+    //         .off('load')
+    //         .css({
+    //             opacity: 1
+    //         })
+    //         .addClass('loaded');
+
+    //         i++;
+
+    //         if (i < images.length)
+    //             lazyloadImg(i, callback);
+    //         else {
+    //             if (callback != '')
+    //                 try {
+    //                     callback();
+    //                 } catch {}
+    //         }
+    //     });
+    // } catch {}
+
+    $('img[data-src]').each(function() {
+        $(this).attr('src', $(this).data('src')).on('load', function() {
             $(this)
-            .off('load')
-            .css({
-                opacity: 1
-            })
-            .addClass('loaded');
-
-            i++;
-
-            if (i < images.length)
-                lazyloadImg(i, callback);
-            else {
-                if (callback != '')
-                    try {
-                        callback();
-                    } catch {}
-            }
-        });
-    } catch {}
-}
-
-function srcConvert(src) {
-    if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
-        return src.image_path + '?store_access_key=csse&no_redirect';
-    else
-        return '/images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
-}
-
-var swiperInited = false;
-
-function getProductContent(result, currentProductId, related = false) {
-    for (key in result) {
-        if (result[key].id == Number(currentProductId)) {
-            product_name = result[key].name;
-
-            var img_desk = '';
-
-            if (typeof result[key].pairs.pairs == 'array' && result[key].pairs.pairs.length > 0)
-                if (result[key].pairs.pairs[0]['desk'] !== undefined)
-                    result[key].pairs.pairs[0];
-
-            if (!related) {
-                $('#related')
-                .append($('<a>', {
-                    class: 'related-item item-selected',
-                    href: '/' + result[key].seo_name
-                }).append($('<img>', {
-                    'data-src': srcConvert(result[key].pairs.main_pair['1600']),
-                    // 'data-srcset': getSrcset(result[key].pairs.main_pair),
-                    // 'sizes': '(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1200px) 1200px, 1600px'
-                })).append($('<div>', {
-                    class: 'bubble'
-                }).append($('<div>', {
-                    class: 'bubble-flex'
-                }).append($('<div>')
-                .append($('<div>', {
-                    class: 'related-name',
-                    text: result[key].name
-                })).append($('<div>', {
-                    class: 'price',
-                    text: result[key].price
-                }))).append($('<div>', {
-                    class: 'show-more',
-                    html: 'Show text <br> ↓'
-                }))).append($('<div>', {
-                    class: 'slide-text',
-                })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
-                .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'));
-
-                $('.js-swiper-related .swiper-wrapper')
-                .append($('<div>', {
-                    class: 'swiper-slide'
+                .off('load')
+                .css({
+                    opacity: 1
                 })
-                .append($('<a>', {
-                    class: 'related-item item-selected',
-                    href: '/' + result[key].seo_name
-                }).append($('<img>', {
-                    'data-src': srcConvert(result[key].pairs.main_pair['1600']),
-                }))
-                .append($('<div>', {
-                    class: 'bubble'
-                })
-                .append($('<div>', {
-                    class: 'bubble-flex'
-                })
-                .append($('<div>')
-                .append($('<div>', {
-                    class: 'related-name',
-                    text: result[key].name
-                }))
-                .append($('<div>', {
-                    class: 'price',
-                    text: result[key].price
-                })))
-                .append($('<div>', {
-                    class: 'show-more',
-                    html: 'Show text <br> ↓'
-                })))
-                .append($('<div>', {
-                    class: 'slide-text',
-                    // html: textSplit(img_desk)
-                }))
-                .append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
-                .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
-
-                // const observer = new MutationObserver(function(mutationsList, observer) {
-                //     for (let mutation of mutationsList) {
-                //         if (mutation.type === 'attributes') {
-                //             if (mutation.attributeName == 'style') {
-                //                 $('.related-item.item-selected .bubble').css({
-                //                     'opacity': 1
-                //                 })
-                //             }
-                //         }
-                //     }
-                // });
-
-                // observer.observe($('.related-item.item-selected img').get(0), {
-                //     attributes: true,
-                //     childList: false,
-                //     subtree: false
-                // });
-            } else {
-                $('.related-item.item-selected .bubble').remove();
-                $('.related-item.item-selected').append($('<div>', {
-                    class: 'bubble'
-                }).append($('<div>', {
-                    class: 'bubble-flex'
-                }).append($('<div>')
-                .append($('<div>', {
-                    class: 'related-name',
-                    text: result[key].name
-                })).append($('<div>', {
-                    class: 'price',
-                    text: result[key].price
-                }))).append($('<div>', {
-                    class: 'show-more',
-                    html: 'Show text <br> ↓'
-                }))).append($('<div>', {
-                    class: 'slide-text',
-                    // html: textSplit(img_desk)
-                })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))
-                .append('<svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>');
-            }
-
-            $('.bubble.bubble-mobile .related-name').text(result[key].name)
-            $('.bubble.bubble-mobile .price').text(result[key].price)
-
-            var i = 0;
-
-            for (img_key in result[key].pairs.pairs) {
-                $('.slider').append($('<figure>', {
-                    class: 'slider-item'
-                }).append($('<img>', {
-                    'data-src': srcConvert(result[key].pairs.pairs[img_key]['1600']),
-                })).append($('<figcaption>', {
-                    class: 'description',
-                    text: result[key].pairs.descriptions[i]
-                })));
-
-                i++;
-            }
-            
-            $('#size-wrapper').empty();
-
-            if (result[key].variations == undefined) {
-                let size = getSizeWord(result[key].size);
-
-                $('#size-wrapper')
-                .addClass('one_size')
-                .append($('<div>', {
-                    id: 'size',
-                    html: '<span class="short-size">' + (result[key].size == 'one size' ? '' : result[key].size) + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
-                    'data-product-id': result[key].id,
-                    'data-variation-id': result[key].id,
-                    'data-price': result[key].price,
-                    'data-product-name': result[key].name,
-                    'data-max-count': result[key].count,
-                    'data-product-type': result[key].type,
-                    'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
-                }))
-            } else {
-                let sizes = Object.keys(result[key].variations),
-                    size = getSizeWord(result[key].size);
-
-                if (result[key].count > 0) {
-                    $('#size-wrapper').append($('<div>', {
-                        id: 'size',
-                        html: '<span class="short-size">' + result[key].size + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
-                        'data-product-id': result[key].variations[sizes[0]].product_id,
-                        'data-variation-id': result[key].variations[sizes[0]].product_id,
-                        'data-price': result[key].price,
-                        'data-product-name': result[key].name,
-                        'data-max-count': result[key].variations[sizes[0]].count,
-                        'data-product-type': result[key].type,
-                        'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
-                    })).append($('<div>', {
-                        class: 'size-arrow',
-                        text: '^'
-                    })).append($('<ul>', {
-                        id: 'size-list'
-                    }));
-
-                    $('#size-list').append($('<li>', {
-                        html: '<span class="short-size">' + result[key].size + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
-                        'data-product-id': result[key].id,
-                        'data-variation-id': result[key].id,
-                        'data-price': result[key].price,
-                        'data-product-name': result[key].name,
-                        'data-max-count': result[key].count,
-                        'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
-                    }));
-                } else {
-                    let variationSizeLetter = Object.keys(result[key].variations)[0];
-                        size = getSizeWord(variationSizeLetter);
-
-                        if (size == undefined)
-                            size = ['', ''];
-
-                        $('#size-wrapper').append($('<div>', {
-                            id: 'size',
-                            html: '<span class="short-size">' + variationSizeLetter + '</span>' + size[0] + ' <span class="chinese">' + size[1] +  '</span>',
-                            'data-product-id': result[key].variations[sizes[0]].product_id,
-                            'data-variation-id': result[key].variations[sizes[0]].product_id,
-                            'data-price': result[key].price,
-                            'data-product-name': result[key].name,
-                            'data-max-count': result[key].variations[sizes[0]].count,
-                            'data-product-type': result[key].type,
-                            'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
-                        })).append($('<div>', {
-                            class: 'size-arrow',
-                            text: '^'
-                        })).append($('<ul>', {
-                            id: 'size-list'
-                        }));
-                    }
-
-                    ['S', 'M', 'L', 'XL'].forEach(variation_key => {
-                        size = getSizeWord(variation_key);
-
-                        if (result[key].variations[variation_key] != undefined && result[key].variations[variation_key].count > 0)
-                            $('#size-list').append($('<li>', {
-                                html: '<span class="short-size">' + variation_key + '</span>' + size[0] + ' <span class="chinese">' + size[1] + '</span>',
-                                'data-product-id': result[key].variations[variation_key].product_id,
-                                'data-variation-id': result[key].variations[variation_key].product_id,
-                                'data-price': result[key].price,
-                                'data-product-name': result[key].name,
-                                'data-max-count': result[key].variations[variation_key].count,
-                                'data-details-main-pair': ('detailed' in result[key].details_main_pair) ? result[key].details_main_pair.detailed.image_path : ''
-                            }));
-                    });
-            }
-
-            if ($('#size').data('max-count') == 0)
-                $('.checkout-button.add').css({
-                    'display': 'none'
-                })
-            else
-                $('.checkout-button.add').css({
-                    'display': ''
-                })
-
-            $('#size-wrapper').on('click', '#size-list li', function() {
-                $(this).closest('#size-wrapper').find('#size')
-                    .data('product-id', $(this).data('product-id'))
-                    .data('variation-id', $(this).data('variation-id'))
-                    .data('price', $(this).data('price'))
-                    .data('product-name', $(this).data('product-name'))
-                    .data('max-count', $(this).data('max-count'));
-
-                setTimeout(() => {
-                    $(this).closest('#size-wrapper').find('#size-list').removeClass('open');
-                }, 50);
-            });
-
-            $('.checkout-button.add').data('main-pair', result[key].pairs.main_pair);
-
-            slider();
-        } else {
-            if (!related) {
-                if (Object.keys(result[key].pairs.main_pair[420]).length)
-                    $('#related')
-                    .append($('<a>', {
-                        class: 'related-item',
-                        href: '/' + result[key].seo_name
-                    }).append($('<img>', {
-                        'data-src': srcConvert(result[key].pairs.main_pair['1600']),
-                    })).append($('<div>', {
-                        class: 'bubble'
-                    }).append($('<div>', {
-                        class: 'related-name',
-                        text: result[key].name
-                    })).append($('<div>', {
-                        class: 'price',
-                        text: result[key].price
-                    })).append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>')));
-
-                    $('.js-swiper-related .swiper-wrapper')
-                    .append($('<div>', {
-                        class: 'swiper-slide 1'
-                    })
-                    .append($('<a>', {
-                        class: 'related-item',
-                        href: '/' + result[key].seo_name
-                    })
-                    .append($('<img>', {
-                        'data-src': srcConvert(result[key].pairs.main_pair['1600']),
-                    }))
-                    .append($('<div>', {
-                        class: 'bubble'
-                    })
-                    .append($('<div>', {
-                        class: 'related-name',
-                        text: result[key].name
-                    }))
-                    .append($('<div>', {
-                        class: 'price',
-                        text: result[key].price
-                    }))
-                    .append('<svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path></g></svg>'))));
-            }
-        }
-    }
-
-    lazyloadImg();
-}
-
-function getSrcset(pair) {
-    if ((typeof pair == 'array' && pair.length > 0) || (typeof pair == 'object' && Object.keys(pair).length > 0))
-        if (pair[420].image_path != undefined)
-            return JSON.stringify(pair);
-            
-    return undefined;
-}
-
-function bodyPosition() {
-    if ($('#preloader').length && !$('#preloader').hasClass('display_none')) {
-        $('body').css({
-            'position': 'fixed'
-        });
-        
-        const callback = function(mutationsList, observer) {
-            if ($(mutationsList[0].target).hasClass('gone'))
-                $('body').css({
-                    'position': ''
-                });
-                setTimeout(() => {
-                    $('#preloader').remove();
-                }, 800);
-        };
-
-        const observer = new MutationObserver(callback);
-
-        observer.observe($('#preloader').get(0), {
-            attributes: true,
-            childList: false,
-            subtree: false
-        });
-    }
+                .addClass('loaded');
+        })
+    })
 }
 
 function textSplit(text) {

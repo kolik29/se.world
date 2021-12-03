@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order success</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css"/>
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+    
+    <link rel="stylesheet" href="/style.css?{{timestamp}}">
+    <link rel="stylesheet" href="css/success-order.css?{{timestamp}}">
+    
+    <script src="/scripts/jquery-3.6.0.min.js"></script>
+    <script src="/scripts/order-success.js?{{timestamp}}"></script>
+</head>
+<body>
+    <header>
+        <div class="menu">
+            <a href="/"><img class="logotype" src="/logotype.svg" alt=""></a>
+            <div class="rotating-icon">
+                <div id="cart">
+                    <img src="/cart.svg" alt="">
+                    <div id="counter">0</div>
+                </div>
+                <div id="about">
+                    <span>info</span>
+                </div>
+            </div>
+        </div>
+        <div class="bag">
+            <div class="about-wrapper">
+                <div class="h1">About 關於</div>
+                <p class="studio-info">
+                Signature Element is a state of mind celebrating occult, chaotic, wacky and quirky human origins. SE researches link between extraterrestrial and primal and constantly tries to find out who we are and how do we get here.
+                </p>
+                <p class="contacts">
+                    hi@se.world <br>
+                    <a href="shipping-and-returns">Shipping & Returns</a>
+                </p>
+                <p class="policy">Find about our <a target="_blanc" href="/policy">Terms & Policy.</a></p>
+            </div>
+            <div id="empty-bag">Nothing in the bag yet</div>
+            <div class="bag-items">
+                <div id="order-list">
+                </div>
+                <div class="input-wrapper">
+                    <a href="checkout" id="checkout" class="action-line">
+                        <div>Total</div>
+                        <div id="total"></div>
+                        <button id="buy" class="checkout-button">BUY</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="grid-container">
+        <div class="order-success">
+            <h1>Order 命令 #<span id="order_id"></span></h1>
+
+            <div class="order-success__body">
+                <div>Dear, <span id="customer_name"></span>, thank you for purchase!</div>
+                <div>You order will be shipped to <span id="customer_address"></span> within <span id="delivery_time"></span> days.</div>
+            </div>
+
+            <div class="order-success__footer">
+                <div>SE you again. <a href="/">Back to shop</a></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js?1"></script>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(86423836, "init", {
+    clickmap:true,
+    trackLinks:true,
+    accurateTrackBounce:true
+    });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/86423836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SY9M72WV3T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SY9M72WV3T');
+    </script>
+</body>
+</html>

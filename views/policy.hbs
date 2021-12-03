@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/p5.min.js"></script>
+    <script src="/p5.dom.min.js"></script>
+    <title>Signature Element</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css"/>
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+    
+    <script src="/scripts/jquery-3.6.0.min.js"></script>
+    <script src="/scripts/ajax.js?{{timestamp}}"></script>
+    <script src="/scripts/script.js?{{timestamp}}"></script>
+
+    <link rel="stylesheet" href="css/policy.css">
+</head>
+<body>
+    <header>
+        <div class="menu">
+            <a href="/"><img class="logotype" src="/logotype.svg" alt=""></a>
+            <div class="rotating-icon">
+                <div id="cart">
+                    <img src="/cart.svg" alt="">
+                    <div id="counter">0</div>
+                </div>
+                <div id="about">
+                    <span>info</span>
+                </div>
+            </div>
+        </div>
+        <div class="bag">
+            <div class="about-wrapper">
+                <div class="h1">About 關於</div>
+                <p class="studio-info">
+                Signature Element is a state of mind celebrating occult, chaotic, wacky and quirky human origins. SE researches link between extraterrestrial and primal and constantly tries to find out who we are and how do we get here.
+                </p>
+                <p class="contacts">
+                    hi@se.world <br>
+                    <a href="shipping-and-returns">Shipping & Returns</a>
+                </p>
+                <p class="policy">Find about our <a target="_blanc" href="/policy">Terms & Policy.</a></p>
+            </div>
+            <div id="empty-bag">Nothing in the bag yet</div>
+            <div class="bag-items">
+                <div id="order-list">
+                </div>
+                <div class="input-wrapper">
+                    <a href="checkout" id="checkout" class="action-line">
+                        <div>Total</div>
+                        <div id="total"></div>
+                        <button id="buy" class="checkout-button">BUY</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="policy-text color">
+        <div class="policy__head align_center">
+            <h1>Terms & Policy</h1>
+            <div class="section-1">
+                <div>Privacy of our users is one of the top priorities for the Signature Element</div>
+                <div>label founded by MADFRENZY LLP and accessible at <a href="/" class="color_gainsboro">SE.WORLD</a></div>
+            </div>
+            <div class="section-2 margin-top_23px">
+                <div>This Privacy Policy document contains types of information that is</div>
+                <div>collected and recorded by MADFRENZY LLP and how we use it.</div>
+            </div>
+            <div class="section-3 margin-top_23px">
+                <div>If you have additional questions or require more information about our</div>
+                <div>Privacy Policy, do not hesitate to <a href="mailto:hi@se.world" class="color_gainsboro">contact us.</a></div>
+            </div>
+        </div>
+        <div class="policy__body margin-top_46px">
+            <h2>
+                General Data Protection Regulation (GDPR)
+            </h2>
+            <div class="section-4 margin-top_23px">
+                <div>We are a Data Controller of your information.</div>
+            </div>
+            <div class="section-5">
+                <div>MADFRENZY LLP legal basis for collecting and using the personal information described in this Privacy Policy depends on the Personal Information we collect and the specific context in which we collect the information:</div>
+            </div>
+            <ul class="margin-top_23px">
+                <li>
+                    MADFRENZY LLP needs to perform a contract with you
+                </li>
+                <li>
+                    You have given MADFRENZY LLP permission to do so
+                </li>
+                <li>
+                    Processing your personal information is in MADFRENZY LLP legitimate interests
+                </li>
+                <li>
+                    MADFRENZY LLP needs to comply with the law
+                </li>
+            </ul>
+            <div class="section-6 margin-top_23px">
+                <div>LLP will retain your personal information only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.</div>
+            </div>
+            <div class="section-7 margin-top_23px">
+                <div>If you are a resident of the European Economic Area (EEA), you have certain data protection rights. If you wish to be informed what Personal Information we hold about you and if you want it to be removed from our systems, please contact us.</div>
+            </div>
+            <div class="section-8 margin-top_23px">
+                <div>In certain circumstances, you have the following data protection rights:</div>
+            </div>
+            <ul class="margin-top_23px">
+                <li>
+                    The right to access, update or to delete the information we have on you.
+                </li>
+                <li>
+                    The right of rectification.
+                </li>
+                <li>
+                    The right to object.
+                </li>
+                <li>
+                    The right of restriction.
+                </li>
+                <li>
+                    The right to data portability
+                </li>
+                <li>
+                    The right to withdraw consent
+                </li>
+            </ul>
+            <h2 class="margin-top_46px">
+                Log Files
+            </h2>
+            <div class="section-9 margin-top_23px">
+                <div>SE.WORLD follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.</div>
+            </div>
+            <h2 class="margin-top_46px">
+                Cookies and Web Beacons
+            </h2>
+            <div class="section-10 margin-top_23px">
+                <div>Like any other website, SE.WORLD uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</div>
+            </div>
+            <div class="section-11 margin-top_23px">
+                <div>For more general information on cookies, please read "Cookies" article from the Privacy Policy Generator.</div>
+            </div>
+            <h2 class="margin-top_46px">
+                Privacy Policies
+            </h2>
+            <div class="section-12 margin-top_23px">
+                <div>You may consult this list to find the Privacy Policy for each of the advertising partners of SE.WORLD.</div>
+            </div>
+            <div class="section-13">
+                <div>Third-party ad servers or ad networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on SE.WORLD which are sent directly to users' browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit.</div>
+            </div>
+            <div class="section-14">
+                <div>Note that SE.WORLD has no access to or control over these cookies that are used by third-party advertisers.</div>
+            </div>
+            <h2 class="margin-top_46px">
+                Third Party Privacy Policies
+            </h2>
+            <div class="section-15 margin-top_23px">
+                <div>SE.WORLD's Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information. It may include their practices and instructions about how to opt-out of certain options.</div>
+            </div>
+            <div class="section-16 margin-top_23px">
+                <div>You can choose to disable cookies through your individual browser options. To know more detailed information about cookie management with specific web browsers, it can be found at the browsers' respective websites.</div>
+            </div>
+            <h2 class="margin-top_46px">
+                Children's Information
+            </h2>
+            <div class="section-17 margin-top_23px">
+                <div>Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity.</div>
+            </div>
+            <div class="section-18 margin-top_23px">
+                <div>SE.WORLD does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.</div>
+            </div>
+            <h2 class="margin-top_42px">
+                Online Privacy Policy Only
+            </h2>
+            <div class="section-19 margin-top_23px">
+                <div>Our Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in SE.WORLD. This policy is not applicable to any information collected offline or via channels other than this website.</div>
+            </div>
+        </div>
+        <div class="policy__footer align_center margin-top_46px">
+            <div class="section-20">
+                <div>By using our website, you hereby consent to our Privacy Policy and agree to its terms.</div>
+            </div>
+            <div class="section-21 color_gainsboro margin-top_23px">
+                <div>MADFRENZY LLP: Company number [OC439011] </div>
+                <div>Registered office address: [W14 9EB] [United Kingdom] [London] [Palliser Road] [Palliser House Second Floor]</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(86423836, "init", {
+    clickmap:true,
+    trackLinks:true,
+    accurateTrackBounce:true
+    });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/86423836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SY9M72WV3T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SY9M72WV3T');
+    </script>
+</body>
+<script src="/policy.js"></script>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Signature Element</title>
+
+    <script src="/scripts/jquery-3.6.0.min.js"></script>
+    <script src="/scripts/ajax.js?{{timestamp}}"></script>
+    <script src="/scripts/script.js?{{timestamp}}"></script>
+
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=6b5c7a6d-4b7b-4150-ac66-e879dc5bf9f5" type="text/javascript"></script>
+    <script src="/scripts/geoposition.js?{{timestamp}}"></script>
+</head>
+<body>
+    <header>
+        <div class="menu">
+            <a href="/"><img class="logotype" src="/logotype.svg" alt=""></a>
+        </div>
+    </header>
+    <div class="checkout-wrapper">
+        <div id="products">
+        </div>
+        <div class="about-wrapper">
+            <div class="h1">Delievery 送貨</div>
+            <p class="delivery-method">
+                UPS Express®: $20 (Free over $200)
+            </p>
+            <p class="continents">
+                Europe | Asia | North America  <span class="ship-days">3 days</span> <br>
+                South America | Middle East | Africa | Australia <span class="ship-days">6 days</span> <br>
+            </p>
+            <p class="payment-info">
+                *Free shipping for all orders from Russia! <br>
+                Moscow | Saint Petersburg 3 days <br>
+                The rest of Russia 6 days <br><br>
+                Order payment online: Debit | Credit card (via Stripe)
+            </p>
+        </div>
+        <form class="bag-items">
+            <div id="order-list">
+                <div id="delivery">
+                    <span id="delivery-cost"></span>&nbsp;<span id="delivery-time"></span>
+                </div>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" placeholder="Country" name="country">
+                <input type="text" placeholder="City" name="state">
+                <input type="text" placeholder="Street" name="street">
+                <input type="text" placeholder="Building" name="building">
+                <input type="text" placeholder="Apartment/Office" name="apartment">
+                <input type="text" placeholder="Name" name="name">
+                <input type="text" placeholder="Phone" name="phone">
+                <input type="email" placeholder="E-mail (for order details only)" name="email">
+                <a id="checkout" class="action-line">
+                    <div>Total</div>
+                    <div id="total"></div>
+                    <button id="pay" class="checkout-button">PAY</button>
+                </a>
+            </div>
+        </form>
+        <div class="about-wrapper">
+            <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="/policy">Terms & Policy.</a></p>
+        </div>
+    </div>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(86423836, "init", {
+    clickmap:true,
+    trackLinks:true,
+    accurateTrackBounce:true
+    });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/86423836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SY9M72WV3T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SY9M72WV3T');
+    </script>
+</body>
+    <script src="/checkout.js?{{timestamp}}"></script>
+</html>

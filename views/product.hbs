@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css?{{timestamp}}">
+    <script src="/p5.min.js"></script>
+    <script src="/p5.dom.min.js"></script>
+    <title>Product</title>
+    
+    <script src="/scripts/jquery-3.6.0.min.js"></script>
+    <script src="/scripts/ajax.js?{{timestamp}}"></script>
+    <script src="/scripts/script.js?{{timestamp}}"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+</head>
+<body class="product-page">
+    <div id="slide-number"></div>
+    <div class="sticky-scroll">
+        <div class="fixed-wrapp">
+            <header>
+                <div class="menu">
+                    <a href="/"><img class="logotype" src="/logotype.svg" alt=""></a>
+                    <div class="rotating-icon">
+                        <div id="cart">
+                            <img src="/cart.svg" alt="">
+                            <div id="counter">0</div>
+                        </div>
+                        <div id="about">
+                            <span>info</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bag">
+                    <div class="about-wrapper">
+                        <div class="h1">About 關於</div>
+                        <p class="studio-info">
+                            Signature Element is a state of mind celebrating occult, chaotic, wacky and quirky human origins. SE researches link between extraterrestrial and primal and constantly tries to find out who we are and how do we get here.
+                        </p>
+                        <p class="contacts">
+                            hi@se.world <br>
+                            <a href="shipping-and-returns">Shipping & Returns</a>
+                        </p>
+                        <p class="policy">Find about our <a target="_blanc" href="/policy">Terms & Policy.</a></p>
+                    </div>
+                    <div id="empty-bag">Nothing in the bag yet</div>
+                    <div class="bag-items">
+                        <div id="order-list">
+                        </div>
+                        <div class="input-wrapper">
+                            <a href="checkout" id="checkout" class="action-line">
+                                <div>Total</div>
+                                <div id="total"></div>
+                                <button id="buy" class="checkout-button">BUY</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div id="indicator">
+                {{#each product.pairs.pairs}}
+                <div class="line"></div>
+                {{/each}}
+            </div>
+            <div id="purchase" class="action-line purchase-desktop">
+                <div class="shipping">Shipping</div>
+                {{#if out_of_stock}}
+                {{else}}
+                <div id="size-wrapper"{{#if product.one_size}} class="one_size"{{/if}}>
+                    {{#each product.variations}}
+                        {{#if @first}}
+                        <div id="size" dara-product-id="{{this.product_id}}" data-variation-id="{{this.product_id}}" data-price="{{this.price}}" data-product-name="{{this.name}}" data-max-count="{{this.count}}" data-product-type="{{this.type}}" data-details-main-pair="{{this.details_main_pair}}">
+                            <span class="short-size">{{this.size}}</span>{{this.word.[0]}} <span class="chinese">{{this.word.[1]}}</span>
+                        </div>
+                        {{/if}}
+                    {{/each}}
+                    <div class="size-arrow">^</div>
+                    <ul id="size-list">
+                        {{#each product.variations}}
+                            <li data-variation-id="{{this.product_id}}" data-max-count="{{this.count}}"><span class="short-size">{{this.size}}</span>{{this.word.[0]}} <span class="chinese">{{this.word.[1]}}</span></li>
+                        {{/each}}
+                    </ul>
+                </div>
+                <button class="checkout-button add">ADD</button>
+                {{/if}}
+                <div class="shipping-info">
+                    UPS Express® <br>
+                    $20 for all international shipping <br>
+                    (Free shipping for orders over $200)<br><br>
+                    Europe | Asia | North America 3 days <br>
+                    South America | Middle East | Africa | Australia 6 days<br><br>
+                    *Free shipping for all orders from Russia!<br>
+                    Moscow | Saint Petersburg 3 days<br>
+                    The rest of Russia 6 days<br><br>
+                    Additional shipping info:<br><br>
+                    We use UPS Express® service for deliveries to the Rest of World.<br><br>
+                    Your order will be shipped on a DDU (Delivery Duty Unpaid) service and you may be required to pay duties and taxes on your purchase when it arrives in the destination country. The average tax for the most countries varies around 10% (from the order total), for orders from Russia the tax is already included in the cost. It might be a good idea to contact your local customs office for current charges.<br><br>
+                    Our courier (UPS Express®) will contact you in advance for the delivery. <br><br>
+                    No Returns / No Refunds / No Exchanges*<br>
+                    *Except for orders from Russia, for Return, Refund or Exchange please contact us at <a href="mailto:hi@se.world">hi@se.world</a>
+                </div>
+            </div>
+            <div class="slider">
+                {{#each product.pairs.pairs}}
+                <figure class="slider-item{{#if @first}} img-selected{{/if}}">
+                    <img data-src="{{this.src.[1600]}}">
+                    <figcaption class="description">{{this.description}}</figcaption>
+                </figure>
+                {{/each}}
+                <button id="prev-img"></button>
+                <button id="next-img"></button>
+            </div>
+            <div class="bubble bubble-mobile">
+                <div class="bubble-flex">
+                    <div class="">
+                        <div class="related-name">{{product.name}}</div>
+                        <div class="price">{{product.price}}</div>
+                    </div>
+                    <div class="show-more">Show text <br> ↓</div>
+                </div>
+                <div class="slide-text">
+                    Classic baseball cap 100% Nylon. Laser cut logo + embroidery! 經典棒球帽 100% 尼龍。激光切割標誌+刺繡
+                </div>
+                <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        <div class="related-scroll">
+            <aside id="related">
+                {{#each products_in_stock}}
+                <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}">
+                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                    <div class="bubble">
+                        <div class="related-name">{{this.name}}</div>
+                        <div class="price">{{this.price}}</div>
+                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                            </g>
+                        </svg>
+                    </div>
+                    {{#if this.current_product}}
+                    <svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                        </g>
+                    </svg>
+                    {{/if}}
+                </a>
+                {{/each}}
+                {{#each products_out_of_stock}}
+                <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}">
+                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                    <div class="bubble">
+                        <div class="related-name">{{this.name}}</div>
+                        <div class="price">{{this.price}}</div>
+                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                            </g>
+                        </svg>
+                    </div>
+                    {{#if this.current_product}}
+                    <svg class="triangle-mobile" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                        </g>
+                    </svg>
+                    {{/if}}
+                </a>
+                {{/each}}
+            </aside>
+        </div>
+    </div>
+    <div class="swiper-related js-swiper-related">
+        <div class="swiper-wrapper">
+            {{#each products_in_stock}}
+            <div class="swiper-slide">
+                <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-test="{{this.current_product}} {{this.id}}">
+                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                    {{#if this.current_product}}
+                    <div class="bubble">
+                        <div class="bubble-flex">
+                            <div class="">
+                                <div class="related-name">{{this.name}}</div>
+                                <div class="price">{{this.price}}</div>
+                            </div>
+                            <div class="show-more">Show text <br> ↓</div>
+                        </div>
+                        <div class="slide-text"></div>
+                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                            </g>
+                        </svg>
+                    </div>
+                    {{else}}
+                    <div class="bubble">
+                        <div class="related-name">{{this.name}}</div>
+                        <div class="price">{{this.price}}</div>
+                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                            </g>
+                        </svg>
+                    </div>
+                    {{/if}}
+                </a>
+            </div>
+            {{/each}}
+            {{#each products_out_of_stock}}
+            <div class="swiper-slide">
+                <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-test="{{this.current_product}} {{this.id}}">
+                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                    {{#if this.current_product}}
+                    <div class="bubble">
+                        <div class="bubble-flex">
+                            <div class="">
+                                <div class="related-name">{{this.name}}</div>
+                                <div class="price">{{this.price}}</div>
+                            </div>
+                            <div class="show-more">Show text <br> ↓</div>
+                        </div>
+                        <div class="slide-text"></div>
+                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                            </g>
+                        </svg>
+                    </div>
+                    {{else}}
+                    <div class="bubble">
+                        <div class="related-name">{{this.name}}</div>
+                        <div class="price">{{this.price}}</div>
+                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                            </g>
+                        </svg>
+                    </div>
+                    {{/if}}
+                </a>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+        
+        ym(86423836, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/86423836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SY9M72WV3T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SY9M72WV3T');
+    </script>
+</body>
+<script src="/product.js?{{timestamp}}"></script>
+</html>
