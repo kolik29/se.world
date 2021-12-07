@@ -1,57 +1,45 @@
 $(() => {
     ymaps.ready(init);
 
-    var countryData;
-
     function init() {
         var geolocation = ymaps.geolocation;
-    
+
         geolocation.get({
             provider: 'yandex',
             mapStateAutoApply: true
         }).then(function (result) {
             var metaDataProperty = result.geoObjects.get(0).properties.get('metaDataProperty');
-            
-            countryData = countries_data.find(country => country.code === metaDataProperty.GeocoderMetaData.Address.country_code);
-            
-            setDelivery(countryData);
+
+            let country = countries_data.find(country => country.code === metaDataProperty.GeocoderMetaData.Address.country_code);				
+
+			$('.input-wrapper input[name="country"]').val(country.name);
+			shippingTo(country);
         });
     }
 
     $('.input-wrapper input[name="country"]').on('change, keyup', function() {
-        let country = countries_data.find(__country => __country.name.toLowerCase() == $(this).val().trim().toLowerCase());
+        let country = countries_data.find(country => country.name.toLowerCase() == $(this).val().trim().toLowerCase());
 
-        if (country == undefined)
-            $('#delivery-time').text('');
-        else {
-            if (country.timing == 'ex_calc') {
-                $('#delivery-time').text('');
-                
-                $('.input-wrapper input[name="state"]').on('change, keyup', function() {
-                    city = cities_data[country.code].find(city => city.name.toLowerCase() === $(this).val().trim().toLowerCase());
-        
-                    if (city == undefined) {
-                        $('#delivery-time').text('');
-                    } else
-                        $('#delivery-time').text('(' + city.deliveries_time + ' ' + declOfNum(city.deliveries_time, ['day', 'days']) + ')');
-                })
-            } else
-                $('#delivery-time').text('(' + country.timing + ' ' + declOfNum(country.timing, ['day', 'days']) + ')');
-
-            if (country.code == 'RU') {
-                $('.input-wrapper input[name="country"]').data('country-code', 'RU');
-                $('#delivery-cost').text('Free Express UPS delivery');
-                $('#delivery').css({
-                    'background-color': '#FFDC00',
-                    'opacity': '1'
-                })
-            } else {
-                $('.input-wrapper input[name="country"]').data('country-code', country.code);
-            }
-
-			updateBag();
-        }
+		if (country) {
+			$('.input-wrapper input[name="country"]').val(country.name);
+			shippingTo(country);
+		}
     })
+
+	$('.input-wrapper input[name="state"]').on('change, keyup', function() {
+		shippingToCity($(this).val());
+	})
+
+	$('body').on('click', '.checkout-wrapper .minus, .checkout-wrapper .plus', () => {
+		let country = countries_data.find(country => country.name.toLowerCase() == $('.input-wrapper input[name="country"]').val().trim().toLowerCase()),
+			city = $('.input-wrapper input[name="state"]').val();
+
+		if (country)
+			shippingTo(country);
+
+		if (city != '')
+			shippingToCity(city);
+	})
 })
 
 var countries_data = [
@@ -8092,47 +8080,75 @@ var cities_data = {
         {
 			"name": "Семей (Семипалатинск)",
 			"deliveries_time": 8}
-        ]
-    }
+    ]
+}
 
-function setDelivery(countryData) {
-    let countryName = '', timing = '';
+function shippingTo(country) {
+	let freeShipping = false, days = '';
+	const order = new Order();
 
-    if (countryData.timing == 'ex_calc') {
-        $('.input-wrapper input[name="state"]').on('change, keyup', function() {
-            city = cities_data[countryData.code].find(city => city.name.toLowerCase() === $(this).val().trim().toLowerCase());
+	if (country.code == 'RU')
+		freeShipping = true;
+	else {
+		if (order.total() > 200) {
+			freeShipping = true;
+			$('#total').text('$' + order.total());
+		} else
+			$('#total').text('$' + (order.total() + 20));
 
-			console.log($(this).val().trim().toLowerCase())
 
-            if (city == undefined) {
-                if ($('.input-wrapper input[name="country"]').val().toLowerCase() != 'россия' && $('.input-wrapper input[name="country"]').val().toLowerCase() != 'russia')
-                    $('#delivery-time').text('')
-            } else
-                $('#delivery-time').text('(' + city.deliveries_time + ' ' + declOfNum(city.deliveries_time, ['day', 'days']) + ')');
-        })
+		days = country.timing + ' ' + declOfNum(country.timing, ['day', 'days']);
+		days = ` (${days})`;
+	}
 
-        countryName = countryData.name;
-    } else {
-        timing = countryData.timing;
-        countryName = countryData.name;
-    }
-    
-    $('.input-wrapper input[name="country"]').val(countryName);
+	$('#delivery').data('country-code', country.code);
 
-    if (timing != '')
-        $('#delivery-time').text('(' + timing + ' ' + declOfNum(timing, ['day', 'days']) + ')');
+	if (freeShipping) {
+		$('#delivery')
+		.css({
+			'background-color': 'rgb(255, 220, 0)',
+			'color': ''
+		})
+		.text(freeShippingTextTemplate(days));
+	} else {
+		let leftToFreeshipping = 200 - order.total();
 
-    if (countryData.code == 'RU') {
-        $('.input-wrapper input[name="country"]').data('country-code', 'RU');
-        $('#delivery-cost').text('Free Express UPS delivery');
-        $('#delivery').css({
-            'background-color': '#FFDC00',
-            'opacity': '1'
-        })
-    } else {
-        $('.input-wrapper input[name="country"]').data('country-code', '');
-        updateBag();
-    }
+		$('#delivery')
+		.css({
+			'background-color': '',
+			'color': '#bbd8ea'
+		})
+		.text(freeShippingTextTemplate(days, leftToFreeshipping));
+	}
+}
+
+function shippingToCity(__city) {
+	if (
+		$('#delivery').data('country-code') == 'RU' ||
+		$('#delivery').data('country-code') == 'BY' ||
+		$('#delivery').data('country-code') == 'KZ'
+	) {
+		try {
+			let city = cities_data[$('#delivery').data('country-code')].find(city => city.name.toLowerCase() == __city.trim().toLowerCase()),
+				days = city.deliveries_time + ' ' + declOfNum(city.deliveries_time, ['day', 'days']);
+
+			days = ` (${days})`;
+
+			$('#delivery')
+			.css({
+				'background-color': 'rgb(255, 220, 0)',
+				'color': ''
+			})
+			.text(freeShippingTextTemplate(days));
+		} catch {}
+	}
+}
+
+function freeShippingTextTemplate(days, leftToFreeshipping = 0) {
+	if (leftToFreeshipping > 0)
+		return `$${leftToFreeshipping} left for free shipping ${days}`
+	else
+		return `Free Express UPS delivery${days}`;
 }
 
 function declOfNum(num, words) {

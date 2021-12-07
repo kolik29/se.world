@@ -1,14 +1,475 @@
-var url = new URL(location.href),
-    basket = {};
+var url = new URL(location.href);
 
-if (localStorage.getItem('basket') == null)
-    basket = {
-        products: [],
-        full_price: 0,
-        count: 0
+try {
+    $(() => {
+        var swiper_related;
+        if ($('.js-swiper-related').length) {
+            swiper_related = new Swiper('.js-swiper-related', {
+                direction: 'vertical',
+                slidesPerView: 'auto',
+                autoHeight: true,
+                loop: true,
+                mousewheel: true,
+                freeMode: true,
+                centeredSlides: true,
+                slideToClickedSlide: true,
+                on: {
+                    afterInit: function() {
+                        swiperInited = true;
+                        this.slideToLoop($('.swiper-related .swiper-slide .related-item.item-selected').closest('.swiper-slide').data('swiper-slide-index'));
+                    }
+                }
+            });
+
+            $('body').on('mouseenter', '.shipping-info', () => swiper_related.disable());
+
+            $('body').on('mouseleave', '.shipping-info', () => swiper_related.enable());
+        }
+
+        $('body').on('click', '.grid-item.archive', function() {
+            $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');
+        })
+
+        $('body').on('click', 'a.related-item', function(e) {
+            e.preventDefault();
+
+            if (!$(e.target).hasClass('item-selected') && $(e.target).closest('.item-selected').length == 0) {
+                $(this).find('img').removeAttr('data-src');
+
+                let prevRelatedItem = $('a.related-item.item-selected')
+
+                prevRelatedItem.removeClass('item-selected');
+                prevRelatedItem.find('.show-more').remove();
+                prevRelatedItem.find('.slide-text').remove();
+
+                $(this).addClass('item-selected');
+
+                window.history.pushState('Product', 'Product', $(this).attr('href'));
+                url = new URL(location.href);
+
+                $.get($(this).attr('href'), data => {
+                    $(data).each(function() {
+                        if ($(this).hasClass('sticky-scroll'))
+                            $('.js-swiper-related .related-item.item-selected .bubble').html($(this).find('.related-item.item-selected .bubble').html());
+
+                    })
+
+                    $('.fixed-wrapp .slider').html($(data).find('.fixed-wrapp .slider').html());
+                    $('.fixed-wrapp #purchase').html($(data).find('.fixed-wrapp #purchase').html());
+                    $('.fixed-wrapp #indicator').html($(data).find('.fixed-wrapp #indicator').html());
+                    $('.fixed-wrapp .bubble.bubble-mobile').html($(data).find('.fixed-wrapp .bubble.bubble-mobile').html());
+
+                    $('#slide-number').text('1/' + $('.slider .slider-item').length)
+
+                    lazyloadImg();
+
+                    swiper_related.update();
+                })
+            }
+        })
+
+        $('body').on('click', '.item-selected .bubble', function() {
+            if ($(this).hasClass('visible'))
+                $(this).removeClass('visible').find('.show-more').html('Show text <br> ↓')
+            else
+                $(this).addClass('visible').find('.show-more').html('Hide text <br> ↑')
+        })
+
+        $('body').on('mousemove', function(e) {
+            if ($('#slide-number').length) {
+                if (
+                    ($(e.target).hasClass('js-swiper-related') || $(e.target).closest('.js-swiper-related').length) ||
+                    ($(e.target).hasClass('action-line') || $(e.target).closest('.action-line').length) ||
+                    ($(e.target).hasClass('menu') || $(e.target).closest('.menu').length) ||
+                    ($(e.target).hasClass('bag') || $(e.target).closest('.bag').length)
+                )
+                    $('#slide-number').css({
+                        'display': 'none'
+                    })
+                else
+                    $('#slide-number').css({
+                        'display': ''
+                    })
+            }
+        })
+
+        $('input[name="phone"]').on('keydown', function(e) {
+            if ("1234567890".indexOf(e.key) == -1 && (e.key != 'Backspace' && e.key != 'Delete' && e.key != 'ArrowRight' && e.key != 'ArrowLeft'))
+                e.preventDefault();
+        })
+        
+        $('input[name="phone"]').on('change', function() {
+            $(this).val($(this).val().replace(/\D/, ''));
+        })
+
+        if ($('body.product-page').length) {
+            productPage();
+            sliderSwipe();
+        }
+
+        $('.rotating-icon').on('click', function() {
+            setTimeout(() => {
+                if ($('.bag').hasClass('open'))
+                    $('#about span').text('close');
+                else
+                    $('#about span').text('info');
+            }, 50);
+        })
+
+        $('form.bag-items').submit(function(e) {
+            e.preventDefault();
+
+            var formSubmit = true, customer = {};
+
+            $(this).find('input').each(function() {
+                if ($(this).val() == '') {
+                    $(this).css({
+                        'background-color': 'red'
+                    });
+
+                    if (formSubmit == undefined)
+                        formSubmit = false;
+
+                    formSubmit = formSubmit && false;
+                } else {
+                    $(this).css({
+                        'background-color': ''
+                    });
+
+                    if (formSubmit == undefined)
+                        formSubmit = true;
+
+                    formSubmit = formSubmit && true;
+
+                    customer[$(this).attr('name')] = $(this).val();
+                }
+            });
+
+            if (formSubmit) {
+                let delivery_price = 0;
+
+                if ($('.input-wrapper input[name="country"]').data('country-code') != 'RU')
+                    delivery_price = (parseInt(order.total()) < 200) ? 20 : 0;
+
+                customer.country = $('.input-wrapper input[name="country"]').data('country-code');
+
+                data = Object.assign(
+                    {
+                        products: order.get()
+                    }, {
+                        customer: customer, custom_shipping: {
+                            "delivery_name": "UPS Express®",
+                            "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
+                            "delivery_price": delivery_price,
+                            "payment_id": 21
+                        }
+                    }
+                );
+
+                post('seworld.create_order', data).then(
+                    result => {
+                        location.href = result.payment_url;
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                )
+            }
+        });
+
+        $('.input-wrapper input').on('keydown', function() {
+            $(this).css({
+                'background-color': ''
+            });
+        });
+
+        $('body').on('click', '#size-list li', function() {
+            $('#size').html($(this).html());
+            $(this).closest('#size-wrapper').find('#size').data('product-id', $(this).data('product-id'))
+            
+            $('#size-list').removeClass('open');
+            $('#size-wrapper').removeClass('button-gray');
+        });
+
+        let order = new Order();
+
+        updateOrder(order);
+
+        $('body').on('click', '.js-order-add', function() {
+            if ($(this).text() != 'ADDED!') {
+                order.add($('#size').data('product-id').toString());
+                updateOrder(order);
+            }
+        });
+
+        $('body').on('click', '.order-item .plus', function() {
+            order.add($(this).closest('.order-item').data('product-id').toString());
+            updateOrder(order);
+        });
+
+        $('body').on('click', '.order-item .minus', function() {
+            order.remove($(this).closest('.order-item').data('product-id').toString());
+            updateOrder(order);
+        });
+
+        if ($('.checkout-wrapper #products').length) {
+            order.get().forEach((order_product) => {
+                let product = order.product(order_product.id);
+
+                $('#products').append($('<div>', {
+                    'class': 'checkout-item',
+                    'data-product-id': product.id
+                }).css({
+                    'grid-row-start': randomInt(1, 3),
+                    'grid-row-end': 'span 3',
+                    'grid-column-start': randomInt(1, 3),
+                    'grid-column-end': 'span 3'
+                }).append($('<img>', {
+                    'data-src': product.details_main_pair,
+                })));
+            })
+        }
+
+        lazyloadImg();
+    });
+}
+
+catch (err) {
+    $.post(
+        '/console_log_save',
+        {
+            error: err
+        },
+        data => console.log(data)
+    )
+}
+
+class Order {
+    constructor() {
+        this.products = products_in_stock;
+        
+        let order = this.get(), products_list = [];
+
+        for (let product_index in this.products) {
+            products_list.push({
+                id: this.products[product_index].id,
+                count: this.products[product_index].count
+            })
+
+            if ('variations' in this.products[product_index])
+                for (let size in this.products[product_index].variations)
+                    products_list.push({
+                        id: this.products[product_index].variations[size].product_id,
+                        count: this.products[product_index].variations[size].count
+                    })
+        }
+
+        products_list.forEach(product_item => {
+            let product_order = order.filter(product => product.id == product_item.id);
+
+            if (product_order.length) {
+                if (Number(product_item.count) == 0)
+                    this.remove(product_item.id, true);
+                else {
+                    if (Number(product_item.count) < product_order[0].count) {
+                        let count_difference = product_order[0].count - Number(product_item.count);
+
+                        for (let i = 0; i < count_difference; i++)
+                            this.remove(product_item.id);
+                    }
+                }
+            } else
+                this.remove(product_item.id, true);
+        })
     }
-else
-    basket = JSON.parse(localStorage.getItem('basket'));
+
+    get() {
+        let order = JSON.parse(localStorage.getItem('order'));
+
+        if (order == null)
+            return [];
+        else
+            return order;
+    }
+
+    add(product_id) {
+        let order = this.get(), products_list = [], product_order = order.filter(product => product.id == product_id);
+
+        if (product_order.length) {
+            for (let product_index in this.products) {
+                products_list.push({
+                    id: this.products[product_index].id,
+                    count: this.products[product_index].count
+                })
+        
+                if ('variations' in this.products[product_index])
+                    for (let size in this.products[product_index].variations)
+                        products_list.push({
+                            id: this.products[product_index].variations[size].product_id,
+                            count: this.products[product_index].variations[size].count
+                        })
+            }
+        
+            products_list.forEach(product_item => {
+                if (
+                    Number(product_item.id) == Number(product_id) &&
+                    Number(product_item.count) > product_order[0].count
+                )
+                    order.forEach((product, index) => {
+                        if (product.id == product_id)
+                            order[index].count++;
+                    });
+            })
+        } else
+            order.push({
+                id: product_id,
+                count: 1
+            })
+
+        this.save(order);
+    }
+
+    remove(product_id, all = false) {
+        let order = this.get();
+
+        if (order.filter(product => product.id == product_id).length)
+            order.forEach((product, index) => {
+                if (product.id == product_id) {
+                    if (all)
+                        order.splice(index, 1);
+                    else {
+                        order[index].count--;
+
+                        if (order[index].count == 0)
+                            order.splice(index, 1);
+                    }
+                }
+            })
+
+        this.save(order);
+    }
+
+    save(order) {
+        localStorage.setItem('order', JSON.stringify(order));
+    }
+
+    count() {
+        let order = this.get(), count = 0;
+
+        order.forEach(product => count += Number(product.count));
+
+        return count;
+    }
+
+    total() {
+        let order = this.get(), price = 0;
+
+        order.forEach(product_order => {
+            for (let product_index in this.products) {
+                if (Number(product_order.id) == Number(this.products[product_index].id))
+                    price += Number(this.products[product_index].price.replace('$', '')) * product_order.count;
+    
+                if ('variations' in this.products[product_index])
+                    for (let size in this.products[product_index].variations)
+                        if (Number(product_order.id) == Number(this.products[product_index].variations[size].product_id))
+                            price += Number(this.products[product_index].price.replace('$', '')) * product_order.count;
+            }
+        })
+
+        return price;
+    }
+
+    product(product_id) {
+        let product;
+
+        for (let product_index in this.products) {
+            if (Number(product_id) == Number(this.products[product_index].id))
+                product = this.products[product_index];
+
+            if ('variations' in this.products[product_index])
+                for (let size in this.products[product_index].variations)
+                    if (Number(product_id) == Number(this.products[product_index].variations[size].product_id)) {
+                        product = this.products[product_index];
+                        product.count = this.products[product_index].variations[size].count;
+                    }
+        }
+
+        return product;
+    }
+}
+
+function updateOrder(order) {
+    $('#cart #counter').text(order.count());
+
+    $('#order-list .order-item').remove();
+
+    let order_products = order.get()
+
+    if (order_products.length) {
+        order_products.forEach(product => {
+            let product_list_item = order.product(product.id);
+
+            $('#order-list')
+            .append($('<div>', {
+                'class': 'order-item',
+                'data-product-id': product.id
+            })
+                .append($('<div>', {
+                    'class': 'minus',
+                    'text': '–'
+                }))
+                .append($('<div>', {
+                    'class': 'bag-product'
+                })
+                    .append($('<div>', {
+                        'class': 'product-type',
+                        'text': product_list_item.type
+                    }))
+                    .append($('<div>', {
+                        'class': 'product-name',
+                        'text': product_list_item.name
+                    }))
+                    .append($('<div>', {
+                        'class': 'product-size',
+                        'text': product_list_item.size
+                    }))
+                    .append($('<div>', {
+                        'class': 'product-quantity',
+                        'text': product.count
+                    }))
+                    .append($('<div>', {
+                        'class': 'product-price',
+                        'text': product_list_item.price
+                    }))
+                )
+                .append($('<div>', {
+                    'class': 'plus',
+                    'text': '+'
+                }))
+            )
+        });
+
+        $('#empty-bag').addClass('display_none');
+        $('.bag-items').addClass('flex-open');
+        $('#total').text(priceFormat(order.total()));
+    } else {
+        $('#empty-bag').removeClass('display_none');
+        $('.bag-items').removeClass('flex-open');
+    }
+}
+
+function lazyloadImg() {
+    $('img[data-src]').each(function() {
+        $(this).attr('src', $(this).data('src')).on('load', function() {
+            $(this)
+                .off('load')
+                .css({
+                    opacity: 1
+                })
+                .addClass('loaded');
+        })
+    })
+}
 
 function productPage() {
     $('body > .wrapper').addClass('preloader-overflow').css({
@@ -17,33 +478,6 @@ function productPage() {
     }).on('scroll', function(e) {
         e.preventDefault();
     });
-}
-
-if (url.pathname == '/checkout') {
-    basket = JSON.parse(localStorage.getItem('basket'));
-
-    $(() => {
-        basket.products.forEach(product => {
-            $('#products').append($('<div>', {
-                class: 'checkout-item',
-                'data-product-id': product.id
-            }).css({
-                'grid-column-start': randomInt(1, 3),
-                'grid-row-start': randomInt(1, 3),
-                'grid-column-end': 'span 3',
-                'grid-row-end': 'span 3',
-            }).append($('<img>', {
-                'data-src': product.details_main_pair
-            })));
-        });
-
-        lazyloadImg();
-    })
-}
-
-function randomInt(min, max) {
-    let rand = min + Math.random() * (max + 1 - min);
-    return Math.floor(rand)
 }
 
 function sliderSwipe() {
@@ -88,218 +522,38 @@ function sliderSwipe() {
     })
 }
 
-$(() => {
-    var swiper = new Swiper('.js-swiper-related', {
-        direction: 'vertical',
-        slidesPerView: 'auto',
-        autoHeight: true,
-        loop: true,
-        mousewheel: true,
-        freeMode: true,
-        centeredSlides: true,
-        slideToClickedSlide: true,
-        on: {
-            afterInit: function() {
-                swiperInited = true;
-                this.slideToLoop($('.swiper-related .swiper-slide .related-item.item-selected').closest('.swiper-slide').data('swiper-slide-index'));
-            }
-        }
+function randomInt(min, max) {
+    let rand = min + Math.random() * (max + 1 - min);
+    return Math.floor(rand)
+}
+
+function textSplit(text) {
+    text = text.split('/');
+
+    text.forEach((item, i) => {
+        text[i] = '<div>' + item.trim() + '</div>';
     })
 
-    $('body').on('click', '.grid-item.archive', function() {
-        $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');
-    })
+    return text.join('');
+}
 
-    $('body').on('click', 'a.related-item', function(e) {
-        e.preventDefault();
+function priceFormat(price) {
+    var currency = '';
 
-        if (!$(e.target).hasClass('item-selected') && $(e.target).closest('.item-selected').length == 0) {
-            $(this).find('img').removeAttr('data-src');
+    if (true)
+        currency = '$';
 
-            let prevRelatedItem = $('a.related-item.item-selected')
+    if (price > 10000)
+        return currency + price.toString().replace(/(\d{1,3}(?=(?:\d\d\d)+(?!\d)))/g, "$1" + ' ');
 
-            prevRelatedItem.removeClass('item-selected');
-            prevRelatedItem.find('.show-more').remove();
-            prevRelatedItem.find('.slide-text').remove();
-
-            $(this).addClass('item-selected');
-
-            window.history.pushState('Product', 'Product', $(this).attr('href'));
-            url = new URL(location.href);
-
-            $.get($(this).attr('href'), data => {
-                $(data).each(function() {
-                    if ($(this).hasClass('js-swiper-related'))
-                        $('.js-swiper-related .related-item.item-selected .bubble').html($(this).find('.related-item.item-selected .bubble').html());
-                })
-
-                $('.fixed-wrapp').html($(data).find('.fixed-wrapp').html());
-
-                $('#slide-number').text('1/' + $('.slider .slider-item').length)
-
-                lazyloadImg();
-            })
-        }
-    })
-
-    $('body').on('click', '.item-selected .bubble', function() {
-        if ($(this).hasClass('visible'))
-            $(this).removeClass('visible').find('.show-more').html('Show text <br> ↓')
-        else
-            $(this).addClass('visible').find('.show-more').html('Hide text <br> ↑')
-    })
-
-    $('body').on('mousemove', function(e) {
-        if ($(e.target).hasClass('js-swiper-related') || $(e.target).closest('.js-swiper-related'))
-            $('#slider-number').css({
-                'display': 'none'
-            })
-        else
-            $('#slider-number').css({
-                'display': ''
-            })
-    })
-
-    $('input[name="phone"]').on('keydown', function(e) {
-        if ("1234567890".indexOf(e.key) == -1 && (e.key != 'Backspace' && e.key != 'Delete' && e.key != 'ArrowRight' && e.key != 'ArrowLeft'))
-            e.preventDefault();
-    })
-    
-    $('input[name="phone"]').on('change', function() {
-        $(this).val($(this).val().replace(/\D/, ''));
-    })
-
-    if ($('body.product-page').length)
-        productPage();
-
-    sliderSwipe();
-
-    showBasket();
-
-    $('.rotating-icon').on('click', function() {
-        setTimeout(() => {
-            if ($('.bag').hasClass('open'))
-                $('#about span').text('close');
-            else
-                $('#about span').text('info');
-        }, 50);
-    })
-
-    $('body').on('click', '.checkout-button.add', function() {
-        let order_item, product_size;
-
-        if ($(this).hasClass('plus') || $(this).hasClass('minus')) {
-            order_item = $(this).closest('.order-item');
-            product_size = {
-                [order_item.find('.product-size').text()]: order_item.data('variation-id')
-            }
-        }
-
-        if ($(this).hasClass('add')) {
-            order_item = $('#size');
-            product_size = {
-                [order_item.find('.short-size').text()]: order_item.data('variation-id')
-            }
-        }
-
-        addToBasket(
-            basket,
-            order_item.data('product-id'),
-            order_item.data('product-name'),
-            order_item.data('product-type'),
-            product_size,
-            order_item.data('product-price'),
-            [],
-            order_item.data('max-count'),
-            '',
-            $(this).hasClass('minus')
-        );
-        basketUpdateTotal();
-        showBasket();
-        updateBag();
-    });
-
-    $('form.bag-items').submit(function(e) {
-        e.preventDefault();
-
-        var formSubmit = true, customer = {};
-
-        $(this).find('input').each(function() {
-            if ($(this).val() == '') {
-                $(this).css({
-                    'background-color': 'red'
-                });
-
-                if (formSubmit == undefined)
-                    formSubmit = false;
-
-                formSubmit = formSubmit && false;
-            } else {
-                $(this).css({
-                    'background-color': ''
-                });
-
-                if (formSubmit == undefined)
-                    formSubmit = true;
-
-                formSubmit = formSubmit && true;
-
-                customer[$(this).attr('name')] = $(this).val();
-            }
-        });
-
-        if (formSubmit) {
-            basket = JSON.parse(localStorage.getItem('basket'));
-
-            let delivery_price = 0;
-
-            basket.full_price = Number(basket.full_price.match(/\d+/));
-
-            if ($('.input-wrapper input[name="country"]').data('country-code') != 'RU')
-                delivery_price = (parseInt(basket.full_price) < 200) ? 20 : 0;
-
-            customer.country = $('.input-wrapper input[name="country"]').data('country-code');
-
-            data = Object.assign(basket, { customer: customer, custom_shipping: {
-                "delivery_name": "UPS Express®",
-                "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
-                "delivery_price": delivery_price,
-                "payment_id": 21
-            }});
-
-            post('seworld.create_order', data).then(
-                result => {
-                    location.href = result.payment_url;
-                },
-                error => {
-                    console.log(error);
-                }
-            )
-        }
-    });
-
-    $('.input-wrapper input').on('keydown', function() {
-        $(this).css({
-            'background-color': ''
-        });
-    });
-
-    $('body').on('click', '#size-list li', function() {
-        $('#size').html($(this).html());
-    });
-
-    updateBag();
-
-    lazyloadImg();
-});
+    return currency + price.toString();
+}
 
 function updateBag() {
-    if ($('#delivery-cost').length) {
-        var priceAll = 0;
+    let order = new Order();
 
-        $('.bag-product').each(function() {
-            priceAll += parseInt($(this).find('.product-price').text()) * parseInt($(this).find('.product-quantity').text())
-        })
+    if ($('#delivery-cost').length) {
+        var priceAll = order.total();
 
         if ($('.input-wrapper input[name="country"]').data('country-code') == '') {
             if (priceAll < 200) {
@@ -327,203 +581,3 @@ function updateBag() {
         $('#total').text('$' + priceAll)
     }
 }
-
-function basketUpdateTotal() {
-    var basket = JSON.parse(localStorage.getItem('basket')), count = 0, full_price = 0;
-
-    if (basket) {
-        basket.products.forEach(item => {
-            count += item.basket_count;
-            full_price += (typeof item.price == 'string' ? Number(item.price.replace(/\D+/g, '')) : item.price) * item.basket_count;
-        })
-
-        basket.count = count;
-        basket.full_price = priceFormat(full_price);
-
-        localStorage.setItem('basket', JSON.stringify(basket));
-    }
-}
-
-function priceFormat(price) {
-    var currency = '';
-
-    if (true)
-        currency = '$';
-
-    if (price > 10000)
-        return currency + price.toString().replace(/(\d{1,3}(?=(?:\d\d\d)+(?!\d)))/g, "$1" + ' ');
-
-    return currency + price.toString();
-}
-
-function showBasket() {
-    var basket = JSON.parse(localStorage.getItem('basket'));
-
-    if (basket) {
-        if (basket.count > 0) {
-            $('#empty-bag').css({
-                display: 'none'
-            });
-
-            $('.bag-items').addClass('flex-open');
-            $('.order-item').remove();
-            $('#counter').text(basket.count);
-
-            $('#total').text('$' + Number(basket.full_price.replace(/[^\d]/g, '')));
-
-            basket.products.forEach(product => {
-                var size = Object.keys(product.variation)[0];
-
-                $('#order-list').prepend(
-                    $('<div>', {
-                        class: 'order-item',
-                        'data-product-id': product.variation[size],
-                        'data-variation-id': product.variation[size],
-                        'data-product-price': product.price,
-                        'data-product-name': product.name,
-                        'data-max-count': product.count,
-                        'data-product-type': product.type
-                        }).append($('<div>', {
-                            class: 'minus',
-                            text: '–'
-                        })).append($('<div>', {
-                            class: 'bag-product'
-                            }).append($('<div>', {
-                                class: 'product-type',
-                                text: product.type
-                            })).append($('<div>', {
-                                class: 'product-name',
-                                text: product.name
-                            })).append($('<div>', {
-                                class: 'product-size',
-                                text: size
-                            })).append($('<div>', {
-                                class: 'product-quantity',
-                                text: product.basket_count
-                            })).append($('<div>', {
-                                class: 'product-price',
-                                text: product.price
-                        }))).append($('<div>', {
-                            class: 'plus',
-                            text: '+'
-                    }))
-                );
-            });
-        } else {
-            $('.bag-items.flex-open').removeClass('flex-open');
-            $('#empty-bag').css({
-                display: ''
-            });
-            $('#counter').text(0);
-            localStorage.removeItem('basket');
-        }
-    }
-}
-
-function addToBasket(basket, product_id, product_name, product_type, size, price, image, max_count, details_main_pair = '', remove = false) {
-    var addProduct = true;
-
-    if (basket.products.length > 0) {
-        basket.products.forEach((product, id) => {
-            if (product.id == product_id)
-                if (JSON.stringify(product.variation) == JSON.stringify(size)) {
-                    if (remove) {
-                        basket.products[id].basket_count = Number(basket.products[id].basket_count) - 1;
-
-                        if (basket.products[id].basket_count <= 0)
-                            $('.checkout-wrapper #products .checkout-item[data-product-id=' + basket.products[id].id + ']').eq(0).remove()
-                    } else if (basket.products[id].basket_count < max_count)
-                        basket.products[id].basket_count = Number(basket.products[id].basket_count) + 1;
-
-                    addProduct = false;
-                }
-
-            if (basket.products[id].basket_count <= 0)
-                basket.products.splice(id, 1)
-        });
-    }
-    
-    if (addProduct && !remove && max_count > 0)
-        basket['products'].push({
-            id: product_id,
-            name: product_name,
-            basket_count: 1,
-            type: product_type,
-            variation: size,
-            price: price,
-            main_pair: image,
-            count: max_count,
-            details_main_pair: details_main_pair
-        });
-
-    localStorage.setItem('basket', JSON.stringify(basket));
-    basketUpdateTotal();
-    showBasket();
-}
-
-function lazyloadImg(i = 0, callback = '') {
-    // let images = $('img[data-src]');
-
-    // try {
-    //     images.eq(i)
-    //     .attr('width', Math.trunc(images.eq(i).width()))
-    //     .attr('height', Math.trunc(images.eq(i).height()))
-    //     .attr('src', images.eq(i).data('src'))
-    //     .on('load', function() {
-    //         $(this)
-    //         .off('load')
-    //         .css({
-    //             opacity: 1
-    //         })
-    //         .addClass('loaded');
-
-    //         i++;
-
-    //         if (i < images.length)
-    //             lazyloadImg(i, callback);
-    //         else {
-    //             if (callback != '')
-    //                 try {
-    //                     callback();
-    //                 } catch {}
-    //         }
-    //     });
-    // } catch {}
-
-    $('img[data-src]').each(function() {
-        $(this).attr('src', $(this).data('src')).on('load', function() {
-            $(this)
-                .off('load')
-                .css({
-                    opacity: 1
-                })
-                .addClass('loaded');
-        })
-    })
-}
-
-function textSplit(text) {
-    text = text.split('/');
-
-    text.forEach((item, i) => {
-        text[i] = '<div>' + item.trim() + '</div>';
-    })
-
-    return text.join('');
-}
-
-navigator.sayswho= (function(){
-    var ua= navigator.userAgent, tem, 
-    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-    if(/trident/i.test(M[1])){
-        tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
-        return 'IE '+(tem[1] || '');
-    }
-    if(M[1]=== 'Chrome'){
-        tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
-        if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
-    }
-    M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
-    if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
-    return M;
-})();

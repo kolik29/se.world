@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="/style.css?{{timestamp}}">
     
     <title>Signature Element</title>
+
+    <script>
+        const products_in_stock = {{{products_in_stock_string}}}
+    </script>
 </head>
 <body>
     <div class="wrapper">
@@ -115,10 +119,12 @@
     </div>
 
     <script src="/scripts/jquery-3.6.0.min.js"></script>
+    {{#if preloader.hide}}
+    {{else}}
     <script src="/p5.min.js"></script>
     <script src="/p5.dom.min.js"></script>
+    {{/if}}
     <script src="/script.js?{{timestamp}}"></script>
-    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
     <script src="/scripts/ajax.js?{{timestamp}}"></script>
     <script src="/scripts/script.js?{{timestamp}}"></script>
 

@@ -8,6 +8,10 @@
     <script src="/p5.min.js"></script>
     <script src="/p5.dom.min.js"></script>
     <title>Product</title>
+
+    <script>
+        const products_in_stock = {{{products_in_stock_string}}}
+    </script>
     
     <script src="/scripts/jquery-3.6.0.min.js"></script>
     <script src="/scripts/ajax.js?{{timestamp}}"></script>
@@ -66,12 +70,10 @@
             </div>
             <div id="purchase" class="action-line purchase-desktop">
                 <div class="shipping">Shipping</div>
-                {{#if out_of_stock}}
-                {{else}}
                 <div id="size-wrapper"{{#if product.one_size}} class="one_size"{{/if}}>
                     {{#each product.variations}}
                         {{#if @first}}
-                        <div id="size" dara-product-id="{{this.product_id}}" data-variation-id="{{this.product_id}}" data-price="{{this.price}}" data-product-name="{{this.name}}" data-max-count="{{this.count}}" data-product-type="{{this.type}}" data-details-main-pair="{{this.details_main_pair}}">
+                        <div id="size" data-product-id="{{this.product_id}}">
                             <span class="short-size">{{this.size}}</span>{{this.word.[0]}} <span class="chinese">{{this.word.[1]}}</span>
                         </div>
                         {{/if}}
@@ -79,11 +81,13 @@
                     <div class="size-arrow">^</div>
                     <ul id="size-list">
                         {{#each product.variations}}
-                            <li data-variation-id="{{this.product_id}}" data-max-count="{{this.count}}"><span class="short-size">{{this.size}}</span>{{this.word.[0]}} <span class="chinese">{{this.word.[1]}}</span></li>
+                            <li data-product-id="{{this.product_id}}"><span class="short-size">{{this.size}}</span>{{this.word.[0]}} <span class="chinese">{{this.word.[1]}}</span></li>
                         {{/each}}
                     </ul>
                 </div>
-                <button class="checkout-button add">ADD</button>
+                {{#if out_of_stock}}
+                {{else}}
+                <button class="checkout-button add js-order-add">ADD</button>
                 {{/if}}
                 <div class="shipping-info">
                     UPS Express® <br>
@@ -129,8 +133,81 @@
                     </g>
                 </svg>
             </div>
+            <div class="swiper-related js-swiper-related">
+                <div class="swiper-wrapper">
+                    {{#each products_in_stock}}
+                    <div class="swiper-slide">
+                        <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-test="{{this.current_product}} {{this.id}}">
+                            <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                            {{#if this.current_product}}
+                            <div class="bubble">
+                                <div class="bubble-flex">
+                                    <div class="">
+                                        <div class="related-name">{{this.name}}</div>
+                                        <div class="price">{{this.price}}</div>
+                                    </div>
+                                    <div class="show-more">Show text <br> ↓</div>
+                                </div>
+                                <div class="slide-text"></div>
+                                <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                                    </g>
+                                </svg>
+                            </div>
+                            {{else}}
+                            <div class="bubble">
+                                <div class="related-name">{{this.name}}</div>
+                                <div class="price">{{this.price}}</div>
+                                <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                                    </g>
+                                </svg>
+                            </div>
+                            {{/if}}
+                        </a>
+                    </div>
+                    {{/each}}
+                    {{#each products_out_of_stock}}
+                    <div class="swiper-slide">
+                        <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-test="{{this.current_product}} {{this.id}}">
+                            <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                            {{#if this.current_product}}
+                            <div class="bubble">
+                                <div class="bubble-flex">
+                                    <div class="">
+                                        <div class="related-name">{{this.name}}</div>
+                                        <div class="price">{{this.price}}</div>
+                                    </div>
+                                    <div class="show-more">Show text <br> ↓</div>
+                                </div>
+                                <div class="slide-text"></div>
+                                <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                                    </g>
+                                </svg>
+                            </div>
+                            {{else}}
+                            <div class="bubble">
+                                <div class="related-name">{{this.name}}</div>
+                                <div class="price">{{this.price}}</div>
+                                <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
+                                    </g>
+                                </svg>
+                            </div>
+                            {{/if}}
+                        </a>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
         </div>
-        <div class="related-scroll">
+
+        {{!-- <div class="related-wrapper"> --}}
             <aside id="related">
                 {{#each products_in_stock}}
                 <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}">
@@ -175,79 +252,7 @@
                 </a>
                 {{/each}}
             </aside>
-        </div>
-    </div>
-    <div class="swiper-related js-swiper-related">
-        <div class="swiper-wrapper">
-            {{#each products_in_stock}}
-            <div class="swiper-slide">
-                <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-test="{{this.current_product}} {{this.id}}">
-                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
-                    {{#if this.current_product}}
-                    <div class="bubble">
-                        <div class="bubble-flex">
-                            <div class="">
-                                <div class="related-name">{{this.name}}</div>
-                                <div class="price">{{this.price}}</div>
-                            </div>
-                            <div class="show-more">Show text <br> ↓</div>
-                        </div>
-                        <div class="slide-text"></div>
-                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
-                            </g>
-                        </svg>
-                    </div>
-                    {{else}}
-                    <div class="bubble">
-                        <div class="related-name">{{this.name}}</div>
-                        <div class="price">{{this.price}}</div>
-                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
-                            </g>
-                        </svg>
-                    </div>
-                    {{/if}}
-                </a>
-            </div>
-            {{/each}}
-            {{#each products_out_of_stock}}
-            <div class="swiper-slide">
-                <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-test="{{this.current_product}} {{this.id}}">
-                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
-                    {{#if this.current_product}}
-                    <div class="bubble">
-                        <div class="bubble-flex">
-                            <div class="">
-                                <div class="related-name">{{this.name}}</div>
-                                <div class="price">{{this.price}}</div>
-                            </div>
-                            <div class="show-more">Show text <br> ↓</div>
-                        </div>
-                        <div class="slide-text"></div>
-                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
-                            </g>
-                        </svg>
-                    </div>
-                    {{else}}
-                    <div class="bubble">
-                        <div class="related-name">{{this.name}}</div>
-                        <div class="price">{{this.price}}</div>
-                        <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
-                            </g>
-                        </svg>
-                    </div>
-                    {{/if}}
-                </a>
-            </div>
-            {{/each}}
-        </div>
+        {{!-- </div> --}}
     </div>
     
     <!-- Yandex.Metrika counter -->

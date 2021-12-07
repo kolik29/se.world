@@ -86,10 +86,10 @@ function hidePreloader() {
 var preloader = document.getElementById('preloader');
 preloader.addEventListener('click', function() {
   hidePreloader()
-})
+}, { passive: true })
 preloader.addEventListener('wheel', function() {
   hidePreloader()
-})
+}, { passive: true })
 
 
 

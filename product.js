@@ -36,7 +36,7 @@ window.onload = function() {
             el.classList.remove('open')
             if (el.classList.contains('bag')) {
                 header.style.backgroundColor = 'transparent'
-                fixedwrapp.style.zIndex = '1'
+                // fixedwrapp.style.zIndex = '1'
             }
             if (el.classList.contains('shipping-info')) {
                 shippingButton[0].classList.remove('button-gray')
@@ -48,7 +48,7 @@ window.onload = function() {
         } else {
             if (el.classList.contains('bag')) {
                 header.style.backgroundColor = 'white'
-                fixedwrapp.style.zIndex = '20'
+                // fixedwrapp.style.zIndex = '20'
                 var gray = document.getElementsByClassName('button-gray')[0]
                 if (gray) {
                     gray.classList.remove('button-gray')
@@ -219,32 +219,50 @@ window.onload = function() {
 
     try {
         //Size
-        var size = document.getElementById('size')
-        var sizeWrapper = document.getElementById('size-wrapper')
-        var sizeList = document.getElementById('size-list')
-        sizeWrapper.addEventListener('click',function() {
-            showBlock(sizeList)
+        var size
+        var sizeWrapper
+        var sizeList
+        size = document.getElementById('size')
+        sizeWrapper = document.getElementById('size-wrapper')
+        sizeList = document.getElementById('size-list')
 
+        $('body').on('click', '#size-wrapper', function() {
+            size = document.getElementById('size')
+            sizeWrapper = document.getElementById('size-wrapper')
+            sizeList = document.getElementById('size-list')
+            
+            showBlock(sizeList)
+            
+            var sizes = document.querySelectorAll('#size-list li')
+            for (i=0; i < sizes.length; i++) {
+                sizes[i].addEventListener('click', function (e) {
+                    // e.stopPropagation()
+                    size.innerHTML = e.target.innerHTML
+                    sizeList.classList.remove('open')
+                    sizeWrapper.classList.remove('button-gray')
+                })
+            }
         })
-        var sizes = document.querySelectorAll('#size-list li')
-        for (i=0; i < sizes.length; i++) {
-            sizes[i].addEventListener('click', function (e) {
-                e.stopPropagation()
-                size.innerHTML = e.target.innerHTML
-                sizeList.classList.remove('open')
-                sizeWrapper.classList.remove('button-gray')
-            })
-        }
     }
     catch(err) {
         console.log(err)
     }
 
     //Shipping
-    var shippingButton = document.getElementsByClassName('shipping')
-    var shippingInfo = document.getElementsByClassName('shipping-info')
-    shippingButton[0].addEventListener('click', function() {showBlock(shippingInfo[0])})
+    var shippingButton
+    var shippingInfo
+    shippingButton = document.getElementsByClassName('shipping')
+    shippingInfo = document.getElementsByClassName('shipping-info')
+    
+    // shippingButton[0].addEventListener('click', function() {showBlock(shippingInfo[0])})
 
+    $('body').on('click', '.shipping', function() {
+        //Shipping
+        shippingButton = document.getElementsByClassName('shipping')
+        shippingInfo = document.getElementsByClassName('shipping-info')
+        
+        showBlock(shippingInfo[0])
+    })
 
     // Add to cart
     var addButton = document.getElementsByClassName('add')[0]
@@ -254,21 +272,21 @@ window.onload = function() {
     var name = document.querySelector('.item-selected .related-name')
     var price = document.querySelector('.item-selected .price')
     var emptyBag = document.getElementById('empty-bag')
-    var counter = document.getElementById('counter')
-    var total = document.getElementById('total')
+    // var counter = document.getElementById('counter')
+    // var total = document.getElementById('total')
 
     //Update bag
     var updateBag = function() {
-        var products = document.getElementsByClassName('product-quantity')
-        var prices = document.getElementsByClassName('product-price')
-        var quantityAll = 0
-        var priceAll = 0
-        for (i=1; i<products.length; i++) {
-            quantityAll = quantityAll + parseInt(products[i].innerHTML)
-            priceAll = priceAll + parseInt(prices[i].innerHTML) * parseInt(products[i].innerHTML)
-        }
-        counter.innerHTML = quantityAll
-        total.innerHTML = priceAll
+        // var products = document.getElementsByClassName('product-quantity')
+        // var prices = document.getElementsByClassName('product-price')
+        // var quantityAll = 0
+        // var priceAll = 0
+        // for (i=1; i<products.length; i++) {
+        //     quantityAll = quantityAll + parseInt(products[i].innerHTML)
+        //     priceAll = priceAll + parseInt(prices[i].innerHTML) * parseInt(products[i].innerHTML)
+        // }
+        // counter.innerHTML = quantityAll
+        // total.innerHTML = priceAll
     }
 
     //Update quantity
@@ -295,13 +313,13 @@ window.onload = function() {
             clone.removeAttribute('id')
             
             //quantity
-            clone.querySelector('.minus').addEventListener('click', function () {updateQuantity(clone, -1)})
-            clone.querySelector('.plus').addEventListener('click', function () {updateQuantity(clone, 1)})
+            // clone.querySelector('.minus').addEventListener('click', function () {updateQuantity(clone, -1)})
+            // clone.querySelector('.plus').addEventListener('click', function () {updateQuantity(clone, 1)})
 
             //data
-            clone.querySelector('.product-name').innerHTML = name.innerHTML
-            clone.querySelector('.product-size').innerHTML = size.childNodes[0].innerHTML
-            clone.querySelector('.product-price').innerHTML = price.innerHTML
+            // clone.querySelector('.product-name').innerHTML = name.innerHTML
+            // clone.querySelector('.product-size').innerHTML = size.childNodes[0].innerHTML
+            // clone.querySelector('.product-price').innerHTML = price.innerHTML
 
             if (orderItem.length > 0) {
                 for (i=0; i < orderItem.length; i++) {
@@ -316,12 +334,16 @@ window.onload = function() {
                 bagItems.querySelector('#order-list').prepend(clone)
             }
         } catch {}
-        addButton.innerHTML = 'ADDED!'
+        $('.add').text('ADDED!')
         setTimeout(function() {
-            addButton.innerHTML = 'ADD' 
+            $('.add').text('ADD')
         }, 1000)
     }
 
-    addButton.addEventListener('click', addToCart)
+    // addButton.addEventListener('click', addToCart)
+
+    $('body').on('click', '.add', function() {
+        addToCart();
+    })
 
 }

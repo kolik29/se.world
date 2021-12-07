@@ -64,11 +64,11 @@ window.onload = function() {
     // }
 
     document.addEventListener('click', function(e) {
-        if (e.target)
-            if (e.target.classList.contains('minus'))
-                updateQuantity(e.target.closest('.order-item'), -1);
-            else if (e.target.classList.contains('plus'))
-                updateQuantity(e.target.closest('.order-item'), 1);
+        // if (e.target)
+        //     if (e.target.classList.contains('minus'))
+        //         updateQuantity(e.target.closest('.order-item'), -1);
+        //     else if (e.target.classList.contains('plus'))
+        //         updateQuantity(e.target.closest('.order-item'), 1);
     })
 
     updateBag()

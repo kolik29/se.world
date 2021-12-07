@@ -5,14 +5,14 @@ const redis = require('./redis.js')
 const db = new redis.DB()
 const path = require('path')
 const { Worker } = require('worker_threads')
-
 const logging = require('./logging.js')
+const urlencodedParser = express.urlencoded({extended: false})
 
 main()
 
 function main() {
     try {
-        app.set("view engine", "hbs")
+        app.set('view engine', 'hbs')
         db.openSocket()
 
         startServer(true)
@@ -80,6 +80,10 @@ function main() {
                     url: 'update_cache_image',
                     special: true
                 },
+                {
+                    url: 'console_log_save',
+                    special: true
+                }
             ]
             
             for (let key in products_in_stock)
@@ -96,12 +100,19 @@ function main() {
             
             for (let rout of routes)
                 if (rout.special) {
-                    app.get('/' + rout.url,  async function(req, res) {
+                    app.get('/' + rout.url, async function() {
                         if (rout.url == 'update_cache')
                             startCache(false)
                         
                         if (rout.url == 'update_cache_image')
                             startCache(true)
+                    })
+
+                    app.post('/' + rout.url, urlencodedParser, async function(req, res) {
+                        if(!req.body) return res.sendStatus(400)
+                        console.log(JSON.parse(JSON.stringify(req.body)))
+                        logging.log(JSON.stringify(req.body), 'front.log')
+                        res.send('console_log_save: true')
                     })
                 } else
                     app.get('/' + rout.url, async function(req, res) {
@@ -112,8 +123,9 @@ function main() {
                         products_in_stock = await db.get('products_in_stock')
                         products_out_of_stock = await db.get('products_out_of_stock')
                         
-                        if (rout.file == 'index.hbs' || rout.file == 'product.hbs') {
+                        if (rout.file == 'index.hbs' || rout.file == 'product.hbs' || rout.file == 'checkout.hbs') {
                             pageData['products_in_stock'] = products_in_stock
+                            pageData['products_in_stock_string'] = JSON.stringify(products_in_stock)
                             pageData['products_out_of_stock'] = products_out_of_stock
                             
                             if (rout.file == 'index.hbs') {
@@ -168,7 +180,7 @@ function main() {
                                     
                                     pageData['out_of_stock'] = true
                                 }
-                                
+
                                 let product_pairs = []
 
                                 for (let i = 0; i < product.pairs.pairs.length; i++)
@@ -200,9 +212,12 @@ function main() {
                                     }
                                 
                                 for (let key in product.variations) {
-                                    if (Number(product.variations[key].count) == 0)
-                                        delete product.variations[key]
-                                    else {
+                                    if (
+                                        Number(product.variations[key].count) == 0
+                                    ) {
+                                        if (!pageData['out_of_stock'])
+                                            delete product.variations[key]
+                                    } else {
                                         product.variations[key]['type'] = product.type
                                         product.variations[key]['price'] = product.price
                                         product.variations[key]['name'] = product.name
@@ -221,7 +236,7 @@ function main() {
 
                         if (rout.url == 'order-success')
                             startCache(false)
-                        
+
                         res.render(path.join(__dirname + '/views/' + rout.file), pageData)
                     })
         }
@@ -250,8 +265,8 @@ function main() {
     catch(err) {
         console.log(err)
         console.log('timeout: 5s')
-        дщппштп.log(err)
-        дщппштп.log('timeout: 5s')
+        logging.log(err)
+        logging.log('timeout: 5s')
         setTimeout(() => {
             main()
         }, 5000);

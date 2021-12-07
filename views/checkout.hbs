@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="/style.css">
     <title>Signature Element</title>
 
+    <script>
+        const products_in_stock = {{{products_in_stock_string}}}
+    </script>
+
     <script src="/scripts/jquery-3.6.0.min.js"></script>
     <script src="/scripts/ajax.js?{{timestamp}}"></script>
     <script src="/scripts/script.js?{{timestamp}}"></script>
@@ -41,19 +45,17 @@
         </div>
         <form class="bag-items">
             <div id="order-list">
-                <div id="delivery">
-                    <span id="delivery-cost"></span>&nbsp;<span id="delivery-time"></span>
-                </div>
+                <div id="delivery"></div>
             </div>
             <div class="input-wrapper">
-                <input type="text" placeholder="Country" name="country">
-                <input type="text" placeholder="City" name="state">
-                <input type="text" placeholder="Street" name="street">
-                <input type="text" placeholder="Building" name="building">
-                <input type="text" placeholder="Apartment/Office" name="apartment">
-                <input type="text" placeholder="Name" name="name">
-                <input type="text" placeholder="Phone" name="phone">
-                <input type="email" placeholder="E-mail (for order details only)" name="email">
+                <input value="test" type="text" placeholder="Country" name="country">
+                <input value="test" type="text" placeholder="City" name="state">
+                <input value="test" type="text" placeholder="Street" name="street">
+                <input value="test" type="text" placeholder="Building" name="building">
+                <input value="test" type="text" placeholder="Apartment/Office" name="apartment">
+                <input value="test" type="text" placeholder="Name" name="name">
+                <input value="123123123" type="text" placeholder="Phone" name="phone">
+                <input value="test@test.ru" type="email" placeholder="E-mail (for order details only)" name="email">
                 <a id="checkout" class="action-line">
                     <div>Total</div>
                     <div id="total"></div>
