@@ -131,62 +131,67 @@ try {
         $('form.bag-items').submit(function(e) {
             e.preventDefault();
 
-            var formSubmit = true, customer = {};
+            if (!$('#pay').data('form-send')) {
+                console.log('test');
+                var formSubmit = true, customer = {};
 
-            $(this).find('input').each(function() {
-                if ($(this).val() == '') {
-                    $(this).css({
-                        'background-color': 'red'
-                    });
+                $(this).find('input').each(function() {
+                    if ($(this).val() == '') {
+                        $(this).css({
+                            'background-color': 'red'
+                        });
 
-                    if (formSubmit == undefined)
-                        formSubmit = false;
+                        if (formSubmit == undefined)
+                            formSubmit = false;
 
-                    formSubmit = formSubmit && false;
-                } else {
-                    $(this).css({
-                        'background-color': ''
-                    });
+                        formSubmit = formSubmit && false;
+                    } else {
+                        $(this).css({
+                            'background-color': ''
+                        });
 
-                    if (formSubmit == undefined)
-                        formSubmit = true;
+                        if (formSubmit == undefined)
+                            formSubmit = true;
 
-                    formSubmit = formSubmit && true;
+                        formSubmit = formSubmit && true;
 
-                    customer[$(this).attr('name')] = $(this).val();
-                }
-            });
+                        customer[$(this).attr('name')] = $(this).val();
+                    }
+                });
 
-            if (formSubmit) {
-                let delivery_price = 0;
+                if (formSubmit) {
+                    let delivery_price = 0;
 
-                if ($('.input-wrapper input[name="country"]').data('country-code') != 'RU')
-                    delivery_price = (parseInt(order.total()) < 200) ? 20 : 0;
+                    if ($('.input-wrapper input[name="country"]').data('country-code') != 'RU')
+                        delivery_price = (parseInt(order.total()) < 200) ? 20 : 0;
 
-                customer.country = $('.input-wrapper input[name="country"]').data('country-code');
+                    customer.country = $('.input-wrapper input[name="country"]').data('country-code');
 
-                data = Object.assign(
-                    {
-                        products: order.get()
-                    }, {
-                        customer: customer, custom_shipping: {
-                            "delivery_name": "UPS Express®",
-                            "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
-                            "delivery_price": delivery_price,
-                            "payment_id": 21
+                    data = Object.assign(
+                        {
+                            products: order.get()
+                        }, {
+                            customer: customer, custom_shipping: {
+                                "delivery_name": "UPS Express®",
+                                "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
+                                "delivery_price": delivery_price,
+                                "payment_id": 21
+                            }
                         }
-                    }
-                );
+                    );
 
-                post('seworld.create_order', data).then(
-                    result => {
-                        location.href = result.payment_url;
-                    },
-                    error => {
-                        console.log(error);
-                    }
-                )
+                    post('seworld.create_order', data).then(
+                        result => {
+                            location.href = result.payment_url;
+                        },
+                        error => {
+                            console.log(error);
+                        }
+                    )
+                }
             }
+
+            $('#pay').data('form-send', true).text('PLEASE, WAIT');
         });
 
         $('.input-wrapper input').on('keydown', function() {

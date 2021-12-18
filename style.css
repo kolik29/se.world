@@ -1677,3 +1677,11 @@ body > .wrapper {
 #delivery a:hover {
     opacity: 0.5;
 }
+
+.margin-top_24px {
+    margin-top: 24px;
+}
+
+.color_gainsboro {
+    color: #dfdfdc;
+}

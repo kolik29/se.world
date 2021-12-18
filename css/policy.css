@@ -8,10 +8,6 @@
     color: #B7AFA6;
 }
 
-.color_gainsboro {
-    color: #dfdfdc;
-}
-
 .align_center {
     display: flex;
     flex-direction: column;
