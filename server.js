@@ -47,10 +47,10 @@ class Preloader {
 
                     fs.writeFileSync('preloader.js', `var preloaderData = ${preloader}; try { module.exports.preloaderData = preloaderData; } catch {}`);
 
-                    console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
+                    // console.log((new Date()), `Preloader update. Product id: ${pendingProduct[0].id}.`);
                     this.online = pendingProduct[0].show_preloader;
 
-                    // const result = webp.cwebp(image, path.join(__dirname, 'images/' + name.split('.')[0] + '.webp'), "-q 10", logging="-v");
+                    const result = webp.cwebp(image, path.join(__dirname, 'images/' + name.split('.')[0] + '.webp'), "-q 10", logging="-v");
 
                     let prelaoderImages = [];
 
@@ -77,9 +77,9 @@ class Preloader {
 
     intervalUpdate(interval) {
         this.update();
-        setInterval(() => {
-            this.update();
-        }, interval);
+        // setInterval(() => {
+        //     this.update();
+        // }, interval);
     }
 }
 
@@ -115,6 +115,7 @@ function post(hostname, dispatch, callback) {
                 data += chunk;
             });
             response.on('end', function () {
+                console.log(dispatch, data);
                 callback(JSON.parse(data));
             });
         }).end();
@@ -239,6 +240,7 @@ function setRoutes() {
         })
 
         routes.forEach((rout) => {
+            console.log(rout)
             app.get('/' + rout.url, (req, res) => {
                 // if (cookie.confirm(req, res, 'csse')) {
                     if (rout.index) {
@@ -258,8 +260,7 @@ function setRoutes() {
             });
         });
     });
+    app.listen(3000, () => {
+        console.log(`Server running at https://${serverConfig.config.hostname}:${serverConfig.config.port}/`);
+    });
 }
-
-app.listen(serverConfig.config.port, () => {
-    console.log(`Server running at https://${serverConfig.config.hostname}:${serverConfig.config.port}/`);
-});
