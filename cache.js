@@ -1,7 +1,9 @@
 const redis = require('./redis.js')
 const post = require('./post.js')
 const image_converter = require('./image_converter.js')
-const { workerData, parentPort } = require('worker_threads')
+const { parentPort } = require('worker_threads')
+
+const serverConfig = require('./server-config.js')
 
 const logging = require('./logging.js')
 
@@ -17,7 +19,7 @@ async function caching(convert = false) {
     logging.log('caching start!')
 
     for (dispatch of dispatches) {
-        products = await getImages(await post.post('testcsse.madfrenzy.com', 'seworld.' + dispatch + '&store_access_key=csse&no_redirect'), convert)
+        products = await getImages(await post.post(serverConfig.config.postHost, 'seworld.' + dispatch + '&store_access_key=csse&no_redirect'), convert)
         await db.set(dispatch, products)
     }
 
