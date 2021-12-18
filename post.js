@@ -1,4 +1,3 @@
-const https = require('https')
 const axios = require('axios').default;
 
 const logging = require('./logging.js')
