@@ -37,7 +37,8 @@ try {
         }
 
         $('body').on('click', '.grid-item.archive', function() {
-            $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');        })
+            $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');
+        })
 
         $('body').on('click', 'a.related-item', function(e) {
             e.preventDefault();
@@ -162,10 +163,10 @@ try {
                 if (formSubmit) {
                     let delivery_price = 0;
 
-                    if ($('.input-wrapper input[name="country"]').data('country-code') != 'RU')
+                    if ($('#delivery').data('country-code') != 'RU')
                         delivery_price = (parseInt(order.total()) < 200) ? 20 : 0;
 
-                    customer.country = $('.input-wrapper input[name="country"]').data('country-code');
+                    customer.country = $('#delivery').data('country-code');
 
                     data = Object.assign(
                         {
@@ -180,9 +181,12 @@ try {
                         }
                     );
 
+                    $('#pay').data('form-send', true).text('PLEASE, WAIT');
+
                     post('seworld.create_order', data).then(
                         result => {
-                            location.href = result.payment_url;
+                            if (result.payment_url)
+                                location.href = result.payment_url;
                         },
                         error => {
                             console.log(error);
@@ -190,8 +194,6 @@ try {
                     )
                 }
             }
-
-            $('#pay').data('form-send', true).text('PLEASE, WAIT');
         });
 
         $('.input-wrapper input').on('keydown', function() {
@@ -236,17 +238,23 @@ try {
             order.get().forEach((order_product) => {
                 let product = order.product(order_product.id);
 
-                $('#products').append($('<div>', {
-                    'class': 'checkout-item',
-                    'data-product-id': product.id
-                }).css({
-                    'grid-row-start': randomInt(1, 3),
-                    'grid-row-end': 'span 3',
-                    'grid-column-start': randomInt(1, 3),
-                    'grid-column-end': 'span 3'
-                }).append($('<img>', {
-                    'data-src': product.details_main_pair,
-                })));
+                try {
+                    $('#products').append($('<div>', {
+                        'class': 'checkout-item',
+                        'data-product-id': product.id
+                    }).css({
+                        'grid-row-start': randomInt(1, 3),
+                        'grid-row-end': 'span 3',
+                        'grid-column-start': randomInt(1, 3),
+                        'grid-column-end': 'span 3'
+                    }).append($('<img>', {
+                        'data-src': product.details_main_pair,
+                    })));
+                }
+
+                catch {
+                    localStorage.removeItem('order');
+                }
             })
         }
 
@@ -273,14 +281,14 @@ class Order {
         for (let product_index in this.products) {
             products_list.push({
                 id: this.products[product_index].id,
-                count: this.products[product_index].count
+                basket_count: this.products[product_index].basket_count
             })
 
             if ('variations' in this.products[product_index])
                 for (let size in this.products[product_index].variations)
                     products_list.push({
                         id: this.products[product_index].variations[size].product_id,
-                        count: this.products[product_index].variations[size].count
+                        basket_count: this.products[product_index].variations[size].basket_count
                     })
         }
 
@@ -288,13 +296,13 @@ class Order {
             let product_order = order.filter(product => product.id == product_item.id);
 
             if (product_order.length) {
-                if (Number(product_item.count) == 0)
+                if (Number(product_item.basket_count) == 0)
                     this.remove(product_item.id, true);
                 else {
-                    if (Number(product_item.count) < product_order[0].count) {
-                        let count_difference = product_order[0].count - Number(product_item.count);
+                    if (Number(product_item.basket_count) < product_order[0].basket_count) {
+                        let basket_count_difference = product_order[0].basket_count - Number(product_item.basket_count);
 
-                        for (let i = 0; i < count_difference; i++)
+                        for (let i = 0; i < basket_count_difference; i++)
                             this.remove(product_item.id);
                     }
                 }
@@ -319,31 +327,33 @@ class Order {
             for (let product_index in this.products) {
                 products_list.push({
                     id: this.products[product_index].id,
-                    count: this.products[product_index].count
+                    basket_count: this.products[product_index].count
                 })
         
                 if ('variations' in this.products[product_index])
                     for (let size in this.products[product_index].variations)
                         products_list.push({
                             id: this.products[product_index].variations[size].product_id,
-                            count: this.products[product_index].variations[size].count
+                            basket_count: this.products[product_index].variations[size].count
                         })
             }
         
             products_list.forEach(product_item => {
+                console.log(Number(product_item.basket_count), Number(product_order[0].basket_count))
                 if (
                     Number(product_item.id) == Number(product_id) &&
-                    Number(product_item.count) > product_order[0].count
-                )
+                    Number(product_item.basket_count) > Number(product_order[0].basket_count)
+                ) {
                     order.forEach((product, index) => {
                         if (product.id == product_id)
-                            order[index].count++;
+                            order[index].basket_count = Number(order[index].basket_count) + 1;
                     });
+                }
             })
         } else
             order.push({
                 id: product_id,
-                count: 1
+                basket_count: 1
             })
 
         this.save(order);
@@ -358,9 +368,9 @@ class Order {
                     if (all)
                         order.splice(index, 1);
                     else {
-                        order[index].count--;
+                        order[index].basket_count--;
 
-                        if (order[index].count == 0)
+                        if (order[index].basket_count == 0)
                             order.splice(index, 1);
                     }
                 }
@@ -374,11 +384,11 @@ class Order {
     }
 
     count() {
-        let order = this.get(), count = 0;
+        let order = this.get(), basket_count = 0;
 
-        order.forEach(product => count += Number(product.count));
+        order.forEach(product => basket_count += Number(product.basket_count));
 
-        return count;
+        return basket_count;
     }
 
     total() {
@@ -387,12 +397,12 @@ class Order {
         order.forEach(product_order => {
             for (let product_index in this.products) {
                 if (Number(product_order.id) == Number(this.products[product_index].id))
-                    price += Number(this.products[product_index].price.replace('$', '')) * product_order.count;
+                    price += Number(this.products[product_index].price.replace('$', '')) * product_order.basket_count;
     
                 if ('variations' in this.products[product_index])
                     for (let size in this.products[product_index].variations)
                         if (Number(product_order.id) == Number(this.products[product_index].variations[size].product_id))
-                            price += Number(this.products[product_index].price.replace('$', '')) * product_order.count;
+                            price += Number(this.products[product_index].price.replace('$', '')) * product_order.basket_count;
             }
         })
 
@@ -410,7 +420,7 @@ class Order {
                 for (let size in this.products[product_index].variations)
                     if (Number(product_id) == Number(this.products[product_index].variations[size].product_id)) {
                         product = this.products[product_index];
-                        product.count = this.products[product_index].variations[size].count;
+                        product.basket_count = this.products[product_index].variations[size].basket_count;
                     }
         }
 
@@ -429,48 +439,54 @@ function updateOrder(order) {
         order_products.forEach(product => {
             let product_list_item = order.product(product.id);
 
-            $('#order-list')
-            .append($('<div>', {
-                'class': 'order-item',
-                'data-product-id': product.id
-            })
+            try {
+                $('#order-list')
                 .append($('<div>', {
-                    'class': 'minus'
+                    'class': 'order-item',
+                    'data-product-id': product.id
                 })
-                .append($('<div>', {
-                    'text': '–'
-                }))
+                    .append($('<div>', {
+                        'class': 'minus'
+                    })
+                    .append($('<div>', {
+                        'text': '–'
+                    }))
+                    )
+                    .append($('<div>', {
+                        'class': 'bag-product'
+                    })
+                        // .append(`${product_list_item.type} <span class="product-name">${product_list_item.name}</span> ${product_list_item.size == 'one size' ? '' : 'size '}<span class="product-size">${product_list_item.size}</span> x <span class="product-quantity">${product.count}</span> <span class="product-price">${product_list_item.price}</span>`)
+                        .append($('<span>', {
+                            'class': 'product-type',
+                            'text': product_list_item.type
+                        }))
+                        .append($('<span>', {
+                            'class': 'product-name',
+                            'text': product_list_item.name
+                        }))
+                        .append($('<span>', {
+                            'class': 'product-size' + (product_list_item.size == 'one size' ? ' one-size' : ''),
+                            'text': product_list_item.size
+                        }))
+                        .append($('<span>', {
+                            'class': 'product-quantity',
+                            'text': product.basket_count
+                        }))
+                        .append($('<span>', {
+                            'class': 'product-price',
+                            'text': product_list_item.price
+                        }))
+                    )
+                    .append($('<div>', {
+                        'class': 'plus',
+                        'text': '+'
+                    }))
                 )
-                .append($('<div>', {
-                    'class': 'bag-product'
-                })
-                    // .append(`${product_list_item.type} <span class="product-name">${product_list_item.name}</span> ${product_list_item.size == 'one size' ? '' : 'size '}<span class="product-size">${product_list_item.size}</span> x <span class="product-quantity">${product.count}</span> <span class="product-price">${product_list_item.price}</span>`)
-                    .append($('<span>', {
-                        'class': 'product-type',
-                        'text': product_list_item.type
-                    }))
-                    .append($('<span>', {
-                        'class': 'product-name',
-                        'text': product_list_item.name
-                    }))
-                    .append($('<span>', {
-                        'class': 'product-size' + (product_list_item.size == 'one size' ? ' one-size' : ''),
-                        'text': product_list_item.size
-                    }))
-                    .append($('<span>', {
-                        'class': 'product-quantity',
-                        'text': product.count
-                    }))
-                    .append($('<span>', {
-                        'class': 'product-price',
-                        'text': product_list_item.price
-                    }))
-                )
-                .append($('<div>', {
-                    'class': 'plus',
-                    'text': '+'
-                }))
-            )
+            }
+
+            catch {
+                localStorage.removeItem('order');
+            }
         });
 
         $('#empty-bag').addClass('display_none');
@@ -579,7 +595,7 @@ function updateBag() {
     if ($('#delivery-cost').length) {
         var priceAll = order.total();
 
-        if ($('.input-wrapper input[name="country"]').data('country-code') == '') {
+        if ($('#delivery').data('country-code') == '') {
             if (priceAll < 200) {
                 $('#delivery-cost').text('$' + (200 - priceAll) + ' left for free shipping');
                 $('#delivery').css({
@@ -594,7 +610,7 @@ function updateBag() {
                     'opacity': '1'
                 })
             }
-        } else if ($('.input-wrapper input[name="country"]').data('country-code') == 'RU') {
+        } else if ($('#delivery').data('country-code') == 'RU') {
             $('#delivery-cost').text('Free Express UPS delivery');
             $('#delivery').css({
                 'background-color': '#FFDC00',

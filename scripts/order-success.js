@@ -1,4 +1,4 @@
-localStorage.removeItem('basket');
+localStorage.removeItem('order');
 
 $(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
