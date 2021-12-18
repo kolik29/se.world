@@ -1,5 +1,5 @@
 function fn_url(dispatch) {
-    return 'https://se.madfrenzy.com/?dispatch=' + dispatch + '&store_access_key=csse&no_redirect';
+    return 'https://testcsse.madfrenzy.com/?dispatch=' + dispatch + '&store_access_key=csse&no_redirect';
 }
 
 function post(dispatch, data = {}) {

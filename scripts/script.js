@@ -3,20 +3,30 @@ var url = new URL(location.href);
 try {
     $(() => {
         var swiper_related;
+        
         if ($('.js-swiper-related').length) {
             swiper_related = new Swiper('.js-swiper-related', {
                 direction: 'vertical',
                 slidesPerView: 'auto',
-                autoHeight: true,
-                loop: true,
-                mousewheel: true,
+                loop: false,
+                mousewheel: {
+                    eventsTarget: 'body'
+                },
                 freeMode: true,
                 centeredSlides: true,
+                centeredSlidesBounds: true,
                 slideToClickedSlide: true,
+                activeIndex: 0,
                 on: {
                     afterInit: function() {
                         swiperInited = true;
-                        this.slideToLoop($('.swiper-related .swiper-slide .related-item.item-selected').closest('.swiper-slide').data('swiper-slide-index'));
+
+                        setTimeout(() => {
+                            this.slideTo($('.js-swiper-related .related-item.item-selected').parent('.swiper-slide').index(), 0);
+                        }, 30);
+                    },
+                    slideChange: function() {
+                        $('.js-swiper-related .related-item[data-product-id="' + $('.js-swiper-related .related-item.item-selected').eq(0).data('product-id') + '"]').addClass('item-selected');
                     }
                 }
             });
@@ -27,8 +37,7 @@ try {
         }
 
         $('body').on('click', '.grid-item.archive', function() {
-            $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');
-        })
+            $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');        })
 
         $('body').on('click', 'a.related-item', function(e) {
             e.preventDefault();
@@ -64,11 +73,14 @@ try {
                     lazyloadImg();
 
                     swiper_related.update();
+
+                    Change_slide();
                 })
             }
         })
 
         $('body').on('click', '.item-selected .bubble', function() {
+            console.log('test')
             if ($(this).hasClass('visible'))
                 $(this).removeClass('visible').find('.show-more').html('Show text <br> ↓')
             else
@@ -186,9 +198,12 @@ try {
         $('body').on('click', '#size-list li', function() {
             $('#size').html($(this).html());
             $(this).closest('#size-wrapper').find('#size').data('product-id', $(this).data('product-id'))
-            
-            $('#size-list').removeClass('open');
+                        
             $('#size-wrapper').removeClass('button-gray');
+
+            setTimeout(() => {
+                $('#size-list').removeClass('open');
+            }, 1);
         });
 
         let order = new Order();
@@ -415,29 +430,33 @@ function updateOrder(order) {
                 'data-product-id': product.id
             })
                 .append($('<div>', {
-                    'class': 'minus',
+                    'class': 'minus'
+                })
+                .append($('<div>', {
                     'text': '–'
                 }))
+                )
                 .append($('<div>', {
                     'class': 'bag-product'
                 })
-                    .append($('<div>', {
+                    // .append(`${product_list_item.type} <span class="product-name">${product_list_item.name}</span> ${product_list_item.size == 'one size' ? '' : 'size '}<span class="product-size">${product_list_item.size}</span> x <span class="product-quantity">${product.count}</span> <span class="product-price">${product_list_item.price}</span>`)
+                    .append($('<span>', {
                         'class': 'product-type',
                         'text': product_list_item.type
                     }))
-                    .append($('<div>', {
+                    .append($('<span>', {
                         'class': 'product-name',
                         'text': product_list_item.name
                     }))
-                    .append($('<div>', {
-                        'class': 'product-size',
+                    .append($('<span>', {
+                        'class': 'product-size' + (product_list_item.size == 'one size' ? ' one-size' : ''),
                         'text': product_list_item.size
                     }))
-                    .append($('<div>', {
+                    .append($('<span>', {
                         'class': 'product-quantity',
                         'text': product.count
                     }))
-                    .append($('<div>', {
+                    .append($('<span>', {
                         'class': 'product-price',
                         'text': product_list_item.price
                     }))

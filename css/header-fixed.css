@@ -1,3 +1,21 @@
+header {
+    position: unset;
+}
+
+.grid-container {
+    margin-top: calc(0.5rem - 2px);
+}
+
+@media screen and (max-width: 768px) {
+    .grid-container {
+        margin-top: 0.5rem;
+    }
+}
+
+.shipping-and-returns__head {
+    margin-top: 3px;
+}
+
 .grid-container {
     display: flex;
     letter-spacing: 0.05px;
@@ -20,6 +38,7 @@
 
 .shipping-and-returns__footer {
     margin-top: 83px;
+    margin-bottom: 10px;
 }
 
 .color_gainsboro {
@@ -56,4 +75,23 @@
 
 .section-10 {
     line-height: 1.1rem;
+}
+
+body > .policy-text {
+    margin-top: calc(-0.5rem - 3px);
+}
+
+body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+}
+
+body > .grid-container {
+    z-index: 10;
+}
+
+.shipping-and-returns {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }

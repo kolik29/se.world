@@ -28,34 +28,39 @@
         <div id="products">
         </div>
         <div class="about-wrapper">
-            <div class="h1">Delievery 送貨</div>
-            <p class="delivery-method">
-                UPS Express®: $20 (Free over $200)
-            </p>
-            <p class="continents">
-                Europe | Asia | North America  <span class="ship-days">3 days</span> <br>
-                South America | Middle East | Africa | Australia <span class="ship-days">6 days</span> <br>
-            </p>
-            <p class="payment-info">
-                *Free shipping for all orders from Russia! <br>
-                Moscow | Saint Petersburg 3 days <br>
-                The rest of Russia 6 days <br><br>
+            <div class="shipping-and-returns__head">
+                <h1>Shipping 運輸</h1>
+                <div class="section-1">UPS Express®</div>
+                <div class="section-2 margin-top_3px">$20 for all international shipping</div>
+
+                <div class="section-3 color_gainsboro margin-top_24px">Free shipping for orders over $200 and for all orders from Russia!</div>
+
+                <div class="section-4">Europe | Asia | North America <span class="color_gainsboro">3 days</span></div>
+                <div class="section-5">South America | Middle East | Africa | Australia <span class="color_gainsboro">6 days</span></div>
+
+                <div class="section-6 margin-top_25px">Moscow | Saint Petersburg <span class="color_gainsboro">3 days</span></div>
+                <div class="section-7 margin-top_3px">The rest of Russia <span class="color_gainsboro">6 days</span></div>
+            </div>
+            <br>
+            <div>
                 Order payment online: Debit | Credit card (via Stripe)
-            </p>
+            </div>
         </div>
         <form class="bag-items">
             <div id="order-list">
-                <div id="delivery"></div>
+                <div id="delivery">
+                    Contact to us about the delivery time&nbsp;<a href="mailto:hi@se.world">hi@se.world</a> 
+                </div>
             </div>
             <div class="input-wrapper">
-                <input value="test" type="text" placeholder="Country" name="country">
-                <input value="test" type="text" placeholder="City" name="state">
-                <input value="test" type="text" placeholder="Street" name="street">
-                <input value="test" type="text" placeholder="Building" name="building">
-                <input value="test" type="text" placeholder="Apartment/Office" name="apartment">
-                <input value="test" type="text" placeholder="Name" name="name">
-                <input value="123123123" type="text" placeholder="Phone" name="phone">
-                <input value="test@test.ru" type="email" placeholder="E-mail (for order details only)" name="email">
+                <input type="text" placeholder="Country" name="country">
+                <input type="text" placeholder="City" name="state">
+                <input type="text" placeholder="Street" name="street">
+                <input type="text" placeholder="Building" name="building">
+                <input type="text" placeholder="Apartment/Office" name="apartment">
+                <input type="text" placeholder="Name" name="name">
+                <input type="text" placeholder="Phone" name="phone">
+                <input type="email" placeholder="E-mail (for order details only)" name="email">
                 <a id="checkout" class="action-line">
                     <div>Total</div>
                     <div id="total"></div>

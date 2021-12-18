@@ -1,6 +1,5 @@
 .policy-text ul {
     padding: 0;
-    font-size: .8rem;
     padding-left: 35px;
     line-height: .9rem;
 }
@@ -20,25 +19,8 @@
     text-align: center;
 }
 
-.policy__body {
-    letter-spacing: -.037rem;
-}
-
-.policy__body div {
-    letter-spacing: -.055rem;
-}
-
 .policy__head {
     margin-top: 3px;
-}
-
-.policy__head h1 {
-    margin-bottom: 7px;
-    letter-spacing: -.02rem;
-}
-
-.policy__head div {
-    letter-spacing: -.037rem;
 }
 
 .margin-top_23px {
@@ -62,4 +44,30 @@
 .section-9,
 .section-15 {
     line-height: .9rem;
+}
+
+.policy-text h2,
+.policy-text {
+    font-size: 1.6vw;
+}
+
+@media screen and (max-width: 768px) {
+    .policy-text h2,
+    .policy-text {
+        font-size: 4.5vw;
+    }
+
+    .policy__head {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .policy__head h1 {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+body > .policy-text {
+    z-index: 10;
 }

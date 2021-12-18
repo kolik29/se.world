@@ -17,7 +17,7 @@ async function caching(convert = false) {
     logging.log('caching start!')
 
     for (dispatch of dispatches) {
-        products = await getImages(await post.post('se.madfrenzy.com', 'seworld.' + dispatch + '&store_access_key=csse&no_redirect'), convert)
+        products = await getImages(await post.post('testcsse.madfrenzy.com', 'seworld.' + dispatch + '&store_access_key=csse&no_redirect'), convert)
         await db.set(dispatch, products)
     }
 

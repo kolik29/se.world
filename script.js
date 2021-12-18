@@ -1,4 +1,3 @@
-
 //P5 preloader
 
 document.querySelector(':root').style.setProperty('--vh', window.innerHeight/100 + 'px');
@@ -83,13 +82,15 @@ function hidePreloader() {
   },800)
 }
 
-var preloader = document.getElementById('preloader');
-preloader.addEventListener('click', function() {
-  hidePreloader()
-}, { passive: true })
-preloader.addEventListener('wheel', function() {
-  hidePreloader()
-}, { passive: true })
+try {
+  var preloader = document.getElementById('preloader');
+  preloader.addEventListener('click', function() {
+    hidePreloader()
+  }, { passive: true })
+  preloader.addEventListener('wheel', function() {
+    hidePreloader()
+  }, { passive: true })
+} catch {}
 
 
 
@@ -109,8 +110,14 @@ var bag = document.querySelector('.bag')
 rotatingicon.addEventListener('click', function(){
     if (!bag.classList.contains('open')) {
         bag.classList.add('open')
+        $('header').css({
+          'z-index': 20
+        })
     } else {
         bag.classList.remove('open')
+        $('header').css({
+          'z-index': ''
+        })
     }
 })
 

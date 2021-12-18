@@ -123,7 +123,7 @@ function main() {
                         products_in_stock = await db.get('products_in_stock')
                         products_out_of_stock = await db.get('products_out_of_stock')
                         
-                        if (rout.file == 'index.hbs' || rout.file == 'product.hbs' || rout.file == 'checkout.hbs') {
+                        // if (rout.file == 'index.hbs' || rout.file == 'product.hbs' || rout.file == 'checkout.hbs') {
                             pageData['products_in_stock'] = products_in_stock
                             pageData['products_in_stock_string'] = JSON.stringify(products_in_stock)
                             pageData['products_out_of_stock'] = products_out_of_stock
@@ -232,7 +232,7 @@ function main() {
 
                                 pageData['product'] = product
                             }
-                        }
+                        // }
 
                         if (rout.url == 'order-success')
                             startCache(false)
