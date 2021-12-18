@@ -181,10 +181,11 @@ try {
                         }
                     );
 
-                    $('#pay').data('form-send', true).text('PLEASE, WAIT');
+                    $('#pay').data('form-send', true).text('WAIT');
 
                     post('seworld.create_order', data).then(
                         result => {
+                            console.log(result)
                             if (result.payment_url)
                                 location.href = result.payment_url;
                         },
@@ -253,7 +254,8 @@ try {
                 }
 
                 catch {
-                    localStorage.removeItem('order');
+                    order.clear();
+                    order = new Order();
                 }
             })
         }
@@ -426,10 +428,18 @@ class Order {
 
         return product;
     }
+
+    clear() {
+        localStorage.removeItem('order');
+    }
 }
 
 function updateOrder(order) {
-    $('#cart #counter').text(order.count());
+    if (isNaN(order.count())) {
+        order.clear();
+        order = new Order();
+    } else
+        $('#cart #counter').text(order.count());
 
     $('#order-list .order-item').remove();
 
@@ -485,7 +495,8 @@ function updateOrder(order) {
             }
 
             catch {
-                localStorage.removeItem('order');
+                order.clear();
+                order = new Order();
             }
         });
 
