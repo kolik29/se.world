@@ -17,7 +17,7 @@ function main() {
 
         startServer(true)
 
-        app.listen(3001, () => {
+        app.listen(serverConfig.config.port, () => {
             console.log(`Server running at https://${serverConfig.config.hostname}:${serverConfig.config.port}/`)
             logging.log(`Server running at https://${serverConfig.config.hostname}:${serverConfig.config.port}/`)
         })
