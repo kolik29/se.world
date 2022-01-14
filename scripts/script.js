@@ -428,10 +428,13 @@ class Order {
 
         return product;
     }
+}
 
-    clear() {
-        localStorage.removeItem('order');
-    }
+function srcConvert(src) {
+    // if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
+        return src.image_path + '?store_access_key=csse&no_redirect';
+    // else
+    //     return '/images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
 }
 
 function updateOrder(order) {
