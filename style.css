@@ -1467,10 +1467,6 @@ body > .wrapper {
     }
 }
 
-.rotating-icon #cart {
-    position: absolute;
-}
-
 .rotating-icon #about {
     height: 0;
     padding-top: 100%;
@@ -1545,12 +1541,6 @@ body > .wrapper {
 #size .short-size,
 #size-list .short-size {
     text-transform: uppercase;
-}
-
-@media screen and (min-width: 768px) {
-    .rotating-icon {
-        position: absolute;
-    }
 }
 
 @media screen and (orientation: portrait) {
