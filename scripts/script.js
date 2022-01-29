@@ -2,6 +2,26 @@ var url = new URL(location.href);
 
 try {
     $(() => {
+        $('.js-restock-timer').each(function() {
+            let restock = $(this).data('restock').split('/'),
+                restock_date = new Date(Number(restock[2]), Number(restock[0]) - 1, Number(restock[1])),
+                current_date = new Date();
+
+            console.log(restock_date)
+
+            setInterval(() => {
+                current_date = new Date();
+                let distance = restock_date.getTime() - current_date.getTime(),
+                    days = Math.floor(distance / (1000 * 60 * 60 * 24)),
+                    hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                    minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                    seconds = Math.floor((distance % (1000 * 60)) / 1000),
+                    milliseconds = Math.floor((distance % (1000)));
+
+                $(this).text(days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's ' + milliseconds + 'ms');
+            }, 1);
+        })
+
         var swiper_related;
         
         if ($('.js-swiper-related').length) {
@@ -498,7 +518,7 @@ function updateOrder(order) {
             }
 
             catch {
-                order.clear();
+                // order.clear();
                 order = new Order();
             }
         });

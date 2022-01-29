@@ -85,7 +85,7 @@
                         </g>
                     </svg>
                     <div class="item-name">
-                        {{this.name}}
+                        {{this.name}} {{this.restock}}
                     </div>
                     <div class="price">
                         {{this.price}}
@@ -101,7 +101,11 @@
             {{#each products_out_of_stock}}
             <a href="/{{this.seo_name}}" class="grid-item display_none">
                 <img data-src="{{this.pairs.main_pair.[420]}}" width="242" height="229">
+                {{#if this.restock}}
+                <div class="bubble" style="opacity: 1">
+                {{else}}
                 <div class="bubble">
+                {{/if}}
                     <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
@@ -111,7 +115,11 @@
                         {{this.name}}
                     </div>
                     <div class="price">
+                        {{#if this.restock}}
+                        Restock in <span data-restock="{{this.restock}}" class="js-restock-timer"></span>
+                        {{else}}
                         {{this.price}}
+                        {{/if}}
                     </div>
                 </div>
             </a>

@@ -1675,3 +1675,7 @@ body > .wrapper {
 .color_gainsboro {
     color: #dfdfdc;
 }
+
+.price {
+    white-space: nowrap;
+}
