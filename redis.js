@@ -19,15 +19,15 @@ class DB {
     }
 
     set(key, data) {
-        this.client.set(serverConfig.configюdb_prefix + key, JSON.stringify(data), redis.print)
+        this.client.set(serverConfig.config.db_prefix + key, JSON.stringify(data), redis.print)
     }
 
     async get(key) {
-        return JSON.parse(await this.client.get(serverConfig.configюdb_prefix + key))
+        return JSON.parse(await this.client.get(serverConfig.config.db_prefix + key))
     }
 
     async del(key) {
-        this.client.del(serverConfig.configюdb_prefix + key)
+        this.client.del(serverConfig.config.db_prefix + key)
     }
 }
 

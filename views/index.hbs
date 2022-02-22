@@ -116,7 +116,7 @@
                     </div>
                     <div class="price">
                         {{#if this.restock}}
-                        Restock in <span data-restock="{{this.restock}}" class="js-restock-timer"></span>
+                        Restock in <span data-restock="{{this.restock}}" data-restock-time="{{this.restock_time}}" class="js-restock-timer"></span>
                         {{else}}
                         {{this.price}}
                         {{/if}}
