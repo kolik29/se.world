@@ -2,6 +2,31 @@ var url = new URL(location.href);
 
 try {
     $(() => {
+        $('.js-restock-timer').each(function() {
+            try {
+                let restock = $(this).data('restock').split('/'),
+                    restock_time = $(this).data('restock-time').split(':'),
+                    restock_date = new Date(Number(restock[2]), Number(restock[0]) - 1, Number(restock[1]), Number(restock_time[0]) || 0, Number(restock_time[1]) || 0),
+                    current_date = new Date();
+
+                setInterval(() => {
+                    current_date = new Date();
+                    let distance = restock_date.getTime() - current_date.getTime(),
+                        days = Math.floor(distance / (1000 * 60 * 60 * 24)),
+                        hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                        minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                        seconds = Math.floor((distance % (1000 * 60)) / 1000),
+                        milliseconds = Math.floor((distance % (1000)));
+
+                    if (distance > 0)
+                        $(this).text(days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's ' + milliseconds + 'ms');
+                    else
+                        $(this).parent().remove();
+                }, 1);
+            }
+            catch {}
+        })
+
         var swiper_related;
         
         if ($('.js-swiper-related').length) {
@@ -453,10 +478,13 @@ class Order {
 
         return product;
     }
+}
 
-    clear() {
-        localStorage.removeItem('order');
-    }
+function srcConvert(src) {
+    // if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
+        return src.image_path + '?store_access_key=csse&no_redirect';
+    // else
+    //     return '/images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
 }
 
 function updateOrder(order) {
@@ -522,7 +550,7 @@ function updateOrder(order) {
             }
 
             catch {
-                order.clear();
+                // order.clear();
                 order = new Order();
             }
         });

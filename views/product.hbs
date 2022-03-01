@@ -182,11 +182,21 @@
                         <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-product-id="{{this.id}}">
                             <img data-src="{{this.pairs.main_pair.[800]}}" width="125" height="118">
                             {{#if this.current_product}}
-                            <div class="bubble">
+                                {{#if this.restock}}
+                                <div class="bubble" style="opacity: 1">
+                                {{else}}
+                                <div class="bubble">
+                                {{/if}}
                                 <div class="bubble-flex">
                                     <div class="">
                                         <div class="related-name">{{this.name}}</div>
-                                        <div class="price">{{this.price}}</div>
+                                        <div class="price">
+                                            {{#if this.restock}}
+                                            Restock in <span data-restock="{{this.restock}}" data-restock-time="{{this.restock_time}}" class="js-restock-timer"></span>
+                                            {{else}}
+                                            {{this.price}}
+                                            {{/if}}
+                                        </div>
                                     </div>
                                     <div class="show-more">Show text <br> ↓</div>
                                 </div>
@@ -198,9 +208,19 @@
                                 </svg>
                             </div>
                             {{else}}
-                            <div class="bubble">
+                                {{#if this.restock}}
+                                <div class="bubble" style="opacity: 1">
+                                {{else}}
+                                <div class="bubble">
+                                {{/if}}
                                 <div class="related-name">{{this.name}}</div>
-                                <div class="price">{{this.price}}</div>
+                                <div class="price">
+                                            {{#if this.restock}}
+                                            Restock in <span data-restock="{{this.restock}}" data-restock-time="{{this.restock_time}}" class="js-restock-timer"></span>
+                                            {{else}}
+                                            {{this.price}}
+                                            {{/if}}
+                                        </div>
                                 <svg class="triangle" viewBox="0 0 72 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <g id="Page-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                         <path vector-effect="non-scaling-stroke" d="M70.7928932,1.47534962 L3.11398865,69.1542542 L47.6661307,1.47534962 L70.7928932,1.47534962 Z" id="Path-3" stroke="#B7AFA6" fill="#FFFFFF"></path>
