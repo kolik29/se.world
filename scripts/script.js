@@ -106,11 +106,24 @@ try {
         })
 
         $('body').on('click', '.item-selected .bubble', function() {
-            console.log('test')
             if ($(this).hasClass('visible'))
                 $(this).removeClass('visible').find('.show-more').html('Show text <br> ↓')
-            else
+            else {
                 $(this).addClass('visible').find('.show-more').html('Hide text <br> ↑')
+
+                $('.related-item.item-selected .slide-text').css({
+                    'width': '',
+                    'white-space': ''
+                })
+
+                console.log([$('.related-item.item-selected .slide-text').width(), $('.related-item.item-selected .bubble').width()])
+
+                if ($('.related-item.item-selected .slide-text').width() > $('.related-item.item-selected .bubble').width())
+                    $('.related-item.item-selected .slide-text').css({
+                        'width': $('.related-item.item-selected .slide-text').width(),
+                        'white-space': 'initial'
+                    })
+            }
         })
 
         $('body').on('mousemove', function(e) {
@@ -210,7 +223,7 @@ try {
 
                     post('seworld.create_order', data).then(
                         result => {
-                            console.log(result)
+                            $('#pay').data('form-send', false).text('BUY');
                             if (result.payment_url)
                                 location.href = result.payment_url;
                         },
@@ -245,9 +258,15 @@ try {
 
         $('body').on('click', '.js-order-add', function() {
             if ($(this).text() != 'ADDED!') {
-                order.add($('#size').data('product-id').toString());
+                order.add($('#size').data('product-id').toString(), $('#size .short-size').text());
                 updateOrder(order);
             }
+
+            $(this).text('ADDED!')
+
+            setTimeout(() => {
+                $(this).text('ADD')
+            }, 1000)
         });
 
         $('body').on('click', '.order-item .plus', function() {
@@ -347,8 +366,10 @@ class Order {
             return order;
     }
 
-    add(product_id) {
-        let order = this.get(), products_list = [], product_order = order.filter(product => product.id == product_id);
+    add(product_id, size = '') {
+        let order = this.get(),
+            products_list = [],
+            product_order = order.filter(product => product.id == product_id);
 
         if (product_order.length) {
             for (let product_index in this.products) {
@@ -358,11 +379,14 @@ class Order {
                 })
         
                 if ('variations' in this.products[product_index])
-                    for (let size in this.products[product_index].variations)
+                    for (let size in this.products[product_index].variations) {
                         products_list.push({
                             id: this.products[product_index].variations[size].product_id,
                             basket_count: this.products[product_index].variations[size].count
                         })
+
+                        console.log(this.products[product_index].variations)
+                    }
             }
         
             products_list.forEach(product_item => {
@@ -380,7 +404,8 @@ class Order {
         } else
             order.push({
                 id: product_id,
-                basket_count: 1
+                basket_count: 1,
+                size: size
             })
 
         this.save(order);
@@ -477,6 +502,8 @@ function updateOrder(order) {
         order_products.forEach(product => {
             let product_list_item = order.product(product.id);
 
+            console.log(product)
+
             try {
                 $('#order-list')
                 .append($('<div>', {
@@ -504,7 +531,7 @@ function updateOrder(order) {
                         }))
                         .append($('<span>', {
                             'class': 'product-size' + (product_list_item.size == 'one size' ? ' one-size' : ''),
-                            'text': product_list_item.size
+                            'text': product.size
                         }))
                         .append($('<span>', {
                             'class': 'product-quantity',

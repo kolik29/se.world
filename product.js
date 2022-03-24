@@ -238,17 +238,17 @@ window.onload = function() {
                 bagItems.querySelector('#order-list').prepend(clone)
             }
         } catch {}
-        $('.add').text('ADDED!')
-        setTimeout(function() {
-            $('.add').text('ADD')
-        }, 1000)
+        // $('.add').text('ADDED!')
+        // setTimeout(function() {
+        //     $('.add').text('ADD')
+        // }, 1000)
     }
 
     // addButton.addEventListener('click', addToCart)
 
-    $('body').on('click', '.add', function() {
-        addToCart();
-    })
+    // $('body').on('click', '.add', function() {
+    //     addToCart();
+    // })
 
 }
 
@@ -363,4 +363,18 @@ var addText = function(slideN) {
         $('.slide-text').addClass('display_none')
     else
         $('.slide-text').removeClass('display_none').text(thisImg[slideN].children[1].innerHTML)
+
+
+    $('.related-item.item-selected .slide-text').css({
+        'width': '',
+        'white-space': ''
+    })
+
+    console.log([$('.related-item.item-selected .slide-text').width(), $('.related-item.item-selected .bubble').width()])
+
+    if ($('.related-item.item-selected .slide-text').width() > $('.related-item.item-selected .bubble').width())
+        $('.related-item.item-selected .slide-text').css({
+            'width': $('.related-item.item-selected .slide-text').width(),
+            'white-space': 'initial'
+        })
 }

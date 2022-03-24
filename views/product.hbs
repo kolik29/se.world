@@ -45,10 +45,9 @@
                         </p>
                         <p class="contacts">
                             <a href="mailto:hi@se.world">hi@se.world</a><br>
-                            <a href="shipping-and-returns">Shipping & Returns</a>
+                            <a href="shipping-and-returns">Shipping & Returns</a> <span class="color_lightgray">&</span> <a target="_blanc" href="/policy">Terms & Policy.</a>
                         </p>
-                        <p class="policy">Find about our <a target="_blanc" href="/policy">Terms & Policy.</a></p>
-                        <p>Design by <a href='http://vaganmanukian.com/'>vaganmanukian.com</a></p>
+                        {{!-- <p>Design by <a href='http://vaganmanukian.com/'>vaganmanukian.com</a></p> --}}
                     </div>
                     <div id="empty-bag">Nothing in the bag yet</div>
                     <div class="bag-items">
@@ -140,7 +139,7 @@
                     {{#each products_in_stock}}
                     <div class="swiper-slide">
                         <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-product-id="{{this.id}}">
-                            <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                            <img data-src="{{this.pairs.main_pair.[800]}}" width="125" height="118">
                             {{#if this.current_product}}
                             <div class="bubble">
                                 <div class="bubble-flex">
@@ -181,7 +180,7 @@
                     {{/if}}
                     <div class="swiper-slide">
                         <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}" data-product-id="{{this.id}}">
-                            <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                            <img data-src="{{this.pairs.main_pair.[800]}}" width="125" height="118">
                             {{#if this.current_product}}
                                 {{#if this.restock}}
                                 <div class="bubble" style="opacity: 1">
@@ -240,7 +239,7 @@
             <aside id="related">
                 {{#each products_in_stock}}
                 <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}">
-                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                    <img data-src="{{this.pairs.main_pair.[800]}}" width="125" height="118">
                     <div class="bubble">
                         <div class="related-name">{{this.name}}</div>
                         <div class="price">{{this.price}}</div>
@@ -266,7 +265,7 @@
                 </div>
                 {{/if}}
                 <a class="related-item{{#if this.current_product}} item-selected{{/if}}" href="/{{this.seo_name}}">
-                    <img data-src="{{this.pairs.main_pair.[420]}}" width="125" height="118">
+                    <img data-src="{{this.pairs.main_pair.[800]}}" width="125" height="118">
                     <div class="bubble">
                         <div class="related-name">{{this.name}}</div>
                         <div class="price">{{this.price}}</div>

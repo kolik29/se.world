@@ -45,7 +45,7 @@ function main() {
 
         setInterval(() => {
             startCache(true).catch(err => console.error(err))
-        }, 3600000)
+        }, 600000)
 
         async function startServer() {    
             let products_in_stock = await db.get('products_in_stock'),

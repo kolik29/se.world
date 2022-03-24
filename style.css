@@ -610,6 +610,8 @@ a {
     display: none;
     margin-top: 1rem;
     line-height: 1.1;
+    width: 100%;
+    white-space: nowrap;
 }
 
 #prev-img, #next-img {
@@ -1674,6 +1676,14 @@ body > .wrapper {
 
 .color_gainsboro {
     color: #dfdfdc;
+}
+
+.color_lightgray {
+    color: #d5d1ce;
+}
+
+.product-page .archive span {
+    font-size: 1rem;
 }
 
 .price {
