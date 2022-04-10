@@ -211,7 +211,7 @@ try {
                             products: order.get()
                         }, {
                             customer: customer, custom_shipping: {
-                                "delivery_name": "UPS Express®",
+                                "delivery_name": "DHL Express®",
                                 "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
                                 "delivery_price": delivery_price,
                                 "payment_id": 21
