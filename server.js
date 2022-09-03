@@ -7,11 +7,16 @@ const path = require('path')
 const { Worker } = require('worker_threads')
 const logging = require('./logging.js')
 const urlencodedParser = express.urlencoded({extended: false})
+const hbs = require('handlebars');
 
 main()
 
 function main() {
     try {
+        hbs.registerHelper('ifEquals', function(arg1, arg2, options) {
+            return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+        });
+
         app.set('view engine', 'hbs')
         db.openSocket()
 
@@ -43,9 +48,9 @@ function main() {
         
         startCache(true).catch(err => console.error(err))
 
-        setInterval(() => {
-            startCache(true).catch(err => console.error(err))
-        }, 600000)
+        // setInterval(() => {
+        //     startCache(true).catch(err => console.error(err))
+        // }, 600000)
 
         async function startServer() {    
             let products_in_stock = await db.get('products_in_stock'),
@@ -192,8 +197,10 @@ function main() {
                                 
                                 product.pairs.pairs = product_pairs
                                 
-                                for (let key in product.variations)
+                                for (let key in product.variations) {
                                     product.variations[key]['word'] = getSizeWord(product.variations[key].size)
+                                    product.variations[key]['sort'] = sizeSort(product.variations[key].size)
+                                }
 
                                 if ('variations' in product)
                                     product.variations[product.size] = {
@@ -201,6 +208,7 @@ function main() {
                                         count: product.count,
                                         size: product.size,
                                         word: getSizeWord(product.size),
+                                        sort: sizeSort(product.size)
                                     }
                                 else
                                     product['variations'] = {
@@ -209,8 +217,27 @@ function main() {
                                             count: product.count,
                                             size: product.size,
                                             word: getSizeWord(product.size),
+                                            sort: sizeSort(product.size)
                                         }
                                     }
+
+                                let min_sort = 4;
+    
+                                for (let key in product.variations) {
+                                    if (product.variations[key]['sort'] < min_sort) {
+                                        min_sort = product.variations[key]['sort'];
+                                    }
+                                }
+
+                                if (Object.keys(product.variations).length == 1) {
+                                    product.variations[Object.keys(product.variations)[0]]['first'] = true;
+                                } else {
+                                    for (let key in product.variations) {
+                                        if (product.variations[key]['sort'] == min_sort) {
+                                            product.variations[key]['first'] = true;
+                                        }
+                                    }
+                                }
                                 
                                 for (let key in product.variations) {
                                     if (
@@ -260,6 +287,30 @@ function main() {
 
         Array.prototype.last = function() {
             return this[this.length - 1]
+        }
+
+        function sizeSort(size) {
+            let res;
+
+            switch (size) {
+                case 'XS':
+                    res = 1;
+                    break;
+                case 'S':
+                    res = 2;
+                    break;
+                case 'M':
+                    res = 3;
+                    break;
+                case 'L':
+                    res = 4;
+                    break;
+                case 'XL':
+                    res = 5;
+                    break;
+            }
+
+            return res;
         }
     }
 

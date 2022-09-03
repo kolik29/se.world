@@ -116,8 +116,6 @@ try {
                     'white-space': ''
                 })
 
-                console.log([$('.related-item.item-selected .slide-text').width(), $('.related-item.item-selected .bubble').width()])
-
                 if ($('.related-item.item-selected .slide-text').width() > $('.related-item.item-selected .bubble').width())
                     $('.related-item.item-selected .slide-text').css({
                         'width': $('.related-item.item-selected .slide-text').width(),
@@ -171,7 +169,6 @@ try {
             e.preventDefault();
 
             if (!$('#pay').data('form-send')) {
-                console.log('test');
                 var formSubmit = true, customer = {};
 
                 $(this).find('input').each(function() {
@@ -211,7 +208,7 @@ try {
                             products: order.get()
                         }, {
                             customer: customer, custom_shipping: {
-                                "delivery_name": "UPS Express®",
+                                "delivery_name": "DHL Express®",
                                 "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
                                 "delivery_price": delivery_price,
                                 "payment_id": 21
@@ -384,13 +381,10 @@ class Order {
                             id: this.products[product_index].variations[size].product_id,
                             basket_count: this.products[product_index].variations[size].count
                         })
-
-                        console.log(this.products[product_index].variations)
                     }
             }
         
             products_list.forEach(product_item => {
-                console.log(Number(product_item.basket_count), Number(product_order[0].basket_count))
                 if (
                     Number(product_item.id) == Number(product_id) &&
                     Number(product_item.basket_count) > Number(product_order[0].basket_count)
@@ -501,8 +495,6 @@ function updateOrder(order) {
     if (order_products.length) {
         order_products.forEach(product => {
             let product_list_item = order.product(product.id);
-
-            console.log(product)
 
             try {
                 $('#order-list')
@@ -670,14 +662,14 @@ function updateBag() {
                 })
                 priceAll += 20;
             } else {
-                $('#delivery-cost').text('Free Express UPS delivery');
+                $('#delivery-cost').text('Free Express DHL Express');
                 $('#delivery').css({
                     'background-color': '#FFDC00',
                     'opacity': '1'
                 })
             }
         } else if ($('#delivery').data('country-code') == 'RU') {
-            $('#delivery-cost').text('Free Express UPS delivery');
+            $('#delivery-cost').text('Free Express DHL Express');
             $('#delivery').css({
                 'background-color': '#FFDC00',
                 'opacity': '1'

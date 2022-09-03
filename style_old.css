@@ -898,7 +898,6 @@ input:-webkit-autofill::first-line {
     
     .purchase-desktop .shipping-info {
         width: 50%;
-        height: calc(100 * var(--vh) - 100% - 2rem - 1px);
         bottom: calc(100% - 1rem + 1px);
         border-radius: 1rem !important;
         padding: 0.5rem 0.5rem 0.45rem;
