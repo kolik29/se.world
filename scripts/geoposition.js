@@ -8087,14 +8087,16 @@ function shippingTo(country) {
 	let freeShipping = false, days = '';
 	const order = new Order();
 
-	if (country.code == 'RU')
+	if (country.code == 'RU') {
 		freeShipping = true;
-	else {
+		$('#total').text('$' + order.total());
+	} else {
 		if (order.total() > 200) {
 			freeShipping = true;
 			$('#total').text('$' + order.total());
-		} else
+		} else {
 			$('#total').text('$' + (order.total() + 20));
+		}
 
 
 		days = country.timing + ' ' + declOfNum(country.timing, ['day', 'days']);
@@ -8148,7 +8150,7 @@ function freeShippingTextTemplate(days, leftToFreeshipping = 0) {
 	if (leftToFreeshipping > 0)
 		return `$${leftToFreeshipping} left for free shipping ${days}`
 	else
-		return `Free Express UPS delivery${days}`;
+		return `Free Express DHL Express${days}`;
 }
 
 function declOfNum(num, words) {

@@ -721,7 +721,7 @@ a {
     left: 18%;
     bottom: 18%;
     right: 18%;
-    background-image: url('alien.svg');
+    background-image: url('alien.svg?2');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -1658,7 +1658,7 @@ body > .wrapper {
 }
 
 .product-page header {
-    z-index: -1;
+    z-index: 1;
 }
 
 #delivery a {
@@ -1687,4 +1687,32 @@ body > .wrapper {
 
 .price {
     white-space: nowrap;
+}
+
+.header[style="background-color: white;"] {
+    z-index: 2;
+}
+
+#size-list {
+    grid-template-columns: 1fr;
+}
+
+#size-list.open {
+    display: grid !important;
+}
+
+#size-list li[data-product-sort="1"] {
+    grid-row-start: 1;
+}
+
+#size-list li[data-product-sort="2"] {
+    grid-row-start: 2;
+}
+
+#size-list li[data-product-sort="3"] {
+    grid-row-start: 3;
+}
+
+#size-list li[data-product-sort="4"] {
+    grid-row-start: 4;
 }

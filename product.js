@@ -33,9 +33,6 @@ window.onload = function() {
     // ShowBlock
     function showBlock(el) {
         if (el.classList.contains('open')) {
-            $('header').css({
-              'z-index': ''
-            })
             el.classList.remove('open')
             if (el.classList.contains('bag')) {
                 header.style.backgroundColor = 'transparent'
@@ -49,11 +46,9 @@ window.onload = function() {
                 sizeWrapper.classList.remove('button-gray')
             }
         } else {
-            $('header').css({
-              'z-index': 20
-            })
             if (el.classList.contains('bag')) {
                 header.style.backgroundColor = 'white'
+                header.style.zIndex = '2'
                 // fixedwrapp.style.zIndex = '20'
                 var gray = document.getElementsByClassName('button-gray')[0]
                 if (gray) {
@@ -66,12 +61,14 @@ window.onload = function() {
                 shippingButton[0].innerHTML = 'X'
                 sizeWrapper.classList.remove('button-gray')
                 header.style.backgroundColor = 'transparent'
+                header.style.zIndex = ''
             }
             if (el.id == 'size-list') {
                 sizeWrapper.classList.add('button-gray')
                 shippingButton[0].classList.remove('button-gray')
                 shippingButton[0].innerHTML = 'Shipping'
                 header.style.backgroundColor = 'transparent'
+                header.style.zIndex = ''
             }
             var otherOpen = document.getElementsByClassName('open')
             if (otherOpen[0]) {
