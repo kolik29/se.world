@@ -1212,7 +1212,12 @@ var countries_data = [
         'name': 'Казахстан',
         'timing': 'ex_calc',
         'code': 'KZ'
-    }
+    },
+	{
+		'name': 'Japan',
+		'timing': 4,
+		'code': 'JP'
+	}
 ];
 
 var cities_data = {
