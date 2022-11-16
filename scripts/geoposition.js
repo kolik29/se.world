@@ -8091,11 +8091,11 @@ function shippingTo(country) {
 		freeShipping = true;
 		$('#total').text('$' + order.total());
 	} else {
-		if (order.total() > 200) {
+		if (order.total() > 190) {
 			freeShipping = true;
 			$('#total').text('$' + order.total());
 		} else {
-			$('#total').text('$' + (order.total() + 20));
+			$('#total').text('$' + (order.total() + 15));
 		}
 
 
@@ -8113,7 +8113,7 @@ function shippingTo(country) {
 		})
 		.text(freeShippingTextTemplate(days));
 	} else {
-		let leftToFreeshipping = 200 - order.total();
+		let leftToFreeshipping = 190 - order.total();
 
 		$('#delivery')
 		.css({
