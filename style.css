@@ -655,7 +655,7 @@ header .bag-items {
 }
 
 #purchase {
-    position: fixed;
+    position: relative;
     display: flex;
 }
 
@@ -919,7 +919,7 @@ input:-webkit-autofill::first-line {
     
     .purchase-desktop .shipping-info {
         width: 50%;
-        bottom: calc(100% - 1rem + 1px);
+        bottom: calc(100% - 0.5rem + 1px);
         border-radius: 1rem !important;
         padding: 0.5rem 0.5rem 0.45rem;
         cursor: default;
@@ -1107,9 +1107,15 @@ input:-webkit-autofill::first-line {
     #size-list li:last-child {
         border-bottom: none;
     }
+
+    #size {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        white-space: nowrap;
+    }
     
     .chinese {
-        display: none;
+        margin: 0 0.25rem;
     }
     
     .size-arrow {
@@ -1737,3 +1743,23 @@ body > .wrapper {
 .related-item.item-selected:hover .bubble {
     display: block !important;
 }
+
+#purchase {
+    padding: 0.5rem 1rem 0.6666666rem;
+    grid-gap: 0.3rem;
+}
+
+@media screen and (max-width: 640px) {
+    #purchase .shipping {
+        opacity: 0.5;
+    }
+}
+
+.product-page .archive span {
+    padding: 0 1rem;
+}
+
+.checkout-wrapper .shipping-and-returns__head h1 {
+    margin-bottom: 0.33333rem;
+}
+
