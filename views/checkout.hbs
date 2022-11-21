@@ -65,10 +65,65 @@
                     <div id="total"></div>
                     <button id="pay" class="checkout-button">PAY</button>
                 </a>
+                <div class="input-wrapper-text">
+                    or
+                </div>
+                <div id="paypal-button-container"></div>
+                <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="/policy">Terms & Policy.</a></p>
             </div>
+            <!-- Sample PayPal credentials (client-id) are included -->
+            <script src="https://www.paypal.com/sdk/js?client-id=Ae1wVCru8WaEQ7kg73vsv0u1WnTpO5-OOlWTzNCwRT-FeYuD3I-Id4VbK7gQ9uXwTfy92rS_FFpBjo-2&currency=USD&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
+            <script>
+            const paypalButtonsComponent = paypal.Buttons({
+                // optional styling for buttons
+                // https://developer.paypal.com/docs/checkout/standard/customize/buttons-style-guide/
+                style: {
+                    color: "gold",
+                    shape: "pill",
+                    layout: "horizontal"
+                },
+
+                // set up the transaction
+                createOrder: (data, actions) => {
+                    // pass in any options from the v2 orders create call:
+                    // https://developer.paypal.com/api/orders/v2/#orders-create-request-body
+                    const createOrderPayload = {
+                        purchase_units: [
+                            {
+                                amount: {
+                                    value: $('#total').data('total').replace('$', '')
+                                }
+                            }
+                        ]
+                    };
+
+                    return actions.order.create(createOrderPayload);
+                },
+
+                // finalize the transaction
+                onApprove: (data, actions) => {
+                    const captureOrderHandler = (details) => {
+                        const payerName = details.payer.name.given_name;
+                        console.log('Transaction completed');
+                    };
+
+                    return actions.order.capture().then(captureOrderHandler);
+                },
+
+                // handle unrecoverable errors
+                onError: (err) => {
+                    console.error('An error prevented the buyer from checking out with PayPal');
+                }
+            });
+
+            paypalButtonsComponent
+                .render("#paypal-button-container")
+                .catch((err) => {
+                    console.error('PayPal Buttons failed to render');
+                });
+            </script>
         </form>
         <div class="about-wrapper">
-            <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="/policy">Terms & Policy.</a></p>
         </div>
     </div>
 

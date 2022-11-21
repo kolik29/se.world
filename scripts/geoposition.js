@@ -8089,13 +8089,13 @@ function shippingTo(country) {
 
 	if (country.code == 'RU') {
 		freeShipping = true;
-		$('#total').text('$' + order.total());
+		$('#total').text('$' + order.total()).data('total', order.total());
 	} else {
 		if (order.total() > 190) {
 			freeShipping = true;
-			$('#total').text('$' + order.total());
+			$('#total').text('$' + order.total()).data('total', order.total());
 		} else {
-			$('#total').text('$' + (order.total() + 15));
+			$('#total').text('$' + (order.total() + 15)).data('total', order.total() + 15);
 		}
 
 

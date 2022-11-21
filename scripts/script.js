@@ -554,7 +554,7 @@ function updateOrder(order) {
 
         $('#empty-bag').addClass('display_none');
         $('.bag-items').addClass('flex-open');
-        $('#total').text(priceFormat(order.total()));
+        $('#total').text(priceFormat(order.total())).data('total', priceFormat(order.total()));
     } else {
         $('#empty-bag').removeClass('display_none');
         $('.bag-items').removeClass('flex-open');
@@ -681,6 +681,6 @@ function updateBag() {
             })
         }
 
-        $('#total').text('$' + priceAll)
+        $('#total').text('$' + priceAll).data('total', priceAll);
     }
 }
