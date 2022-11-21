@@ -41,12 +41,16 @@ function main() {
 
         async function startCache(convert_image) {
             const result = await startCacheWorker(convert_image)
-            console.log(result)
+            console.log(result);
             logging.log(result)
             startServer()
         }
         
         startCache(true).catch(err => console.error(err))
+
+        // setInterval(() => {
+        //     startCache(true).catch(err => console.error(err))
+        // }, 600000)
 
         async function startServer() {    
             let products_in_stock = await db.get('products_in_stock'),
@@ -123,20 +127,6 @@ function main() {
                         
                         products_in_stock = await db.get('products_in_stock')
                         products_out_of_stock = await db.get('products_out_of_stock')
-
-                        let currentDate = Date.now();
-
-                        for (let i in products_out_of_stock) {
-                            if (products_out_of_stock[i].restock && products_out_of_stock[i].restock != null) {
-                                let restockDate = products_out_of_stock[i].restock.split('/')
-                                restockDate = new Date(restockDate[2], restockDate[1], restockDate[0])
-                                restockDate = restockDate.getTime()
-
-                                if (currentDate > restockDate) {
-                                    products_out_of_stock[i].restock = false
-                                }
-                            }
-                        }
                         
                         // if (rout.file == 'index.hbs' || rout.file == 'product.hbs' || rout.file == 'checkout.hbs') {
                             pageData['products_in_stock'] = products_in_stock

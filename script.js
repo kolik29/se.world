@@ -110,20 +110,8 @@ var bag = document.querySelector('.bag')
 rotatingicon.addEventListener('click', function(){
     if (!bag.classList.contains('open')) {
         bag.classList.add('open')
-
-        if ($('.shipping-and-returns').length) {
-          $('.grid-container').css({
-            'z-index': 0
-          })
-        }
     } else {
         bag.classList.remove('open')
-
-        if ($('.shipping-and-returns').length) {
-          $('.grid-container').css({
-            'z-index': ''
-          })
-        }
     }
 })
 

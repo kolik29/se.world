@@ -288,19 +288,6 @@ a {
     align-items: start;
 }
 
-header .bag-items {
-    border-bottom-left-radius: 32px;
-    border-bottom-right-radius: 32px;
-    overflow: hidden;
-}
-
-@media screen and (max-width: 640px) {
-    header .bag-items {
-        border-bottom-left-radius: 27px;
-        border-bottom-right-radius: 27px;
-    }
-}
-
 .product-type:after {
     display: inline;
     content: ' ';
@@ -655,7 +642,7 @@ header .bag-items {
 }
 
 #purchase {
-    position: relative;
+    position: fixed;
     display: flex;
 }
 
@@ -919,11 +906,10 @@ input:-webkit-autofill::first-line {
     
     .purchase-desktop .shipping-info {
         width: 50%;
-        bottom: calc(100% - 0.5rem + 1px);
+        bottom: calc(100% - 1rem + 1px);
         border-radius: 1rem !important;
         padding: 0.5rem 0.5rem 0.45rem;
         cursor: default;
-        max-height: calc(100vh - calc(100% - 0.5rem + 1px));
     }
     
     .purchase-desktop .button-gray {
@@ -1108,15 +1094,9 @@ input:-webkit-autofill::first-line {
     #size-list li:last-child {
         border-bottom: none;
     }
-
-    #size {
-        display: grid;
-        grid-template-columns: auto auto auto auto;
-        white-space: nowrap;
-    }
     
     .chinese {
-        margin: 0 0.25rem;
+        display: none;
     }
     
     .size-arrow {
@@ -1735,59 +1715,4 @@ body > .wrapper {
 
 #size-list li[data-product-sort="4"] {
     grid-row-start: 4;
-}
-
-.js-swiper-related:hover .related-item.item-selected .bubble {
-    display: none;
-}
-
-.related-item.item-selected:hover .bubble {
-    display: block !important;
-}
-
-#purchase {
-    padding: 0.5rem 1rem 0.6666666rem;
-    grid-gap: 0.3rem;
-}
-
-@media screen and (max-width: 640px) {
-    #purchase .shipping {
-        opacity: 0.5;
-    }
-}
-
-.product-page .archive span {
-    padding: 0 1rem;
-}
-
-.checkout-wrapper .shipping-and-returns__head h1 {
-    margin-bottom: 0.33333rem;
-}
-
-#paypal-button-container {
-    margin: 1rem;
-}
-
-.input-wrapper-text {
-    text-align: center;
-    padding: 1rem 0 .5rem;
-}
-
-.input-wrapper-text ~ p.policy {
-    text-align: center;
-}
-
-
-
-#checkout.action-line {
-    border-bottom-left-radius: 32px;
-    border-bottom-right-radius: 32px;
-    overflow: hidden;
-}
-
-@media screen and (max-width: 640px) {
-    #checkout.action-line {
-        border-bottom-left-radius: 27px;
-        border-bottom-right-radius: 27px;
-    }
 }

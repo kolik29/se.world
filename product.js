@@ -141,10 +141,6 @@ window.onload = function() {
                     size.innerHTML = e.target.innerHTML
                     sizeList.classList.remove('open')
                     sizeWrapper.classList.remove('button-gray')
-
-                    setTimeout(() => {
-                        $('#size-wrapper').removeClass('button-gray') 
-                    }, 10);
                 })
             }
         })
