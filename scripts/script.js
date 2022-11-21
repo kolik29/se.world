@@ -2,6 +2,11 @@ var url = new URL(location.href);
 
 try {
     $(() => {
+        $('#checkout').click(function() {
+            if ($(window).width() < 640)
+                $(this).closest('form').submit();
+        })
+
         $('.js-restock-timer').each(function() {
             try {
                 let restock = $(this).data('restock').split('/'),
@@ -199,7 +204,7 @@ try {
                     let delivery_price = 0;
 
                     if ($('#delivery').data('country-code') != 'RU')
-                        delivery_price = (parseInt(order.total()) < 200) ? 20 : 0;
+                        delivery_price = (parseInt(order.total()) < 190) ? 15 : 0;
 
                     customer.country = $('#delivery').data('country-code');
 
@@ -549,7 +554,7 @@ function updateOrder(order) {
 
         $('#empty-bag').addClass('display_none');
         $('.bag-items').addClass('flex-open');
-        $('#total').text(priceFormat(order.total()));
+        $('#total').text(priceFormat(order.total())).data('total', priceFormat(order.total()));
     } else {
         $('#empty-bag').removeClass('display_none');
         $('.bag-items').removeClass('flex-open');
@@ -654,13 +659,13 @@ function updateBag() {
         var priceAll = order.total();
 
         if ($('#delivery').data('country-code') == '') {
-            if (priceAll < 200) {
-                $('#delivery-cost').text('$' + (200 - priceAll) + ' left for free shipping');
+            if (priceAll < 190) {
+                $('#delivery-cost').text('$' + (190 - priceAll) + ' left for free shipping');
                 $('#delivery').css({
                     'background-color': '#77B2D6',
                     'opacity': '0.5'
                 })
-                priceAll += 20;
+                priceAll += 15;
             } else {
                 $('#delivery-cost').text('Free Express DHL Express');
                 $('#delivery').css({
@@ -676,6 +681,6 @@ function updateBag() {
             })
         }
 
-        $('#total').text('$' + priceAll)
+        $('#total').text('$' + priceAll).data('total', priceAll);
     }
 }
