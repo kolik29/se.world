@@ -196,22 +196,17 @@ try {
                 });
 
                 if (formSubmit) {
-                    let delivery_price = 0;
-
-                    if ($('#delivery').data('country-code') != 'RU')
-                        delivery_price = (parseInt(order.total()) < 200) ? 20 : 0;
-
                     customer.country = $('#delivery').data('country-code');
 
                     data = Object.assign(
                         {
                             products: order.get()
                         }, {
-                            customer: customer, custom_shipping: {
+                            customer: customer,
+                            custom_shipping: {
                                 "delivery_name": "DHL Express®",
                                 "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
-                                "delivery_price": delivery_price,
-                                "payment_id": 21
+                                "delivery_id": customer.country.toLowerCase() == 'ru' ? 2 : 7
                             }
                         }
                     );
