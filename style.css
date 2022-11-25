@@ -1791,3 +1791,12 @@ body > .wrapper {
         border-bottom-right-radius: 27px;
     }
 }
+
+.product-page.product-page--instagram .fixed-wrapp {
+    height: calc(100vh - 102px);
+}
+
+.product-page.product-page--instagram .related-wrapper img {
+    height: 85px !important;
+    width: 90px;
+}

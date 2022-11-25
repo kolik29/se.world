@@ -1,7 +1,15 @@
 var url = new URL(location.href);
 
+function instagramHeightHack() {
+    if (/instagram/.test(navigator.userAgent.toLowerCase())) {
+        $('.product-page').addClass('product-page--instagram')
+    }
+}
+
 try {
     $(() => {
+        instagramHeightHack();
+
         $('#checkout').click(function() {
             if ($(window).width() < 640)
                 $(this).closest('form').submit();
