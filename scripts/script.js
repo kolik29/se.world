@@ -10,12 +10,12 @@ try {
     $(() => {
         instagramHeightHack();
 
-        $('#checkout').click(function() {
+        $('#checkout').click(function () {
             if ($(window).width() < 640)
                 $(this).closest('form').submit();
         })
 
-        $('.js-restock-timer').each(function() {
+        $('.js-restock-timer').each(function () {
             try {
                 let restock = $(this).data('restock').split('/'),
                     restock_time = $(this).data('restock-time').split(':'),
@@ -37,11 +37,11 @@ try {
                         $(this).parent().remove();
                 }, 1);
             }
-            catch {}
+            catch { }
         })
 
         var swiper_related;
-        
+
         if ($('.js-swiper-related').length) {
             swiper_related = new Swiper('.js-swiper-related', {
                 direction: 'vertical',
@@ -56,14 +56,14 @@ try {
                 slideToClickedSlide: true,
                 activeIndex: 0,
                 on: {
-                    afterInit: function() {
+                    afterInit: function () {
                         swiperInited = true;
 
                         setTimeout(() => {
                             this.slideTo($('.js-swiper-related .related-item.item-selected').parent('.swiper-slide').index(), 0);
                         }, 30);
                     },
-                    slideChange: function() {
+                    slideChange: function () {
                         $('.js-swiper-related .related-item[data-product-id="' + $('.js-swiper-related .related-item.item-selected').eq(0).data('product-id') + '"]').addClass('item-selected');
                     }
                 }
@@ -74,11 +74,11 @@ try {
             $('body').on('mouseleave', '.shipping-info', () => swiper_related.enable());
         }
 
-        $('body').on('click', '.grid-item.archive', function() {
+        $('body').on('click', '.grid-item.archive', function () {
             $(this).toggleClass('active').nextAll('.grid-item').toggleClass('display_none');
         })
 
-        $('body').on('click', 'a.related-item', function(e) {
+        $('body').on('click', 'a.related-item', function (e) {
             e.preventDefault();
 
             if (!$(e.target).hasClass('item-selected') && $(e.target).closest('.item-selected').length == 0) {
@@ -96,7 +96,7 @@ try {
                 url = new URL(location.href);
 
                 $.get($(this).attr('href'), data => {
-                    $(data).each(function() {
+                    $(data).each(function () {
                         if ($(this).hasClass('sticky-scroll'))
                             $('.js-swiper-related .related-item.item-selected .bubble').html($(this).find('.related-item.item-selected .bubble').html());
 
@@ -118,7 +118,7 @@ try {
             }
         })
 
-        $('body').on('click', '.item-selected .bubble', function() {
+        $('body').on('click', '.item-selected .bubble', function () {
             if ($(this).hasClass('visible'))
                 $(this).removeClass('visible').find('.show-more').html('Show text <br> ↓')
             else {
@@ -137,7 +137,7 @@ try {
             }
         })
 
-        $('body').on('mousemove', function(e) {
+        $('body').on('mousemove', function (e) {
             if ($('#slide-number').length) {
                 if (
                     ($(e.target).hasClass('js-swiper-related') || $(e.target).closest('.js-swiper-related').length) ||
@@ -155,12 +155,12 @@ try {
             }
         })
 
-        $('input[name="phone"]').on('keydown', function(e) {
+        $('input[name="phone"]').on('keydown', function (e) {
             if ("1234567890".indexOf(e.key) == -1 && (e.key != 'Backspace' && e.key != 'Delete' && e.key != 'ArrowRight' && e.key != 'ArrowLeft'))
                 e.preventDefault();
         })
-        
-        $('input[name="phone"]').on('change', function() {
+
+        $('input[name="phone"]').on('change', function () {
             $(this).val($(this).val().replace(/\D/, ''));
         })
 
@@ -169,7 +169,7 @@ try {
             sliderSwipe();
         }
 
-        $('.rotating-icon').on('click', function() {
+        $('.rotating-icon').on('click', function () {
             setTimeout(() => {
                 if ($('.bag').hasClass('open'))
                     $('#about span').text('close');
@@ -178,13 +178,23 @@ try {
             }, 50);
         })
 
-        $('form.bag-items').submit(function(e) {
+        $('form.bag-items button').click(function () {
+            if ($('input[name="country"').val() == 'Russia') {
+                $(this).data('payment-method-name', 'SE Tinkoff');
+            } else {
+                $(this).data('payment-method-name', 'stripe');
+            }
+            
+            $('form.bag-items input[name="payment_method_name"]').val($(this).data('payment-method-name'));
+        })
+
+        $('form.bag-items').submit(function (e) {
             e.preventDefault();
 
             if (!$('#pay').data('form-send')) {
                 var formSubmit = true, customer = {};
 
-                $(this).find('input').each(function() {
+                $(this).find('input').each(function () {
                     if ($(this).val() == '') {
                         $(this).css({
                             'background-color': 'red'
@@ -220,13 +230,13 @@ try {
                         {
                             products: order.get()
                         }, {
-                            customer: customer,
-                            custom_shipping: {
-                                "delivery_name": "DHL Express®",
-                                "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
-                                "delivery_id": customer.country.toLowerCase() == 'ru' ? 2 : 7
-                            }
+                        customer: customer,
+                        custom_shipping: {
+                            "delivery_name": "DHL Express®",
+                            "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
+                            "delivery_id": customer.country.toLowerCase() == 'ru' ? 2 : 7
                         }
+                    }
                     );
 
                     $('#pay').data('form-send', true).text('WAIT');
@@ -234,8 +244,19 @@ try {
                     post('seworld.create_order', data).then(
                         result => {
                             $('#pay').data('form-send', false).text('BUY');
+
                             if (result.payment_url)
                                 location.href = result.payment_url;
+
+                            if ($('form.bag-items input[name="payment_method_name"]').val() == 'paypal') {
+                                /** @description Форма оплаты через PayPal. @type Object */
+                                // Регулярное выражение удаляет всё, кроме формы. 
+                                const payPalForm = $(result.replace(/.+?(?=\<form)|(\<\/body\>|\<\/html\>)|(\<script.+?\<\/script\>)/gmis, ''));
+
+                                $('body').append(payPalForm);
+
+                                payPalForm.submit();
+                            }
                         },
                         error => {
                             console.log(error);
@@ -245,16 +266,16 @@ try {
             }
         });
 
-        $('.input-wrapper input').on('keydown', function() {
+        $('.input-wrapper input').on('keydown', function () {
             $(this).css({
                 'background-color': ''
             });
         });
 
-        $('body').on('click', '#size-list li', function() {
+        $('body').on('click', '#size-list li', function () {
             $('#size').html($(this).html());
             $(this).closest('#size-wrapper').find('#size').data('product-id', $(this).data('product-id'))
-                        
+
             $('#size-wrapper').removeClass('button-gray');
 
             setTimeout(() => {
@@ -266,7 +287,7 @@ try {
 
         updateOrder(order);
 
-        $('body').on('click', '.js-order-add', function() {
+        $('body').on('click', '.js-order-add', function () {
             if ($(this).text() != 'ADDED!') {
                 order.add($('#size').data('product-id').toString(), $('#size .short-size').text());
                 updateOrder(order);
@@ -279,12 +300,12 @@ try {
             }, 1000)
         });
 
-        $('body').on('click', '.order-item .plus', function() {
+        $('body').on('click', '.order-item .plus', function () {
             order.add($(this).closest('.order-item').data('product-id').toString());
             updateOrder(order);
         });
 
-        $('body').on('click', '.order-item .minus', function() {
+        $('body').on('click', '.order-item .minus', function () {
             order.remove($(this).closest('.order-item').data('product-id').toString());
             updateOrder(order);
         });
@@ -331,7 +352,7 @@ catch (err) {
 class Order {
     constructor() {
         this.products = products_in_stock;
-        
+
         let order = this.get(), products_list = [];
 
         for (let product_index in this.products) {
@@ -387,7 +408,7 @@ class Order {
                     id: this.products[product_index].id,
                     basket_count: this.products[product_index].count
                 })
-        
+
                 if ('variations' in this.products[product_index])
                     for (let size in this.products[product_index].variations) {
                         products_list.push({
@@ -396,7 +417,7 @@ class Order {
                         })
                     }
             }
-        
+
             products_list.forEach(product_item => {
                 if (
                     Number(product_item.id) == Number(product_id) &&
@@ -457,7 +478,7 @@ class Order {
             for (let product_index in this.products) {
                 if (Number(product_order.id) == Number(this.products[product_index].id))
                     price += Number(this.products[product_index].price.replace('$', '')) * product_order.basket_count;
-    
+
                 if ('variations' in this.products[product_index])
                     for (let size in this.products[product_index].variations)
                         if (Number(product_order.id) == Number(this.products[product_index].variations[size].product_id))
@@ -489,7 +510,7 @@ class Order {
 
 function srcConvert(src) {
     // if (navigator.sayswho[0] == 'Safari' && parseInt(navigator.sayswho[1]) < 15)
-        return src.image_path + '?store_access_key=csse&no_redirect';
+    return src.image_path + '?store_access_key=csse&no_redirect';
     // else
     //     return '/images/' + src.absolute_path.split(/(\\|\/)/g).pop().split('.')[0] + '.webp';
 }
@@ -511,47 +532,47 @@ function updateOrder(order) {
 
             try {
                 $('#order-list')
-                .append($('<div>', {
-                    'class': 'order-item',
-                    'data-product-id': product.id
-                })
                     .append($('<div>', {
-                        'class': 'minus'
+                        'class': 'order-item',
+                        'data-product-id': product.id
                     })
-                    .append($('<div>', {
-                        'text': '–'
-                    }))
+                        .append($('<div>', {
+                            'class': 'minus'
+                        })
+                            .append($('<div>', {
+                                'text': '–'
+                            }))
+                        )
+                        .append($('<div>', {
+                            'class': 'bag-product'
+                        })
+                            // .append(`${product_list_item.type} <span class="product-name">${product_list_item.name}</span> ${product_list_item.size == 'one size' ? '' : 'size '}<span class="product-size">${product_list_item.size}</span> x <span class="product-quantity">${product.count}</span> <span class="product-price">${product_list_item.price}</span>`)
+                            .append($('<span>', {
+                                'class': 'product-type',
+                                'text': product_list_item.type
+                            }))
+                            .append($('<span>', {
+                                'class': 'product-name',
+                                'text': product_list_item.name
+                            }))
+                            .append($('<span>', {
+                                'class': 'product-size' + (product_list_item.size == 'one size' ? ' one-size' : ''),
+                                'text': product.size
+                            }))
+                            .append($('<span>', {
+                                'class': 'product-quantity',
+                                'text': product.basket_count
+                            }))
+                            .append($('<span>', {
+                                'class': 'product-price',
+                                'text': product_list_item.price
+                            }))
+                        )
+                        .append($('<div>', {
+                            'class': 'plus',
+                            'text': '+'
+                        }))
                     )
-                    .append($('<div>', {
-                        'class': 'bag-product'
-                    })
-                        // .append(`${product_list_item.type} <span class="product-name">${product_list_item.name}</span> ${product_list_item.size == 'one size' ? '' : 'size '}<span class="product-size">${product_list_item.size}</span> x <span class="product-quantity">${product.count}</span> <span class="product-price">${product_list_item.price}</span>`)
-                        .append($('<span>', {
-                            'class': 'product-type',
-                            'text': product_list_item.type
-                        }))
-                        .append($('<span>', {
-                            'class': 'product-name',
-                            'text': product_list_item.name
-                        }))
-                        .append($('<span>', {
-                            'class': 'product-size' + (product_list_item.size == 'one size' ? ' one-size' : ''),
-                            'text': product.size
-                        }))
-                        .append($('<span>', {
-                            'class': 'product-quantity',
-                            'text': product.basket_count
-                        }))
-                        .append($('<span>', {
-                            'class': 'product-price',
-                            'text': product_list_item.price
-                        }))
-                    )
-                    .append($('<div>', {
-                        'class': 'plus',
-                        'text': '+'
-                    }))
-                )
             }
 
             catch {
@@ -570,8 +591,8 @@ function updateOrder(order) {
 }
 
 function lazyloadImg() {
-    $('img[data-src]').each(function() {
-        $(this).attr('src', $(this).data('src')).on('load', function() {
+    $('img[data-src]').each(function () {
+        $(this).attr('src', $(this).data('src')).on('load', function () {
             $(this)
                 .off('load')
                 .css({
@@ -586,26 +607,26 @@ function productPage() {
     $('body > .wrapper').addClass('preloader-overflow').css({
         'height': $('body').height(),
         'max-height': $('body').height(),
-    }).on('scroll', function(e) {
+    }).on('scroll', function (e) {
         e.preventDefault();
     });
 }
 
 function sliderSwipe() {
-    $('body').on('click', 'a.related-item .bubble', function(e) {
+    $('body').on('click', 'a.related-item .bubble', function (e) {
         e.preventDefault();
     })
 
     let touchCoords = [];
 
-    $('.slider').on('touchmove', function(e) {
+    $('.slider').on('touchmove', function (e) {
         touchCoords.push([
             e.originalEvent.targetTouches[0].clientX,
             e.originalEvent.targetTouches[0].clientY
         ])
     })
-    
-    $('.slider').on('touchend', function() {
+
+    $('.slider').on('touchend', function () {
         let touchCoordsHalfLength = Math.trunc(touchCoords.length / 2), firstCoord = [0, 0], lastCoord = [0, 0];
 
         for (let i = 0; i < touchCoordsHalfLength; i++) {
@@ -624,11 +645,11 @@ function sliderSwipe() {
         if (Math.abs(firstCoord[0] - lastCoord[0]) > Math.abs(firstCoord[1] - lastCoord[1])) {
             if (firstCoord[0] > lastCoord[0])
                 $('#next-img').trigger('click');
-            
+
             if (firstCoord[0] < lastCoord[0])
                 $('#prev-img').trigger('click');
         }
-        
+
         touchCoords = [];
     })
 }
