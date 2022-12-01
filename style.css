@@ -1315,10 +1315,6 @@ img[data-src] {
     background-color: #fff !important;
 }
 
-.display_none {
-    display: none;
-}
-
 body > .preloader-overflow {
     overflow: hidden;
     max-height: 100vh;
@@ -1839,4 +1835,8 @@ body > .wrapper {
 
 .checkout-wrapper .policy {
     margin-top: 1rem;
+}
+
+.display_none {
+    display: none !important;
 }

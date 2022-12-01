@@ -178,8 +178,16 @@ try {
             }, 50);
         })
 
+        $('input[name="country"').on('keyup', function () {
+            if ($(this).val().toLowerCase() == 'russia') {
+                $('.js-hide-paypal').addClass('display_none');
+            } else {
+                $('.js-hide-paypal').removeClass('display_none');
+            }
+        })
+
         $('form.bag-items button').click(function () {
-            if ($('input[name="country"').val() == 'Russia') {
+            if ($('input[name="country"').toLowerCase() == 'russia') {
                 $(this).data('payment-method-name', 'SE Tinkoff');
             } else {
                 $(this).data('payment-method-name', 'stripe');
