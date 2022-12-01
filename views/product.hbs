@@ -68,16 +68,6 @@
                 <div class="line"></div>
                 {{/each}}
             </div>
-            <div class="slider">
-                {{#each product.pairs.pairs}}
-                <figure class="slider-item{{#if @first}} img-selected{{/if}}">
-                    <img data-src="{{this.src.[1600]}}">
-                    <figcaption class="description">{{this.description}}</figcaption>
-                </figure>
-                {{/each}}
-                <button id="prev-img"></button>
-                <button id="next-img"></button>
-            </div>
             <div id="purchase" class="action-line purchase-desktop">
                 <div class="shipping">Shipping</div>
                 <div id="size-wrapper"{{#if product.one_size}} class="one_size"{{/if}}>
@@ -114,6 +104,16 @@
                     The average tax for most countries varies around 15% (from the order total). Duty payment is quick and easy through our partner DHL® Express, you will automatically receive a link with all the instructions, it usually takes not more than 5 min to complete. <br><br>
                     No Returns / No Exchanges
                 </div>
+            </div>
+            <div class="slider">
+                {{#each product.pairs.pairs}}
+                <figure class="slider-item{{#if @first}} img-selected{{/if}}">
+                    <img data-src="{{this.src.[1600]}}">
+                    <figcaption class="description">{{this.description}}</figcaption>
+                </figure>
+                {{/each}}
+                <button id="prev-img"></button>
+                <button id="next-img"></button>
             </div>
             <div class="bubble bubble-mobile">
                 <div class="bubble-flex">
