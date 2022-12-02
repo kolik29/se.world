@@ -187,7 +187,7 @@ try {
         })
 
         $('form.bag-items button').click(function () {
-            if ($('input[name="country"').toLowerCase() == 'russia') {
+            if ($('input[name="country"').val().toLowerCase() == 'russia') {
                 $(this).data('payment-method-name', 'SE Tinkoff');
             } else {
                 $(this).data('payment-method-name', 'stripe');
