@@ -10,8 +10,8 @@ try {
     $(() => {
         instagramHeightHack();
 
-        $('#checkout').click(function () {
-            if ($(window).width() < 640)
+        $('#checkout').click(function() {
+            if ($(window).width() < 900)
                 $(this).closest('form').submit();
         })
 
