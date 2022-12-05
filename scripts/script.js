@@ -10,7 +10,7 @@ try {
     $(() => {
         instagramHeightHack();
 
-        $('#checkout').click(function() {
+        $('#checkout').click(function () {
             if ($(window).width() < 900)
                 $(this).closest('form').submit();
         })
@@ -187,12 +187,11 @@ try {
         })
 
         $('form.bag-items button').click(function () {
-            if ($('input[name="country"').val().toLowerCase() == 'russia') {
+            if ($('input[name="country"').val().toLowerCase() == 'russia')
                 $(this).data('payment-method-name', 'SE Tinkoff');
-            } else {
+            else if ($(this).data('payment-method-name').toLowerCase() != 'paypal')
                 $(this).data('payment-method-name', 'stripe');
-            }
-            
+
             $('form.bag-items input[name="payment_method_name"]').val($(this).data('payment-method-name'));
         })
 
