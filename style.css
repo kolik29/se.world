@@ -353,6 +353,7 @@ header .bag-items {
 
 .action-line > * {
     padding: 0.66rem 1rem;
+    line-height: 23px;
 }
 
 .action-line button {
