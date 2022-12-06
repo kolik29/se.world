@@ -1854,3 +1854,12 @@ body > .wrapper {
 .display_none {
     display: none !important;
 }
+
+.checkout-paypal__wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.checkout-paypal {
+    max-width: 300px;
+}
