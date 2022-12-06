@@ -17,6 +17,24 @@
 
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=b6185dd5-4c53-4560-b911-be88ccf5787f" type="text/javascript"></script>
     <script src="/scripts/geoposition.js?{{timestamp}}"></script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '666329731730704');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=666329731730704&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 <body>
     <header>
@@ -65,11 +83,11 @@
                     <div id="total"></div>
                     <button id="pay" class="checkout-button">PAY</button>
                 </a>
-                <div class="input-wrapper-text">
+                {{!-- <div class="input-wrapper-text">
                     or
-                </div>
-                <div id="paypal-button-container"></div>
-                <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="/policy">Terms & Policy.</a></p>
+                </div> --}}
+                {{!-- <div id="paypal-button-container"></div> --}}
+                {{!-- <p class="policy">By clicking PAY you agree with the <a target="_blanc" href="/policy">Terms & Policy.</a></p> --}}
             </div>
             <!-- Sample PayPal credentials (client-id) are included -->
             <script src="https://www.paypal.com/sdk/js?client-id=Ae1wVCru8WaEQ7kg73vsv0u1WnTpO5-OOlWTzNCwRT-FeYuD3I-Id4VbK7gQ9uXwTfy92rS_FFpBjo-2&currency=USD&intent=capture&enable-funding=venmo" data-sdk-integration-source="integrationbuilder"></script>
