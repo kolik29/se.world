@@ -6,8 +6,20 @@ function instagramHeightHack() {
     }
 }
 
+function orderListRounded() {
+    if ($('#order-list .order-item').length > 1) {
+        $('#order-list').addClass('rounded');
+    } else {
+        $('#order-list').removeClass('rounded');
+    }    
+}
+
 try {
     $(() => {
+        setTimeout(() => {
+            orderListRounded();
+        }, 1000);
+
         instagramHeightHack();
 
         $('#checkout').click(function () {
@@ -305,6 +317,8 @@ try {
             setTimeout(() => {
                 $(this).text('ADD')
             }, 1000)
+
+            orderListRounded();
         });
 
         $('body').on('click', '.order-item .plus', function () {
@@ -315,6 +329,7 @@ try {
         $('body').on('click', '.order-item .minus', function () {
             order.remove($(this).closest('.order-item').data('product-id').toString());
             updateOrder(order);
+            orderListRounded();
         });
 
         if ($('.checkout-wrapper #products').length) {
