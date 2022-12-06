@@ -14,6 +14,10 @@ $(() => {
 
 			$('.input-wrapper input[name="country"]').val(country.name);
 			shippingTo(country);
+
+			if (country.name.toLocaleLowerCase() == 'russia') {
+				$('.js-hide-paypal').addClass('display_none');
+			}
         });
     }
 
