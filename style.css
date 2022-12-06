@@ -400,11 +400,7 @@ header .bag-items {
 }
 
 .order-item > * {
-    padding: 0.66rem 0;
-}
-
-.order-item:last-child {
-    border-bottom: 0;
+    padding: calc(0.66rem - 0.5px) 0;
 }
 
 #checkout {
@@ -1639,7 +1635,6 @@ body > .wrapper {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    column-gap: 1em;
     column-gap: 1em;
 }
 
