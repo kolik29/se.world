@@ -1066,7 +1066,6 @@ input:-webkit-autofill::first-line {
     
     #size {
         text-align: center;
-        padding-left: 0.7rem;
     }
     #size::after {
         content: '^';
@@ -1143,6 +1142,7 @@ input:-webkit-autofill::first-line {
     #purchase {
         position: relative;
         display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
     }
     #purchase::before {
         content: '';
