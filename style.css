@@ -1416,8 +1416,9 @@ body > .wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.66666rem 1rem;
+    padding: calc(0.66666rem - 0.5px) 1rem;
     border-bottom: solid 1px white;
+    border-top: solid 1px white;
 }
 
 .product-page .related-item.archive {
