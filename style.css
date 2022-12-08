@@ -346,8 +346,7 @@ a {
 }
 
 .action-line > * {
-    padding: calc(0.66rem - 2px) 1rem;
-    line-height: 23px;
+    padding: calc(0.66rem - 0.5px) 1rem;
 }
 
 .action-line button {
@@ -581,7 +580,6 @@ a {
     position: relative;
     height: 0;
     flex-grow : 1;
-    margin-top: -0.66666rem;
 }
 
 .slider-item {
@@ -646,7 +644,6 @@ a {
 }
 
 #purchase {
-    position: fixed;
     display: flex;
 }
 
