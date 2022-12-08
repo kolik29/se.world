@@ -646,7 +646,7 @@ a {
 }
 
 #purchase {
-    position: relative;
+    position: fixed;
     display: flex;
 }
 
@@ -910,11 +910,10 @@ input:-webkit-autofill::first-line {
     
     .purchase-desktop .shipping-info {
         width: 50%;
-        bottom: calc(100% - 0.5rem + 1px);
+        bottom: calc(100% - 1rem + 1px);
         border-radius: 1rem !important;
         padding: 0.5rem 0.5rem 0.45rem;
         cursor: default;
-        max-height: calc(100vh - calc(100% - 0.5rem + 1px));
     }
     
     .purchase-desktop .button-gray {
@@ -1099,15 +1098,9 @@ input:-webkit-autofill::first-line {
     #size-list li:last-child {
         border-bottom: none;
     }
-
-    #size {
-        display: grid;
-        grid-template-columns: auto auto auto auto;
-        white-space: nowrap;
-    }
     
     .chinese {
-        margin: 0 0.25rem;
+        display: none;
     }
     
     .size-arrow {
@@ -1838,7 +1831,7 @@ body > .wrapper {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-}.
+}
 
 .checkout-wrapper .checkout-paypal:hover {
     filter: brightness(0.95);
