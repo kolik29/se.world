@@ -575,7 +575,7 @@ function updateOrder(order) {
                             }))
                             .append($('<span>', {
                                 'class': 'product-name',
-                                'text': product_list_item.name
+                                'text': product_list_item.price
                             }))
                             .append($('<span>', {
                                 'class': 'product-size' + (product_list_item.size == 'one size' ? ' one-size' : ''),
@@ -585,10 +585,10 @@ function updateOrder(order) {
                                 'class': 'product-quantity',
                                 'text': product.basket_count
                             }))
-                            .append($('<span>', {
+                            /*.append($('<span>', {
                                 'class': 'product-price',
                                 'text': product_list_item.price
-                            }))
+                            }))*/
                         )
                         .append($('<div>', {
                             'class': 'plus',
@@ -712,24 +712,12 @@ function updateBag() {
         if ($('#delivery').data('country-code') == '') {
             if (priceAll < 190) {
                 $('#delivery-cost').text('$' + (190 - priceAll) + ' left for free shipping');
-                $('#delivery').css({
-                    'background-color': '#77B2D6',
-                    'opacity': '0.5'
-                })
                 priceAll += 15;
             } else {
-                $('#delivery-cost').text('Free Express DHL Express');
-                $('#delivery').css({
-                    'background-color': '#FFDC00',
-                    'opacity': '1'
-                })
+                $('#delivery-cost').text('Free DHL Express®');
             }
         } else if ($('#delivery').data('country-code') == 'RU') {
-            $('#delivery-cost').text('Free Express DHL Express');
-            $('#delivery').css({
-                'background-color': '#FFDC00',
-                'opacity': '1'
-            })
+            $('#delivery-cost').text('Free DHL Express®');
         }
 
         $('#total').text('$' + priceAll).data('total', priceAll);

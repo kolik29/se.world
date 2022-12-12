@@ -1891,3 +1891,11 @@ body > .wrapper {
 .text-align_center {
     text-align: center;
 }
+
+#delivery {
+    background-color: #ffdc00;
+}
+
+#delivery span {
+    opacity: 0.5;
+}
