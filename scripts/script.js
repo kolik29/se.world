@@ -718,14 +718,14 @@ function updateBag() {
                 })
                 priceAll += 15;
             } else {
-                $('#delivery-cost').text('free DHL® Express');
+                $('#delivery-cost').text('Free DHL® Express');
                 $('#delivery').css({
                     'background-color': '#FFDC00',
                     'opacity': '1'
                 })
             }
         } else if ($('#delivery').data('country-code') == 'RU') {
-            $('#delivery-cost').text('free DHL® Express');
+            $('#delivery-cost').text('Free DHL® Express');
             $('#delivery').css({
                 'background-color': '#FFDC00',
                 'opacity': '1'
