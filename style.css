@@ -346,8 +346,7 @@ a {
 }
 
 .action-line > * {
-    padding: calc(0.66rem - 2px) 1rem;
-    line-height: 23px;
+    padding: calc(0.66rem - 0.5px) 1rem;
 }
 
 .action-line button {
@@ -581,7 +580,6 @@ a {
     position: relative;
     height: 0;
     flex-grow : 1;
-    margin-top: -0.66666rem;
 }
 
 .slider-item {
@@ -646,7 +644,6 @@ a {
 }
 
 #purchase {
-    position: fixed;
     display: flex;
 }
 
@@ -1069,7 +1066,6 @@ input:-webkit-autofill::first-line {
     
     #size {
         text-align: center;
-        padding-left: 0.7rem;
     }
     #size::after {
         content: '^';
@@ -1146,6 +1142,7 @@ input:-webkit-autofill::first-line {
     #purchase {
         position: relative;
         display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
     }
     #purchase::before {
         content: '';

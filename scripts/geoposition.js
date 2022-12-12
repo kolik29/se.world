@@ -8159,7 +8159,7 @@ function freeShippingTextTemplate(days, leftToFreeshipping = 0) {
 	if (leftToFreeshipping > 0)
 		return `$${leftToFreeshipping} left for free shipping ${days}`
 	else
-		return `Free Express DHL Express${days}`;
+		return `Free DHL® Express${days}`;
 }
 
 function declOfNum(num, words) {

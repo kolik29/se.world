@@ -714,10 +714,18 @@ function updateBag() {
                 $('#delivery-cost').text('$' + (190 - priceAll) + ' left for free shipping');
                 priceAll += 15;
             } else {
-                $('#delivery-cost').text('Free DHL Express®');
+                $('#delivery-cost').text('Free DHL® Express');
+                $('#delivery').css({
+                    'background-color': '#FFDC00',
+                    'opacity': '1'
+                })
             }
         } else if ($('#delivery').data('country-code') == 'RU') {
-            $('#delivery-cost').text('Free DHL Express®');
+            $('#delivery-cost').text('Free DHL® Express');
+            $('#delivery').css({
+                'background-color': '#FFDC00',
+                'opacity': '1'
+            })
         }
 
         $('#total').text('$' + priceAll).data('total', priceAll);
