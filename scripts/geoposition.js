@@ -8116,20 +8116,12 @@ function shippingTo(country) {
 
 	if (freeShipping) {
 		$('#delivery')
-		.css({
-			'background-color': 'rgb(255, 220, 0)',
-			'color': ''
-		})
-		.text(freeShippingTextTemplate(days));
+		.html(freeShippingTextTemplate(days));
 	} else {
 		let leftToFreeshipping = 190 - order.total();
 
 		$('#delivery')
-		.css({
-			'background-color': '',
-			'color': '#bbd8ea'
-		})
-		.text(freeShippingTextTemplate(days, leftToFreeshipping));
+		.html(freeShippingTextTemplate(days, leftToFreeshipping));
 	}
 }
 
@@ -8146,20 +8138,16 @@ function shippingToCity(__city) {
 			days = ` (${days})`;
 
 			$('#delivery')
-			.css({
-				'background-color': 'rgb(255, 220, 0)',
-				'color': ''
-			})
-			.text(freeShippingTextTemplate(days));
+			.html(freeShippingTextTemplate(days));
 		} catch {}
 	}
 }
 
 function freeShippingTextTemplate(days, leftToFreeshipping = 0) {
 	if (leftToFreeshipping > 0)
-		return `$${leftToFreeshipping} left for free shipping ${days}`
+		return `<span>$${leftToFreeshipping}</span>&nbsp;DHL® Express`;
 	else
-		return `Free DHL® Express${days}`;
+		return `Free DHL® Express`;
 }
 
 function declOfNum(num, words) {

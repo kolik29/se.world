@@ -210,7 +210,8 @@ try {
         $('form.bag-items').submit(function (e) {
             e.preventDefault();
 
-            if (!$('#pay').data('form-send')) {
+            //if (!$('#pay').data('form-send')) {
+            if (true) {
                 var formSubmit = true, customer = {};
 
                 $(this).find('input').each(function () {
@@ -711,7 +712,7 @@ function updateBag() {
 
         if ($('#delivery').data('country-code') == '') {
             if (priceAll < 190) {
-                $('#delivery-cost').text('$' + (190 - priceAll) + ' left for free shipping');
+                $('#delivery-cost').html('<span>$' + (190 - priceAll) + '</span>&nbsp;DHL® Express');
                 priceAll += 15;
             } else {
                 $('#delivery-cost').text('Free DHL® Express');
