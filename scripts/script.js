@@ -712,17 +712,17 @@ function updateBag() {
 
         if ($('#delivery').data('country-code') == '') {
             if (priceAll < 190) {
-                $('#delivery-cost').html('<span>$' + (190 - priceAll) + '</span>&nbsp;DHL® Express');
+                $('#delivery-cost').html('<span>$' + (190 - priceAll) + '</span>&nbsp;DHL Express®');
                 priceAll += 15;
             } else {
-                $('#delivery-cost').text('Free DHL® Express');
+                $('#delivery-cost').text('Free DHL Express®');
                 $('#delivery').css({
                     'background-color': '#FFDC00',
                     'opacity': '1'
                 })
             }
         } else if ($('#delivery').data('country-code') == 'RU') {
-            $('#delivery-cost').text('Free DHL® Express');
+            $('#delivery-cost').text('Free DHL Express®');
             $('#delivery').css({
                 'background-color': '#FFDC00',
                 'opacity': '1'
