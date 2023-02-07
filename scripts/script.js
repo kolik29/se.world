@@ -11,7 +11,7 @@ function orderListRounded() {
         $('#order-list').addClass('rounded');
     } else {
         $('#order-list').removeClass('rounded');
-    }    
+    }
 }
 
 try {
@@ -210,8 +210,7 @@ try {
         $('form.bag-items').submit(function (e) {
             e.preventDefault();
 
-            //if (!$('#pay').data('form-send')) {
-            if (true) {
+            if (!$('#pay').data('form-send')) {
                 var formSubmit = true, customer = {};
 
                 $(this).find('input').each(function () {
@@ -261,9 +260,13 @@ try {
 
                     $('#pay').data('form-send', true).text('WAIT');
 
+                    console.log(data)
+
                     post('seworld.create_order', data).then(
                         result => {
                             $('#pay').data('form-send', false).text('BUY');
+
+                            console.log(result)
 
                             if (result.payment_url)
                                 location.href = result.payment_url;
@@ -693,10 +696,7 @@ function textSplit(text) {
 }
 
 function priceFormat(price) {
-    var currency = '';
-
-    if (true)
-        currency = '$';
+    var currency = '$';
 
     if (price > 10000)
         return currency + price.toString().replace(/(\d{1,3}(?=(?:\d\d\d)+(?!\d)))/g, "$1" + ' ');

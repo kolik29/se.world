@@ -12,6 +12,13 @@ function fn_url(dispatch) {
 }
 
 function post(dispatch, data = {}) {
+    console.log(fn_url(dispatch))
+    
+    data['crossDomain'] = true;
+    data['xhrFields'] = {
+        withCredentials: true,
+    };
+
     return new Promise((resolve, reject) => {
         $.post(fn_url(dispatch), data)
             .done(data => {
