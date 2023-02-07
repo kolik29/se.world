@@ -360,7 +360,7 @@ a {
     cursor: inherit;
     width: fit-content;
     justify-self: end;
-    line-height: 1.4em;
+    height: 1.4em;
 }
 
 .plus, .minus {
@@ -879,6 +879,7 @@ input:-webkit-autofill::first-line {
         z-index: 10;
         background-color: transparent;
         cursor: default;
+        position: relative;
     }
     
     .purchase-desktop > * {
@@ -907,7 +908,7 @@ input:-webkit-autofill::first-line {
     
     .purchase-desktop .shipping-info {
         width: 50%;
-        bottom: calc(100% - 1rem + 1px);
+        bottom: 100%;
         border-radius: 1rem !important;
         padding: 0.5rem 0.5rem 0.45rem;
         cursor: default;
@@ -1755,12 +1756,15 @@ body > .wrapper {
     text-align: center;
 }
 
-
-
 .checkout-wrapper #checkout.action-line {
     border-bottom-left-radius: 32px;
     border-bottom-right-radius: 32px;
     overflow: hidden;
+}
+
+#empty-bag {
+    border-bottom-left-radius: 32px;
+    border-bottom-right-radius: 32px;
 }
 
 @media screen and (max-width: 700px) {
