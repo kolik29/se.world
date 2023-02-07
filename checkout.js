@@ -1,16 +1,16 @@
-window.onload = function() {
+window.onload = function () {
 
     //Img Preload
-    [].forEach.call(document.querySelectorAll('img[data-src]'), function(img) {
+    [].forEach.call(document.querySelectorAll('img[data-src]'), function (img) {
         img.setAttribute('src', img.getAttribute('data-src'))
-            img.onload = function() {
-                img.removeAttribute('data-src')
-                img.style.opacity = '1'
-            }
-        })
-        
+        img.onload = function () {
+            img.removeAttribute('data-src')
+            img.style.opacity = '1'
+        }
+    })
+
     // var items = document.getElementsByClassName('checkout-item')
-    
+
     // for (i=0; i<items.length; i++) {
     //     var gridXa = Math.floor(Math.random()*3 + 1)
     //     var gridYa = Math.floor(Math.random()*3 + 1)
@@ -24,12 +24,12 @@ window.onload = function() {
     var delivery = document.getElementById('delivery')
 
     //Update bag
-    var updateBag = function() {
+    var updateBag = function () {
         var products = document.getElementsByClassName('product-quantity')
         var prices = document.getElementsByClassName('product-price')
         var priceAll = 0
-        for (i=0; i<products.length; i++) {
-            priceAll = priceAll + parseInt(prices[i].innerHTML) * parseInt(products[i].innerHTML)
+        for (i = 0; i < products.length; i++) {
+            priceAll = priceAll + (prices[i] ? parseInt(prices[i].innerHTML) : 0) * parseInt(products[i].innerHTML ?? 0)
         }
 
         // if (priceAll < 200) {
@@ -44,7 +44,7 @@ window.onload = function() {
     }
 
     //Update quantity
-    var updateQuantity = function(el, b) {
+    var updateQuantity = function (el, b) {
         var quantity = parseInt(el.querySelector('.product-quantity').innerHTML)
         el.querySelector('.product-quantity').innerHTML = quantity + b
         if ((quantity == 1) && (b == -1)) {
@@ -63,7 +63,7 @@ window.onload = function() {
     //     prod.querySelector('.plus').addEventListener('click', function () {updateQuantity(prod, 1)})
     // }
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         // if (e.target)
         //     if (e.target.classList.contains('minus'))
         //         updateQuantity(e.target.closest('.order-item'), -1);
@@ -73,4 +73,3 @@ window.onload = function() {
 
     updateBag()
 }
-    
