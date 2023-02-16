@@ -712,7 +712,7 @@ function updateBag() {
 
         if ($('#delivery').data('country-code') == '') {
             if (priceAll < 190) {
-                $('#delivery-cost').html('<span>$' + (190 - priceAll) + '</span>&nbsp;DHL Express®');
+                $('#delivery-cost').html('DHL $15 Express®');
                 priceAll += 15;
             } else {
                 $('#delivery-cost').text('Free DHL Express®');

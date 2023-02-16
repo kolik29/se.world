@@ -8145,7 +8145,7 @@ function shippingToCity(__city) {
 
 function freeShippingTextTemplate(days, leftToFreeshipping = 0) {
 	if (leftToFreeshipping > 0)
-		return `<span>$${leftToFreeshipping}</span>&nbsp;DHL Express®`;
+		return `DHL $15 Express®`;
 	else
 		return `Free DHL Express®`;
 }
