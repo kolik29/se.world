@@ -8107,22 +8107,19 @@ function shippingTo(country) {
 			$('#total').text('$' + (order.total() + 15)).data('total', order.total() + 15);
 		}
 
-
 		days = country.timing + ' ' + declOfNum(country.timing, ['day', 'days']);
 		days = ` (${days})`;
 	}
 
-	$('#delivery').data('country-code', country.code);
+	$("#delivery").attr("data-country-code", country.code);
+	$('#delivery').attr("data-timing", country.timing);
 
-	if (freeShipping) {
-		$('#delivery')
-		.html(freeShippingTextTemplate(days));
-	} else {
-		let leftToFreeshipping = 190 - order.total();
-
-		$('#delivery')
-		.html(freeShippingTextTemplate(days, leftToFreeshipping));
-	}
+	if (!freeShipping)
+		$('#delivery').html(
+			freeShippingTextTemplate(days, 190 - order.total())
+		);
+	else
+		$('#delivery').html(freeShippingTextTemplate(days));
 }
 
 function shippingToCity(__city) {
@@ -8138,16 +8135,16 @@ function shippingToCity(__city) {
 			days = ` (${days})`;
 
 			$('#delivery')
-			.html(freeShippingTextTemplate(days));
+				.attr('data-timing', city.deliveries_time)
+				.html(
+					freeShippingTextTemplate(days)
+				);
 		} catch {}
 	}
 }
 
 function freeShippingTextTemplate(days, leftToFreeshipping = 0) {
-	if (leftToFreeshipping > 0)
-		return `<span>$${leftToFreeshipping}</span>&nbsp;DHL Express®`;
-	else
-		return `Free DHL Express®`;
+	return (leftToFreeshipping > 0 ? `<span>$${leftToFreeshipping}</span>&nbsp;` : '') + `DHL Express®${days}`;
 }
 
 function declOfNum(num, words) {

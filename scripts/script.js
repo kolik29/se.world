@@ -252,7 +252,7 @@ try {
                         customer: customer,
                         custom_shipping: {
                             "delivery_name": "DHL Express®",
-                            "delivery_time": $('#delivery-time').text() == '' ? 0 : parseInt($('#delivery-time').text().match(/\d+/)),
+                            "delivery_time": $('#delivery').data('timing') ?? 0,
                             "delivery_id": customer.country.toLowerCase() == 'ru' ? 2 : 7
                         }
                     }
