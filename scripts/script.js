@@ -191,15 +191,14 @@ try {
         })
 
         $('input[name="country"').on('keyup', function () {
-            if ($(this).val().toLowerCase() == 'russia') {
+            if ($(this).val().toUpperCase() == 'RUSSIA')
                 $('.js-hide-paypal').addClass('display_none');
-            } else {
+            else
                 $('.js-hide-paypal').removeClass('display_none');
-            }
         })
 
         $('form.bag-items button').click(function () {
-            if ($('input[name="country"').val().toLowerCase() == 'russia')
+            if ($('input[name="country"').val().toUpperCase() == 'RUSSIA')
                 $(this).data('payment-method-name', 'SE Tinkoff');
             else if ($(this).data('payment-method-name').toLowerCase() != 'paypal')
                 $(this).data('payment-method-name', 'stripe');
