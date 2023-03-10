@@ -8,8 +8,12 @@ const serverLogging = require('./logging.js')
 webp.grant_permission();
 
 function convert(file_path, size, convert) {
+    if (file_path === undefined) return
+
     let name = file_path.split('/').last(),
         extension = name.split('.').last()
+
+    console.log(name)
 
     if (convert) {
         if (!fs.existsSync(path.join(__dirname, 'images/' + size)))
