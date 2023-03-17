@@ -912,6 +912,7 @@ input:-webkit-autofill::first-line {
         border-radius: 1rem !important;
         padding: 0.5rem 0.5rem 0.45rem;
         cursor: default;
+        max-height: calc(100vh - 3rem);
     }
     
     .purchase-desktop .button-gray {
